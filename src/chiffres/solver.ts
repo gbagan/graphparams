@@ -1,0 +1,102 @@
+import {range} from '../libs/iter';
+
+export interface Calc {
+    readonly val: number,
+    readonly left?: Calc,
+    readonly operator?: string,
+    readonly right?: Calc
+}
+
+function sublists(list: ReadonlyArray<number>) {
+    let res: number[][] = [[]];
+    for (const x of list)
+        res = res.concat(res.map((slist) => slist.concat(x)));
+    return res;
+}
+
+function encodeList(list: ReadonlyArray<number>) {
+    let t = 0;
+    for (const x of list)
+        t += 1 << x;
+    return t;
+}
+
+type CalcTable = Map<number, Calc>;
+
+function computeTable(list: Calc[], target: number) {
+    const tables: CalcTable[] = new Array(1 << list.length);
+    const indexList = Array.from(range(list.length));
+    const slistsTab: number[][][] = [];
+    for (let i = 0; i <= list.length; i++) {
+        slistsTab.push([]);
+    }
+    for (const list2 of sublists(indexList))
+        slistsTab[list2.length].push(list2);
+    let i = 0;
+    for (const elem of list) {
+        const table: CalcTable = new Map()
+        table.set(elem.val, elem);
+        tables[1 << i] = table;
+        i++;
+    }
+    i = 0;
+    for (const listsOfSizeI of slistsTab) {
+        if (i <= 1) {
+            i++;
+            continue;
+        }
+        for (const slist of listsOfSizeI) {
+            const table = computeTable2(slist, tables);
+            if (table.has(target))
+                return table
+            tables[encodeList(slist)] = table;
+        }
+        i++;
+    }
+    return tables[(1 << list.length) - 1];
+}
+
+function computeTable2(list: number[], tables: CalcTable[]) {
+    const table: CalcTable = new Map();
+    const slists = sublists(list);
+    const n = slists.length
+    const n2 = Math.floor(n / 2);
+    for (let k = 1; k <= n2; k++) {
+        const list1 = slists[k];
+        const list2 = slists[n - 1 - k];
+        const table1 = tables[encodeList(list1)];
+        const table2 = tables[encodeList(list2)];
+        for (const [i, e1] of table1.entries()) {
+            for (const [j, e2] of table2.entries()) {
+                table.set(i + j, { val: i + j, left: e1, operator: '+', right: e2});
+                table.set(i * j, { val: i * j, left: e1, operator: '*', right: e2});
+                if (i > j) {
+                    table.set(i - j, { val: i - j, left: e1, operator: '-', right: e2});
+                    if (i % j === 0)
+                        table.set(i / j, { val: i / j, left: e1, operator: '/', right: e2});
+                } else {
+                    table.set(j - i, { val: j - i, left: e2, operator: '-', right: e1});
+                    if (j % i === 0)
+                        table.set(j / i, { val: j / i, left: e2, operator: '/', right: e1});
+                }
+                table.set(j, e2);
+                table.set(i, e1);
+            }
+        }
+    }
+    return table
+}
+
+export function solve(values: ReadonlyArray<number>, target: number) {
+    let bestDiff = Infinity
+    let bestCalc: Calc | null = null;
+    const values2 = values.map(val => ({val}));
+    for (const [value, calc] of computeTable(values2, target)) {
+        const diff = Math.abs(value - target);
+        if (diff < bestDiff) {
+            bestDiff = diff;
+            bestCalc = calc;
+        }
+    }
+    return bestCalc!;
+}

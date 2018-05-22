@@ -1,0 +1,118 @@
+import * as React from 'react';
+import { connect } from 'react-redux';
+import * as vis from 'vis';
+
+import * as iter from "../../libs/iter";
+import { Graph } from "../../libs/graph/graph";
+import { Shift } from "../types";
+import { State as RootState } from '../redux/reducers';
+import * as actions from "../redux/actions";
+
+import VisWithTraffic, { EdgeTraffic } from "./VisWithTraffic"
+
+interface Props {
+    readonly graph: Graph | null;
+    readonly guards: ReadonlyArray<number> | null;
+    readonly onSelectVertex: (x: number) => any;
+    readonly shift: Shift | null;
+}
+
+interface State {
+}
+
+
+function edgeId(u: number, v: number, isDigraph: boolean) {
+    return isDigraph || u < v ?
+        u.toString() + "," + v.toString()
+        : v.toString() + "," + u.toString();
+}
+
+
+function edgeTraffic(shift: Shift) {
+    const isDigraph = false;
+
+    return shift.map(pair => ({
+        id: edgeId(pair[0], pair[1], isDigraph),
+        size: 5,
+        isBackward: !isDigraph && pair[0] > pair[1]
+    }))
+}
+
+
+class VisEds extends React.Component<Props, State> {
+    animateTraffic: ((e: EdgeTraffic[]) => void) | null
+
+    constructor(props: Props) {
+        super(props);
+        this.animateTraffic = null;
+    }
+
+    componentDidUpdate(prevProps: Props, prevState: State) {
+        const prevGuards = prevProps.guards;
+        const nextGuards = this.props.guards;
+        const { shift, graph } = this.props;
+        if (!prevGuards || !nextGuards || !graph || prevProps.graph !== graph || !shift)
+            return null;
+        const traffic = edgeTraffic(shift);
+        if (this.animateTraffic && traffic)
+            this.animateTraffic(traffic);
+        return null;
+    }
+
+
+    render() {
+        const { graph, guards, onSelectVertex } = this.props;
+        if (!graph)
+            return <div className="viz" />;
+        //const digraph = (graph as any).reverseAdj !== undefined;
+
+        const nodes: vis.Node[] = Array.from(iter.map(iter.range(0, graph.V), i => ({
+            id: i.toString(),
+            shape: 'circularImage',
+            image: (guards || []).includes(i) ? "img/policeman.png" : "img/house.png"
+        })));
+
+        const edges: vis.EdgeOptions[] = Array.from(graph.edges()).map(edge =>
+            ({ id: edge[0] + "," + edge[1], from: edge[0], to: edge[1] })
+        )
+
+        const options = {
+            interaction: {
+                selectConnectedEdges: false,
+            },
+            physics: {
+                enabled: false
+            },
+            nodes: {
+                color: {
+                    background: 'blue',
+                }
+            },
+            edges: {
+                color: {
+                    highlight: 'red'
+                },
+                smooth: false
+            }
+        }
+
+        const events = {
+            'click': (params: any) => onSelectVertex && params.nodes.length === 1 && onSelectVertex(parseInt(params.nodes[0]))
+        }
+
+        return <VisWithTraffic className="viz" nodes={nodes} edges={edges} options={options} events={events}
+            ref={component => { if (component) this.animateTraffic = component.animateTraffic }} />
+    }
+}
+//if (digraph)
+//            edge.arrows = 'to';
+
+
+const mapStateToProps = (state: RootState) => ({
+    graph: state.graph,
+    guards: state.guards,
+    shift: state.shift
+});
+
+
+export default connect(mapStateToProps, { onSelectVertex: actions.selectVertex })(VisEds)

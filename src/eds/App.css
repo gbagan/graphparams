@@ -1,0 +1,25 @@
+﻿body:after {
+    display: none;
+    background: url(img/policeman.png), url(img/house.png);
+}
+
+.eds .viz{
+    height: 600px;
+    width: 700px;
+}
+
+.eds .graphinput {
+    height: 320px;
+    width: 280px;
+    font-family: monospace;
+    font-size: 10pt;
+}
+
+
+.eds .texthelp {
+    height: 500px;
+    width: 420px;
+    background-color: lightgray;
+    font-family: monospace;
+    font-size: 10pt;
+}
