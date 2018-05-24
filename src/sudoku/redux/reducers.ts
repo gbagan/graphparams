@@ -1,10 +1,13 @@
 import { getType, ActionType, } from 'typesafe-actions';
 import * as iter from '../../libs/iter';
-
 import * as actions from './actions';
+import {RootState} from '../../store';
 
 import { PosAndVal, ModelCell, Boards, Examples, Solution } from '../types';
 import Solver from '../solver';
+
+export type Action = ActionType<typeof actions>;
+export const selector = (state: RootState) => state.sudoku;
 
 const boards: Boards = [
     { name: '2x2', data: 2 },
@@ -38,9 +41,6 @@ const initialState: State = {
     cells: null,
     solutions: null
 }
-
-export type Action = ActionType<typeof actions>;
-
 
 export default function reducer(state: State = initialState, action: Action): State {
     switch (action.type) {

@@ -1,8 +1,9 @@
 const webpack = require('webpack');
 const path = require('path');
-const DashboardPlugin = require('webpack-dashboard/plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 //const { CheckerPlugin } = require('awesome-typescript-loader')
+//const DashboardPlugin = require('webpack-dashboard/plugin');
+//const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const PATHS = {
     root: path.resolve(__dirname, '..'),
@@ -12,30 +13,19 @@ const PATHS = {
 };
 
 module.exports = {
-
-    // Currently we need to add '.ts' to the resolve.extensions array.
     resolve: {
         modules: [PATHS.nodeModules],
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
         descriptionFiles: ['package.json'],
     },
-
-    // Source maps support ('inline-source-map' also works)
     devtool: 'source-map',
-
-    // Add the loader for .ts files.
     module: {
         rules: [
             { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
-            { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+            { test: /\.css$/, use: [ MiniCssExtractPlugin.loader, "css-loader" ] },
             { test: /\.(png|jpg|gif)$/, use: [{ loader: 'file-loader', options: {} }] },
-            { test: /\.html/, loader: 'file-loader?name=[name].[ext]' }
         ]
     },
-    //  plugins: [
-    //      new CheckerPlugin()
-    // ],
-
     entry: {
         app: [
             PATHS.src + '/index.tsx',
@@ -43,15 +33,17 @@ module.exports = {
     },
     output: {
         path: PATHS.dist + "/static/",
-        filename: 'bundle.js',
+        //filename: 'bundle.js',
         publicPath: PATHS.root + '/public/',
         // chunkFilename: '[id].chunk.js',
     },
-
     plugins: [
-        new DashboardPlugin(),
-        new HtmlWebpackPlugin({
-            template: './index.html'
-        }),
-    ]
+        new MiniCssExtractPlugin({
+            // Options similar to the same options in webpackOptions.output
+            // both options are optional
+            filename: "[name].css",
+            chunkFilename: "[id].css",
+            modules: true
+        })
+    ],
 };

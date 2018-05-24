@@ -1,24 +1,29 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 
 import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
 import Button from 'antd/lib/button';
 
-import { State as RootState } from '../redux/reducers';
+import { selector, State } from '../redux/reducers';
 import * as actions from "../redux/actions";
-import { Boards,  Example, Examples } from '../types';
 import ActionDropDown from './actiondropdown';
 import Output from './output';
 import Grid from './grid';
 
-interface Props {
-    boards: Boards;
-    examples: Examples;
-    onSelectGrid: (n: number) => any;
-    onSelectExample: (e: Example) => any;
-    onSolve: () => any;
+const mapStateToProps = createSelector(selector, (state: State) => ({
+    boards: state.boards,
+    examples: state.examples,
+}));
+
+const mapDispatchToProps = {
+    onSelectGrid: actions.selectGrid,
+    onSelectExample: actions.selectExample,
+    onSolve: actions.solve
 }
+
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps
 
 const Main: React.SFC<Props> = (props) => {
     const { boards, examples, onSelectGrid, onSelectExample, onSolve } = props;
@@ -40,16 +45,4 @@ const Main: React.SFC<Props> = (props) => {
         </div>
     )
 }
-
-const mapStateToProps = (state: RootState) => ({
-    boards: state.boards,
-    examples: state.examples,
-});
-
-const mapDispatchToProps = {
-    onSelectGrid: actions.selectGrid,
-    onSelectExample: actions.selectExample,
-    onSolve: actions.solve
-}
-
 export default connect(mapStateToProps, mapDispatchToProps)(Main)

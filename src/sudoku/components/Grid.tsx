@@ -1,17 +1,22 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 
-import { State as RootState } from '../redux/reducers';
+import { selector, State as ReduxState } from '../redux/reducers';
 import * as actions from "../redux/actions";
-import { Position, PosAndVal, ModelCell } from '../types';
+import { Position } from '../types';
 import Cell from "./cell";
 import Console from "./console";
 
-interface Props {
-    readonly squaresize: number;
-    readonly cells: ReadonlyArray<ModelCell> | null;
-    readonly onCellFilled: (p: PosAndVal) => any;
-}
+
+const mapStateToProps = createSelector(selector, (state: ReduxState) => ({
+    squaresize: state.squaresize,
+    cells: state.cells
+}));
+const mapDispatchToProps = {
+    onCellFilled: actions.fillCell
+};
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
 interface State {
     showConsole: boolean;
@@ -74,15 +79,6 @@ class Grid extends React.Component<Props, State> {
         });
         onCellFilled && onCellFilled({ row, col, value });
     }
-}
-
-const mapStateToProps = (state: RootState) => ({
-    squaresize: state.squaresize,
-    cells: state.cells
-});
-
-const mapDispatchToProps = {
-    onCellFilled: actions.fillCell
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Grid)

@@ -784,9 +784,9 @@ export function generateSun(n: number) {
 export class Graph extends _Graph<any> {
     _adj: ReadonlyArray<number[]>
 
-    constructor(n: number) {
+    constructor(n: number, adj: ReadonlyArray<number[]>) {
         super(n);
-        this._adj = [];
+        this._adj = adj;
     }
 
     adj(i: number) {
@@ -799,7 +799,7 @@ export class MutableGraph extends _Graph<any> {
 
     constructor(n: number) {
         super(n);
-        this._adj = [];
+        this._adj = Array.from(iter.range(n)).map(() => []);
     }
 
     adj(i: number) {
@@ -854,6 +854,10 @@ export class MutableGraph extends _Graph<any> {
             this._adj[i].push(...adj);
         }
         return this;
+    }
+
+    freeze(): Graph {
+        return new Graph(this.V, this._adj.map(adj => Array.from(adj)));
     }
 }
 

@@ -1,20 +1,30 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "jsx": "react",
+    "baseUrl": ".",
+    "outDir": "build/dist",
     "module": "esnext",
-    "removeComments": false,
-    "strict": true,
-    "outDir": "./out",
+    "target": "esnext",
+    "sourceMap": true,
+    "allowJs": true,
+    "jsx": "react",
     "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "noUnusedLocals": true,
-    //"noUnusedParameters": true,
+    "rootDir": ".",
+    "strict" : true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-                                    
-},
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true
+  },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "build",
+    "scripts",
+    "acceptance-tests",
+    "webpack",
+    "jest",
+    "src/setupTests.ts"
   ]
 }

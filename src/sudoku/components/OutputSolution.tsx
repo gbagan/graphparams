@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { PosAndVal } from '../types';
+import {Solution } from '../types';
 
 interface Props {
     index: number,
-    solution: ReadonlyArray<PosAndVal>,
-    onSelect?: (solution: ReadonlyArray<PosAndVal> | null) => void;
+    solution: Solution,
+    onSelect: (solution: Solution | null) => any;
 }
 
 const OutputSolution: React.SFC<Props> = (props) => {

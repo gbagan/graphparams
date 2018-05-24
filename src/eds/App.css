@@ -1,9 +1,4 @@
-﻿body:after {
-    display: none;
-    background: url(img/policeman.png), url(img/house.png);
-}
-
-.eds .viz{
+﻿.eds .viz{
     height: 600px;
     width: 700px;
 }

@@ -1,45 +1,35 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 import * as vis from 'vis';
 
 import * as iter from "../../libs/iter";
-import { Graph } from "../../libs/graph/graph";
 import { Shift } from "../types";
-import { State as RootState } from '../redux/reducers';
+import { selector, State as ReduxState } from '../redux/reducers';
 import * as actions from "../redux/actions";
+
+
+//import POLICEMAN  "../img/policeman.png";
+//import HOUSE from "../img/house.png"
+const POLICEMAN = "static/policeman.png";
+const HOUSE = "static/house.png";
 
 import VisWithTraffic, { EdgeTraffic } from "./VisWithTraffic"
 
-interface Props {
-    readonly graph: Graph | null;
-    readonly guards: ReadonlyArray<number> | null;
-    readonly onSelectVertex: (x: number) => any;
-    readonly shift: Shift | null;
+
+const mapStateToProps = createSelector(selector, (state: ReduxState) => ({
+    graph: state.graph,
+    guards: state.guards,
+    shift: state.shift
+}));
+
+const mapDispatchToProps = {
+    onSelectVertex: actions.selectVertex
 }
 
-interface State {
-}
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps
 
-
-function edgeId(u: number, v: number, isDigraph: boolean) {
-    return isDigraph || u < v ?
-        u.toString() + "," + v.toString()
-        : v.toString() + "," + u.toString();
-}
-
-
-function edgeTraffic(shift: Shift) {
-    const isDigraph = false;
-
-    return shift.map(pair => ({
-        id: edgeId(pair[0], pair[1], isDigraph),
-        size: 5,
-        isBackward: !isDigraph && pair[0] > pair[1]
-    }))
-}
-
-
-class VisEds extends React.Component<Props, State> {
+class VisEds extends React.Component<Props, {}> {
     animateTraffic: ((e: EdgeTraffic[]) => void) | null
 
     constructor(props: Props) {
@@ -47,7 +37,7 @@ class VisEds extends React.Component<Props, State> {
         this.animateTraffic = null;
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State) {
+    componentDidUpdate(prevProps: Props, prevState: {}) {
         const prevGuards = prevProps.guards;
         const nextGuards = this.props.guards;
         const { shift, graph } = this.props;
@@ -69,7 +59,7 @@ class VisEds extends React.Component<Props, State> {
         const nodes: vis.Node[] = Array.from(iter.map(iter.range(0, graph.V), i => ({
             id: i.toString(),
             shape: 'circularImage',
-            image: (guards || []).includes(i) ? "img/policeman.png" : "img/house.png"
+            image: (guards || []).includes(i) ? POLICEMAN : HOUSE
         })));
 
         const edges: vis.EdgeOptions[] = Array.from(graph.edges()).map(edge =>
@@ -108,11 +98,22 @@ class VisEds extends React.Component<Props, State> {
 //            edge.arrows = 'to';
 
 
-const mapStateToProps = (state: RootState) => ({
-    graph: state.graph,
-    guards: state.guards,
-    shift: state.shift
-});
+
+function edgeId(u: number, v: number, isDigraph: boolean) {
+    return isDigraph || u < v ?
+        u.toString() + "," + v.toString() 
+        : v.toString() + "," + u.toString();
+}
 
 
-export default connect(mapStateToProps, { onSelectVertex: actions.selectVertex })(VisEds)
+function edgeTraffic(shift: Shift) {
+    const isDigraph = false;
+
+    return shift.map(pair => ({
+        id: edgeId(pair[0], pair[1], isDigraph),
+        size: 5,
+        isBackward: !isDigraph && pair[0] > pair[1]
+    }))
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(VisEds)

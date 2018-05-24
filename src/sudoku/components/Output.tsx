@@ -1,16 +1,22 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+
 import Card from 'antd/lib/card';
 
 import * as actions from "../redux/actions";
-import { State as RootState } from '../redux/reducers';
-import { PosAndVal } from '../types';
+import { selector, State } from '../redux/reducers';
 import OutputSolution from './OutputSolution';
 
-interface Props {
-    solutions: ReadonlyArray<ReadonlyArray<PosAndVal>> | null;
-    onSelectSolution: (solution: ReadonlyArray<PosAndVal> | null) => any;
+const mapStateToProps = createSelector(selector, (state: State) => ({
+    solutions: state.solutions
+}));
+
+const mapDispatchToProps = {
+    onSelectSolution: actions.showSolution
 }
+
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps
 
 const Output: React.SFC<Props> = (props) => {
     const { solutions, onSelectSolution } = props;
@@ -26,14 +32,6 @@ const Output: React.SFC<Props> = (props) => {
             )
         }</Card>
     );
-}
-
-const mapStateToProps = (state: RootState) => ({
-    solutions: state.solutions
-});
-
-const mapDispatchToProps = {
-    onSelectSolution: actions.showSolution
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Output)

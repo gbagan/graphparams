@@ -8,15 +8,11 @@ import Radio, { RadioChangeEvent } from 'antd/lib/radio'
 import Select, { SelectValue } from 'antd/lib/select'
 
 import * as iter from '../../libs/iter';
-
-
-import { GraphInputData } from "../types";
 import * as actions from '../redux/actions';
 
-
-interface Props{
-    readonly onSubmit: (data: GraphInputData) => any
-}
+const mapStateToProps = () => {}
+const mapDispatchToProps = { onSubmit: actions.submitInput }
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps
 
 interface State {
     readonly code: string;
@@ -111,4 +107,4 @@ function localStorageKeys(): string[] {
             key => key.slice(6)));
 }
 
-export default connect(() => ({}), {onSubmit: actions.submitInput})(GraphInput);
+export default connect(mapStateToProps, mapDispatchToProps)(GraphInput)
