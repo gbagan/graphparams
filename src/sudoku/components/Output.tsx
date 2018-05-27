@@ -5,10 +5,10 @@ import { createSelector } from 'reselect';
 import Card from 'antd/lib/card';
 
 import * as actions from "../redux/actions";
-import { selector, State } from '../redux/reducers';
+import selector from '../redux/selector';
 import OutputSolution from './OutputSolution';
 
-const mapStateToProps = createSelector(selector, (state: State) => ({
+const mapStateToProps = createSelector(selector, state => ({
     solutions: state.solutions
 }));
 

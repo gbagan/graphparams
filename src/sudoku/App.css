@@ -14,10 +14,9 @@
 }
 
 .sudoku .grid .cell {
-    display: inline-block;
     cursor:pointer;  
     text-align: center;
-    overflow: hidden;
+    float: left;
 	box-sizing: border-box;
     box-shadow: 0px 0px 0px 1px #bdc3c7;
     background:white;

@@ -68,9 +68,9 @@ export class GraphInput extends React.Component<Props, State> {
                 </Row>
                 <Row>
                     <Select onChange={this.handleSelectChange} value={loadName}>{
-                        loadList.map((name, i) => (
+                        loadList.map((name, i) =>
                             <Select.Option key={i} value={name}>{name}</Select.Option>
-                        ))
+                        )
                     }</Select>
                     <Button type="primary" onClick={onLoadSubmit}>Load</Button>
                     <Button type="danger" onClick={onRemove}>Remove</Button>

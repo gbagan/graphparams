@@ -2,6 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
 
+import './redux.d.ts';
+import './promise-worker.d.ts';
+
 import './index.css';
 //import 'antd/dist/antd.css';
 import './antd.css';
@@ -10,13 +13,14 @@ import { HashRouter, Route } from 'react-router-dom';
 import ChiffresApp from './chiffres/App';
 import { App as SudokuApp } from './sudoku';
 import { App as EdsApp } from './eds';
+import { App as GraphParamsApp } from './graphparams';
 import AppMenu from './menu';
 import {store} from './store';
 
 const menu = [
     {
         title: "Graphs", submenu: [
-            { title: "Parameters", link: "/graph/params", component: SudokuApp as any },
+            { title: "Parameters", link: "/graph/params", component: GraphParamsApp as any },
             { title: "Eternal Domination", link: "/graph/eds", component: EdsApp as any },
         ]
     },
@@ -33,19 +37,8 @@ const menu = [
 
 export type Menudata = typeof menu;
 
-function routes(menu: Menudata) {
-    const t = [];
-    let i = 0;
-    for (const { submenu } of menu) {
-        for (const { link, component } of submenu) {
-            t.push(<Route key={i} path={link} component={component} />);
-            i++;
-        }
-    }
-    return t;
-}
-
-
+const routes = (menu: Menudata) =>
+    menu.map(item => item.submenu.map(item2 => <Route path={item2.link} component={item2.component}/>))
 
 const body = (
     <Provider store={store}>

@@ -6,13 +6,13 @@ import Row from 'antd/lib/row';
 import Col from 'antd/lib/col';
 import Button from 'antd/lib/button';
 
-import { selector, State } from '../redux/reducers';
+import selector from '../redux/selector';
 import * as actions from "../redux/actions";
 import ActionDropDown from './actiondropdown';
 import Output from './output';
 import Grid from './grid';
 
-const mapStateToProps = createSelector(selector, (state: State) => ({
+const mapStateToProps = createSelector(selector, state => ({
     boards: state.boards,
     examples: state.examples,
 }));

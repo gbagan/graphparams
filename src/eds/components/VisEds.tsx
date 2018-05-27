@@ -5,19 +5,18 @@ import * as vis from 'vis';
 
 import * as iter from "../../libs/iter";
 import { Shift } from "../types";
-import { selector, State as ReduxState } from '../redux/reducers';
+import selector from '../redux/selector';
 import * as actions from "../redux/actions";
-
 
 //import POLICEMAN  "../img/policeman.png";
 //import HOUSE from "../img/house.png"
 const POLICEMAN = "static/policeman.png";
 const HOUSE = "static/house.png";
 
-import VisWithTraffic, { EdgeTraffic } from "./VisWithTraffic"
+import VisWithTraffic, { EdgeTraffic } from "../../libs/components/VisWithTraffic"
 
 
-const mapStateToProps = createSelector(selector, (state: ReduxState) => ({
+const mapStateToProps = createSelector(selector, state => ({
     graph: state.graph,
     guards: state.guards,
     shift: state.shift
@@ -66,26 +65,6 @@ class VisEds extends React.Component<Props, {}> {
             ({ id: edge[0] + "," + edge[1], from: edge[0], to: edge[1] })
         )
 
-        const options = {
-            interaction: {
-                selectConnectedEdges: false,
-            },
-            physics: {
-                enabled: false
-            },
-            nodes: {
-                color: {
-                    background: 'blue',
-                }
-            },
-            edges: {
-                color: {
-                    highlight: 'red'
-                },
-                smooth: false
-            }
-        }
-
         const events = {
             'click': (params: any) => onSelectVertex && params.nodes.length === 1 && onSelectVertex(parseInt(params.nodes[0]))
         }
@@ -97,6 +76,27 @@ class VisEds extends React.Component<Props, {}> {
 //if (digraph)
 //            edge.arrows = 'to';
 
+
+
+const options = {
+    interaction: {
+        selectConnectedEdges: false,
+    },
+    physics: {
+        enabled: false
+    },
+    nodes: {
+        color: {
+            background: 'blue',
+        }
+    },
+    edges: {
+        color: {
+            highlight: 'red'
+        },
+        smooth: false
+    }
+}
 
 
 function edgeId(u: number, v: number, isDigraph: boolean) {

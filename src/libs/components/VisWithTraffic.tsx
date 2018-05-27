@@ -1,10 +1,7 @@
-/* eslint-disable import/first */
-
 import * as React from 'react';
 import * as vis from 'vis';
 
 import VisGraph from './VisGraph';
-import { bind, } from '../../libs/decorators';
 
 export interface EdgeTraffic {
     readonly id: string;
@@ -108,10 +105,7 @@ export default class VisWithTraffic extends React.Component<Props, State> {
         setTimeout(() => this.animateTrafficFrame(edgesList, offset + 0.01), 10);
     }
 
-    @bind
-    animateTraffic(edgesList: EdgeTraffic[]) {
-        this.animateTrafficFrame(edgesList, 0.1);
-    }
+    animateTraffic = (edgesList: EdgeTraffic[]) => this.animateTrafficFrame(edgesList, 0.1);
 
     render() {
         const { nodes, edges, options, events, className } = this.props;

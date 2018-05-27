@@ -1,4 +1,4 @@
-export interface GraphInputData {
+export type GraphInputData = {
     type: "load" | "generate",
     input: string,
     rules: "one" | "all"

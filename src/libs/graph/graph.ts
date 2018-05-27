@@ -13,14 +13,22 @@ export interface Result {
     witness: any;
 }
 
-abstract class _Graph<T> {
+export type PlainGraph = {
+    readonly digraph: boolean;
+    readonly V: number;
+    readonly adj: ReadonlyArray<ReadonlyArray<number>>;
+}
+
+type Adj<T extends "mutable" | "immutable"> = T extends "mutable" ? number[] : ReadonlyArray<number>; 
+
+abstract class _Graph<T extends "mutable" | "immutable"> {
     V: number;
 
     constructor(n: number) {
         this.V = n;
     }
 
-    abstract adj(i: number): number[];
+    abstract adj(i: number): Adj<T>;
 
     nbVertices() {
         return this.V;
@@ -166,7 +174,7 @@ abstract class _Graph<T> {
             let minDegree = Infinity;
             let bestVertex = null;
             for (const v of set) {
-                const degree = this.adj(v).filter(u => set.has(u)).length;
+                const degree = iter.count<number>(this.adj(v), u => set.has(u));
                 if (degree < minDegree) {
                     bestVertex = v;
                     minDegree = degree;
@@ -280,7 +288,7 @@ abstract class _Graph<T> {
         let isChordal = true;
         let witness: number[] = [];
         for (const v of lbfs) {
-            const nbor = this.adj(v).filter((u) => visited.has(u));
+            const nbor = [...iter.filter<number>(this.adj(v), u => visited.has(u))];
             const res = this.hasClique(nbor);
             if (!res.result) {
                 isChordal = false;
@@ -501,12 +509,12 @@ abstract class _Graph<T> {
     chromaticAux(precol: number[], uncol: Set<number>, maxcol: number, usedColor: boolean[], predicate: (col: number[]) => boolean): Result {
         if (uncol.size === 0)
             return predicate(precol) ? { result: true, witness: precol } : { result: false, witness: null };
-        const v = iter.min(uncol, (w) => iter.count(this.adj(w), (u) => precol[u] !== -1)).elem;
+        const v = iter.min(uncol, (w) => iter.count<number>(this.adj(w), (u) => precol[u] !== -1)).elem;
         const uncol2 = new Set(uncol);
         uncol2.delete(v);
         let newColor = true;
         for (let i = 0; i < maxcol; i++) {
-            if (this.adj(v).some((u) => precol[u] === i))
+            if (iter.some<number>(this.adj(v), u => precol[u] === i))
                 continue;
             if (!usedColor[i] && !newColor)
                 continue;
@@ -744,7 +752,7 @@ abstract class _Graph<T> {
         for (let i = 0; i < edges.length; i++)
             m.set(edges[i].toString(), i);
         for (let i = 0; i < this.V; i++) {
-            const clique = this.adj(i).map((j) =>
+            const clique = iter.map(this.adj(i), j =>
                 m.get(i < j ? [i, j].toString() : [j, i].toString())!);
             g2.addClique(...clique);
         }
@@ -782,9 +790,9 @@ export function generateSun(n: number) {
 }
 
 export class Graph extends _Graph<any> {
-    _adj: ReadonlyArray<number[]>
+    _adj: ReadonlyArray<ReadonlyArray<number>>
 
-    constructor(n: number, adj: ReadonlyArray<number[]>) {
+    constructor(n: number, adj: ReadonlyArray<ReadonlyArray<number>>) {
         super(n);
         this._adj = adj;
     }
@@ -792,6 +800,18 @@ export class Graph extends _Graph<any> {
     adj(i: number) {
         return this._adj[i];
     }
+
+    toPlainObject(): PlainGraph {
+        return {
+            digraph: false,
+            V: this.V,
+            adj: this._adj
+        }
+    }
+}
+
+export function fromPlainObject(object: PlainGraph) {
+    return new Graph(object.V, object.adj);
 }
 
 export class MutableGraph extends _Graph<any> {

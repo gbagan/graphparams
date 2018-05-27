@@ -1,10 +1,7 @@
-/* eslint-disable import/first */
-
 import * as React from 'react';
 import * as vis from 'vis';
 
 import { isEqual } from '../../libs/iter';
-
 
 interface Props {
     readonly nodes: ReadonlyArray<vis.Node> | null;

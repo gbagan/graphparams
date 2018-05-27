@@ -104,27 +104,27 @@ function parse(str: string): Graph | string {
     ]);
 
     const functions = new Map([
-        ['graph', [1, ParserToken.Number, (n: number) => new MutableGraph(n)]],
+        ['graph',    { arity: 1,  type: ParserToken.Number, fn: (n: number) => new MutableGraph(n)}],
         //['digraph', (n: number) => new Digraph(n)]
-        ['path', [1, ParserToken.Number, (n: number) => new MutableGraph(n).addPath(...range(n))]],
-        ['clique', [1, ParserToken.Number, (n: number) => new MutableGraph(n).addClique(...range(n))]],
-        //['grid', [1, GraphParserToken.Number, (n: number, m: number) => new Graph('G' + n + ',' + m)]],
-        ['star', [1, ParserToken.Number, (n: number) => new MutableGraph(1).join(new MutableGraph(n))]],
-        ['cycle', [1, ParserToken.Number, (n: number) => new MutableGraph(n).addCycle(...range(n))]],
-        ['biclique', [1, ParserToken.Number, (n: number, m: number) => new MutableGraph(n).join(new MutableGraph(m))]],
-        ['sun', [1, ParserToken.Number, (n: number) => generateSun(n)]]
+        ['path',     { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n).addPath(...range(n))}],
+        ['clique',   { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n).addClique(...range(n))}],
+        //['grid',   [1, GraphParserToken.Number, (n: number, m: number) => new Graph('G' + n + ',' + m)]],
+        ['star',     { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(1).join(new MutableGraph(n))}],
+        ['cycle',    { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n).addCycle(...range(n))}],
+        ['biclique', { arity: 2, type: ParserToken.Number, fn: (n: number, m: number) => new MutableGraph(n).join(new MutableGraph(m))}],
+        ['sun',      { arity: 1, type: ParserToken.Number, fn: (n: number) => generateSun(n)}]
     ]);
 
     const methods = new Map([
-        ['addEdge', [2, ParserToken.Number]],
-        ['addClique', [-1, ParserToken.Number]],
-        ['addPath', [-1, ParserToken.Number]],
-        ['addCycle', [-1, ParserToken.Number]],
-        ['addEdges', [-1, ParserToken.Edge]],
-        ['complement', [0, ParserToken.Number]],
-        ['lineGraph', [0, ParserToken.Number]],
-        ['union', [1, ParserToken.Graph]],
-        ['join', [1, ParserToken.Graph]],
+        ['addEdge',    {arity: 2,  type: ParserToken.Number}],
+        ['addClique',  {arity: -1, type: ParserToken.Number}],
+        ['addPath',    {arity: -1, type: ParserToken.Number}],
+        ['addCycle',   {arity: -1, type: ParserToken.Number}],
+        ['addEdges',   {arity: -1, type: ParserToken.Edge}],
+        ['complement', {arity: 0,  type: ParserToken.Number}],
+        ['lineGraph',  {arity: 0,  type: ParserToken.Number}],
+        ['union',      {arity: 1,  type: ParserToken.Graph}],
+        ['join',       {arity: 1,  type: ParserToken.Graph}],
     ]);
 
 
@@ -133,7 +133,7 @@ function parse(str: string): Graph | string {
     let topToken = ParserToken.Begin;
     for (const [token, value] of lexer(str)) {
         if (stack.length > 0)
-            topToken = stack[stack.length - 1][0];
+            topToken = stack[stack.length - 1].type;
         if (token === LexerToken.Number) {
             if (![LexerToken.Comma, LexerToken.LeftParen].includes(lastToken)) {
                 return 'syntax error';
@@ -195,28 +195,26 @@ function parse(str: string): Graph | string {
             if (!ttoken) {
                 return 'unexpected error'
             } else if (ttoken.type === ParserToken.Function) {
-                const [arity, type, fn] = functions.get(ttoken.data)!;
-                if (parameters.length !== arity) {
+                const fn = functions.get(ttoken.data)!;
+                if (parameters.length !== fn.arity) {
                     return 'invalid number of arguments: ' + ttoken.data;
-                } else if (!parameters.every((p) => p[0] === type)) {
+                } else if (!parameters.every(p => p.type === fn.type)) {
                     return 'invalid argument types: ' + ttoken.data;
-                } else if (typeof fn === "number") {
-                    return 'unexpected error'
                 } else {
-                    const rgraph = (fn as (...x: any[]) => MutableGraph)(...parameters.map(x => x.data));
+                    const rgraph = (fn.fn as any)(...parameters.map(x => x.data)) as MutableGraph;
                     stack.push({ type: ParserToken.Graph, data: rgraph });
                 }
             } else if (ttoken.type === ParserToken.Method) {
                 const token2 = stack.pop();
                 if (!token2 || token2.type !== ParserToken.Graph)
                     return 'unexcepted error'
-                const [arity, type] = methods.get(ttoken.data)!;
-                if (parameters.length !== arity && arity !== -1) {
+                const method = methods.get(ttoken.data)!;
+                if (parameters.length !== method.arity && method.arity !== -1) {
                     return 'invalid number of arguments: ' + ttoken.data;
-                } else if (!parameters.every((p) => p.type === type)) {
+                } else if (!parameters.every(p => p.type === method.type)) {
                     return 'invalid argument types: ' + ttoken.data;
                 } else {
-                    const rgraph = (token2.data as any)[ttoken.data](...parameters.map(x => x.data));
+                    const rgraph = (token2.data as any)[ttoken.data](...parameters.map(x => x.data)) as MutableGraph;
                     stack.push({ type: ParserToken.Graph, data: rgraph });
                 }
             }

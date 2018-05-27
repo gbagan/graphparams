@@ -1,13 +1,11 @@
 import { getType, ActionType, } from 'typesafe-actions';
 import * as iter from '../../libs/iter';
 import * as actions from './actions';
-import {RootState} from '../../store';
 
-import { PosAndVal, ModelCell, Boards, Examples, Solution } from '../types';
+import { PosAndVal, ModelCell, Boards, Examples, Solution } from '../types.d';
 import Solver from '../solver';
 
 export type Action = ActionType<typeof actions>;
-export const selector = (state: RootState) => state.sudoku;
 
 const boards: Boards = [
     { name: '2x2', data: 2 },
@@ -26,7 +24,7 @@ const examples: Examples = [{
     }
 }];
 
-export interface State {
+export type State = {
     readonly boards: Boards;
     readonly examples: Examples;
     readonly squaresize: number,

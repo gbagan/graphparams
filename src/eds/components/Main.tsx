@@ -8,9 +8,9 @@ import Card from 'antd/lib/card';
 
 import GraphInput from './GraphInput';
 import VisEds from './VisEds';
+import selector from '../redux/selector';
 
-import { selector, State as ReduxState } from '../redux/reducers';
-const mapStateToProps = createSelector(selector, (state: ReduxState) => ({ helpText: state.helpText }));
+const mapStateToProps = createSelector(selector, state => ({ helpText: state.helpText }));
 const mapDispatchToProps = {}
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps
 

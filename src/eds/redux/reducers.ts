@@ -1,5 +1,4 @@
 import { getType, ActionType, } from 'typesafe-actions';
-import {RootState} from '../../store';
 
 import * as actions from './actions';
  
@@ -8,8 +7,6 @@ import { Graph } from '../../libs/graph/graph';
 import { EDSArena } from '../../libs/graph/arena';
 import parse from '../../libs/graph/graphparser';
 import { memoize } from '../../libs/decorators';
-
-export const selector = (state: RootState) => state.eds;
 
 const HELP_TEXT =
     `petersen     // petersen graph
@@ -51,11 +48,9 @@ const GRAPH_EXAMPLE =
 */
 
 
-
-
 export type Action = ActionType<typeof actions>;
 
-export interface State {
+export type State = {
     readonly graph: Graph | null;
     readonly guards: ReadonlyArray<number> | null;
     readonly shift: Shift | null;
@@ -80,7 +75,6 @@ const getArena = memoize((graph: Graph, rules: "one" | "all") => {
 });
 
 export default function reducer(state: State = initialState, action: Action): State {
-    console.log(state, action);
     switch (action.type) {
         case getType(actions.selectVertex): {
             const { graph, guards, rules } = state;
@@ -103,9 +97,9 @@ export default function reducer(state: State = initialState, action: Action): St
                     return state;
                 const data: any = JSON.parse(textdata);
                 const code = data.code;
-                const result2 = parse(code);
-                if (result2 instanceof Graph) {
-                    graph = result2;
+                const result = parse(code);
+                if (result instanceof Graph) {
+                    graph = result;
                 } else
                     return state;
             } else { //case "generate":

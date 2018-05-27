@@ -44,7 +44,7 @@ export function allDifferent<T>(l: T[]) {
 }
 
 
-export function arrayIntersection<T>(l1: T[], l2: T[]) {
+export function arrayIntersection<T>(l1: ReadonlyArray<T>, l2: ReadonlyArray<T>) {
     const l: T[] = [];
     let i = 0;
     let j = 0;
@@ -86,7 +86,7 @@ export function* subsets(n: number, k: number): Iterable<number[]> {
     }
 }
 
-export function binaryEncode(set: number[]) {
+export function binaryEncode(set: ReadonlyArray<number>) {
     let x = 0;
     for (const i of set) {
         x |= (1 << i);

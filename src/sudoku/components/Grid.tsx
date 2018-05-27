@@ -2,14 +2,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
-import { selector, State as ReduxState } from '../redux/reducers';
+import selector from '../redux/selector';
 import * as actions from "../redux/actions";
 import { Position } from '../types';
 import Cell from "./cell";
 import Console from "./console";
 
 
-const mapStateToProps = createSelector(selector, (state: ReduxState) => ({
+const mapStateToProps = createSelector(selector, state => ({
     squaresize: state.squaresize,
     cells: state.cells
 }));
