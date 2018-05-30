@@ -1,7 +1,7 @@
 import { getType, ActionType, } from 'typesafe-actions';
 import * as actions from './actions';
 import '../custom.d.ts';
-import {GraphParameter, PlainGraph} from "../types";
+import {Witness, GraphParameter, PlainGraph} from "../types";
 
 const GRAPH_PARAMETERS = [
     { cat: 1, hardness: 0, name: "order", fullname: "order", method: "nbVertices" },
@@ -35,6 +35,13 @@ const GRAPH_PARAMETERS = [
     { cat: 4, hardness: 2, name: "edn", fullname: "eternal dominating set", method: "edn" },
     { cat: 4, hardness: 2, name: "medn", fullname: "m-eternal dominating set", method: "medn" }
 ];
+
+export const CODE_EXAMPLE = `graph(9)
+.addClique(0, 1, 2)
+.addPath(2, 3, 4)
+.addCycle(4, 5, 6, 7)
+.addEdges(1-5, 4-8)
+.addEdge(3, 8)`;
 
 const HELP_TEXT =
     `petersen     // petersen graph
@@ -96,36 +103,61 @@ export type State = {
     readonly helpText: string;
     readonly error: string | null;
     readonly graph: PlainGraph | null;
+    readonly computing: boolean;
+    readonly witness: Witness | null
 }
 
 const initialState: State = {
-    code: "",
+    code: CODE_EXAMPLE,
     parameters: GRAPH_PARAMETERS.map(param => ({...param, checked: param.hardness <= 1, result: null})),
     helpText: HELP_TEXT,
     graph: null,
-    error: null
+    error: null,
+    computing: false,
+    witness: null
 }
 
 export default function reducer(state: State = initialState, action: Action): State {
-    console.log('action', action);
     switch(action.type) {
         case getType(actions.changeCode): {
             return {...state, code: action.payload};
         }
         case getType(actions.toggleParameter): {
-            const parameters = state.parameters.map(param => param.name === action.payload ?  { ...param, checked: !param.checked }  : param);
+            const parameters = state.parameters.map(p => p.name === action.payload 
+                                                    ?  { ...p, checked: !p.checked }  : p);
             return { ...state, parameters };
         }
         case getType(actions.selectAll): {
-            const parameters = state.parameters.map(param => ({ ...param, checked: true }));
+            const parameters = state.parameters.map(p => ({ ...p, checked: true }));
             return { ...state, parameters };
         }
         case getType(actions.unselectAll): {
-            const parameters = state.parameters.map(param => ({ ...param, checked: false }));
+            const parameters = state.parameters.map(p => ({ ...p, checked: false }));
             return { ...state, parameters };
         }
-        case getType(actions.computeGraphSuccess): {
+        case getType(actions.startComputing): {
+            const parameters = state.parameters.map(p => ({ ...p, result: null }));
+            return { ...state, parameters, computing: true, graph: null, error: null, witness: null};
+        }
+        case getType(actions.finishComputing): {
+            return { ...state, computing: false};
+        }
+        case getType(actions.graphComputed): {
             return { ...state, graph: action.payload};
+        }
+        case getType(actions.computeGraphError): {
+            return { ...state, error: action.payload }
+        }
+        case getType(actions.startComputingParameter): {
+            const parameters = state.parameters.map<GraphParameter>(p => p.name === action.payload ? { ...p, result: "computing" } : p);
+            return { ...state, parameters};
+        }
+        case getType(actions.parameterComputed): {
+            const parameters = state.parameters.map(p => p.name === action.payload.name ? action.payload : p);
+            return { ...state, parameters};
+        }
+        case getType(actions.showWitness): {
+            return { ...state, witness: action.payload };
         }
         default:
             return state;

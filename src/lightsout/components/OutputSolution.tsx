@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Solution } from '../types.d';
+import {Solution} from '../types.d';
 
 interface Props {
     index: number,

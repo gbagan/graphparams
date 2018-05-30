@@ -130,5 +130,6 @@ export default function maximumMatching(g: GenericGraph): Result {
         }
         m = m.filter(([x, y]) => !excludeSet.has(g.edgeId(x, y)));
     }
-    return { result: m.length, witness: m }
+    const t: number[] = [];
+    return { result: m.length, witness: t.concat(...m) }
 }

@@ -32,7 +32,7 @@ export function uniq<T>(l: T[]) {
     return l2;
 }
 
-export function allDifferent<T>(l: T[]) {
+export function allDifferent<T>(l: ReadonlyArray<T>) {
     let pred: T|null = null;
     for (const x of l) {
         if (x === pred) {

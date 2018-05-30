@@ -4,12 +4,11 @@ import * as classNames from 'classnames';
 interface Props {
     readonly value: number,
     readonly cols: number,
-    readonly onClick?: (val: number) => void
+    readonly onClick: (val: number) => void
 }
 
 const ConsoleNum: React.SFC<Props> = (props) => {
     const { value, cols, onClick } = props;
-    const onclick2 = onClick ? () => onClick(value) : undefined;
     const className = classNames("num", { remove: value === 0 })
 
     const style = {
@@ -17,7 +16,7 @@ const ConsoleNum: React.SFC<Props> = (props) => {
     }
 
     return (
-        <div className={className} style={style} onClick={onclick2}>
+        <div className={className} style={style} onClick={() => onClick(value)}>
             <span>{value === 0 ? "X" : value} </span>
         </div>
     );

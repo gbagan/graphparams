@@ -83,13 +83,13 @@ function restoreMatrix(row: DancingCell) {
 
 class DancingMatrix {
     root: DancingCell;
-    rowsDict: DancingCell[];
-    colsDict: DancingCell[];
+    rowsDict: ReadonlyArray<DancingCell>;
+    colsDict: ReadonlyArray<DancingCell>;
 
-    constructor(nbRows: number, nbColumns: number, matrixPairs: [number,number][], fixedVertices: number[]) {
+    constructor(nbRows: number, nbColumns: number, matrixPairs: ReadonlyArray<[number,number]>, fixedVertices: ReadonlyArray<number>) {
         this.root = new DancingCell;
 
-        this.rowsDict = Array_tabulate(nbRows, (i) => {
+        this.rowsDict = Array_tabulate(nbRows, i => {
             const cell = new DancingCell
             cell.id = i;
             cell.col = this.root;
@@ -98,7 +98,7 @@ class DancingMatrix {
             return cell
         });
 
-        this.colsDict = Array_tabulate(nbColumns, (i) => {
+        this.colsDict = Array_tabulate(nbColumns, i => {
             const cell = new DancingCell
             cell.id = i;
             cell.row = this.root;
@@ -136,9 +136,9 @@ class DancingMatrix {
     }
 
     insertNode(row: number, col: number) {
-        const rowCell = this.rowsDict[row]
+        const rowCell = this.rowsDict[row];
         const colCell = this.colsDict[col]
-        const cell = new DancingCell
+        const cell = new DancingCell();
         cell.row = rowCell;
         cell.col = colCell;
         colCell.size++;
@@ -149,7 +149,7 @@ class DancingMatrix {
     }
 }
 
-function * _dlx(mat: DancingMatrix) : Iterable<number[]> {
+function * _dlx(mat: DancingMatrix) : Iterable<ReadonlyArray<number>> {
     if (mat.empty())
         yield [];
     const col = mat.chooseMinEdge();
@@ -165,7 +165,7 @@ function * _dlx(mat: DancingMatrix) : Iterable<number[]> {
 }
 
 
-export function dlx(nbRows: number, nbColumns: number, matrixPairs: [number,number][], fixedVertices: number[]) {
+export default function dlx(nbRows: number, nbColumns: number, matrixPairs: ReadonlyArray<[number,number]>, fixedVertices: ReadonlyArray<number>) {
     const mat = new DancingMatrix(nbRows, nbColumns, matrixPairs, fixedVertices);
     return _dlx(mat);
 }

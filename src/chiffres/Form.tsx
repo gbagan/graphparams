@@ -7,7 +7,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 interface Props {
     form: WrappedFormUtils;
-    onSubmit?: (vals: ReadonlyArray<number>, target: number) => void;
+    onSubmit: (vals: ReadonlyArray<number>, target: number) => void;
 }
 
 export function toArrayOfNumbers(data: string): ReadonlyArray<number> | null {
@@ -26,46 +26,43 @@ export function toArrayOfNumbers(data: string): ReadonlyArray<number> | null {
     return values;
 }
 
-class ChiffresForm extends React.Component<Props, {}> {
-    handleSubmit = (e: React.FormEvent<any>) => {
-        e.preventDefault();
+const checkInputValues = (rule: any, value: string, callback: any) => {
+    if (value && toArrayOfNumbers(value))
+        callback();
+    else
+        callback("Invalid input");
+}
 
-        const { onSubmit } = this.props;
-        this.props.form.validateFields((err, values) => {
-            if (err)
-                return;
-            const values2 = toArrayOfNumbers(values.values);
-            const target = parseInt(values.target);
-            onSubmit && values2 && onSubmit(values2, target);
-        });
-    }
+const handleSubmit = (e: React.FormEvent<any>, props: Props) => {
+    e.preventDefault();
+    const { onSubmit } = props;
+    props.form.validateFields((err, values) => {
+        if (err)
+            return;
+        const values2 = toArrayOfNumbers(values.values);
+        const target = parseInt(values.target);
+        onSubmit && values2 && onSubmit(values2, target);
+    });
+}
 
-    checkInputValues = (rule: any, value: string, callback: any) => {
-        if (value && toArrayOfNumbers(value))
-            callback();
-        else
-            callback("Invalid input");
-    }
-
-    render() {
-        const { getFieldDecorator } = this.props.form;
-        return (
-            <Form layout="inline" onSubmit={this.handleSubmit}>
-                <Form.Item label="Values given">
-                    {getFieldDecorator('values', {
-                        rules: [{ required: true, message: 'Please input values separated by spaces!' },
-                        { validator: this.checkInputValues }]
-                    })
-                        (<Input placeholder="3 5 10" />)}
-                </Form.Item>
-                <Form.Item label="Target">
-                    {getFieldDecorator('target', { rules: [{ required: true, message: 'Please input the target value!' }] })
-                        (<InputNumber min={1} max={999} />)}
-                </Form.Item>
-                <Button htmlType="submit" type="primary">Solve</Button>
-            </Form>
-        );
-    }
+const ChiffresForm: React.SFC<Props> = (props) => {
+    const { getFieldDecorator } = props.form;
+    return (
+        <Form layout="inline" onSubmit={e => handleSubmit(e, props)}>
+            <Form.Item label="Values given">
+                {getFieldDecorator('values', {
+                    rules: [{ required: true, message: 'Please input values separated by spaces!' },
+                    { validator: checkInputValues }]
+                })
+                    (<Input placeholder="3 5 10" />)}
+            </Form.Item>
+            <Form.Item label="Target">
+                {getFieldDecorator('target', { rules: [{ required: true, message: 'Please input the target value!' }] })
+                    (<InputNumber min={1} max={999} />)}
+            </Form.Item>
+            <Button htmlType="submit" type="primary">Solve</Button>
+        </Form>
+    );
 }
 
 export default Form.create<Props>()(ChiffresForm);

@@ -1,8 +1,8 @@
-﻿import { dlx } from './dlx';
+﻿import dlx from './dlx';
 
-import {PosAndVal} from './types';
+import {PosAndVal, Solution} from '../types';
 
-export default class Solver {
+class Solver {
     readonly dim: number;  // dimension of a square
     readonly size: number; // dimension of the grid
     readonly size2: number; // size * size
@@ -55,7 +55,7 @@ export default class Solver {
     }
 
 
-    *solve(limit?: number): Iterable<ReadonlyArray<PosAndVal>> {
+    *solve(limit?: number): Iterable<Solution> {
         const fixedCells2 = this.fixedCells.map((x) => this.cellToNumber(x));
         let i = 0;
         for (const sol of dlx(this.size3, 4 * this.size2, this.matrix, fixedCells2)) {
@@ -66,3 +66,10 @@ export default class Solver {
         }
     }
 }
+
+const solve = (n: number, fixedCells: ReadonlyArray<PosAndVal>, limit?: number) => {
+    const solver = new Solver(n, fixedCells);
+    return solver.solve(limit);
+}
+
+export default solve;

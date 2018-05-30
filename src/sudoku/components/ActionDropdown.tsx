@@ -8,9 +8,9 @@ interface NameAndData<T> {
     readonly data: T;
 }
 
-interface Props {
+type Props = {
     readonly label: string,
-    readonly action?: (x: any) => void;
+    readonly action: (x: any) => void;
     data: ReadonlyArray<NameAndData<any>>;
 }
 
@@ -18,7 +18,7 @@ const ActionDropdown: React.SFC<Props> = (props: Props) => {
     const { label, action, data } = props;
 
     const menu = (
-        <Menu onClick={e => action && action(data[parseInt(e.key)].data)}>{
+        <Menu onClick={e => action(data[parseInt(e.key)].data)}>{
             data.map((el, i) => <Menu.Item key={i}>{el.name}</Menu.Item>)
         }</Menu>
     );

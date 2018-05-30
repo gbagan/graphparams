@@ -6,18 +6,22 @@ import createSagaMiddleware from 'redux-saga';
 import { reducer as graphparams, saga as graphparamSaga } from './graphparams';
 import { reducer as sudoku } from './sudoku';
 import { reducer as eds } from './eds';
-//import { devToolsEnhancer } from 'redux-devtools-extension';
+import { reducer as lightsout } from './lightsout';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 function* rootSaga() {
-    yield all([graphparamSaga])
+    yield all([graphparamSaga()])
 }
 
-const reducer = combineReducers({ graphparams, eds, sudoku });
+const reducer = combineReducers({ graphparams, eds, sudoku, lightsout });
 const sagaMiddleware = createSagaMiddleware();
 
+const composeEnhancers = composeWithDevTools({});
+
 export const store = createStore(reducer,
+    composeEnhancers(
     applyMiddleware(sagaMiddleware)
-    //,devToolsEnhancer({})
+    )
 );
 sagaMiddleware.run(rootSaga);
 

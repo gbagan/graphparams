@@ -8,20 +8,21 @@ import Card from 'antd/lib/card';
 import Button from 'antd/lib/button';
 import Input from 'antd/lib/input';
 
-//import GraphInput from './GraphInput';
 import ParamInput from './ParamInput';
-//import VisEds from './VisEds';
+import Output from './Output';
+import GraphOutput from './GraphOutput';
 import * as actions from '../redux/actions';
 import selector from '../redux/selector';
 
 const mapStateToProps = createSelector(selector, state => ({
     code: state.code,
-    helpText: state.helpText
+    helpText: state.helpText,
+    computing: state.computing
 }));
 const mapDispatchToProps = {
     onSelectAll: actions.selectAll,
     onUnselectAll: actions.unselectAll,
-    onCompute: actions.computeGraphRequest,
+    onCompute: actions.asyncCompute,
     onSkip: actions.skip,
     onCodeChange: actions.changeCode
 }
@@ -34,27 +35,32 @@ const Main: React.SFC<Props> = props => {
         <div className="graphparams" >
             <h1>Graph parameters</h1>
             <Row type="flex">
-                <Col span={16}>
+                <Col span={18}>
                     <Row>
-                        <Button color="primary" onClick={props.onSelectAll}>Select all</Button>
-                        <Button color="primary" onClick={props.onUnselectAll}>Unselect all</Button>
-                        <Button color="primary" onClick={props.onCompute}>Compute</Button>
-                        <Button color="primary" onClick={props.onSkip}>Skip</Button>
+                        <Button type="primary" disabled={props.computing} onClick={props.onSelectAll}>Select all</Button>
+                        <Button type="primary" disabled={props.computing} onClick={props.onUnselectAll}>Unselect all</Button>
+                        <Button type="primary" disabled={props.computing} onClick={props.onCompute}>Compute</Button>
+                        <Button type="primary" disabled={!props.computing} onClick={props.onSkip}>Skip</Button>
                     </Row>
                     <Row type="flex">
                         <ParamInput />
                     </Row>
-                    <Row type="flex">
+                    <Row type="flex" gutter={16}>
                         <Col>
-                            <Input.TextArea rows={12} cols={40} className="graphinput" onChange={handleCodeChange} value={props.code} />
+                            <Card className="graphinput" title="Input">
+                                <Input.TextArea onChange={handleCodeChange} value={props.code} />
+                            </Card>
                         </Col>
                         <Col>
-                            <Card title="Output" />
+                            <Output />
+                        </Col>
+                        <Col>
+                            <GraphOutput />
                         </Col>
                     </Row>
                 </Col>
-                <Col span={8}>
-                    <Card title="Help">{htmlize(props.helpText)}</Card>
+                <Col span={6}>
+                    <Card className="helptext" title="Help">{htmlize(props.helpText)}</Card>
                 </Col>
             </Row>
         </div>
@@ -62,7 +68,6 @@ const Main: React.SFC<Props> = props => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
-
 
 function htmlize(text: string) {
     return text.split("\n").map(line => [line, <br />]);

@@ -55,13 +55,13 @@ class VisEds extends React.Component<Props, {}> {
             return <div className="viz" />;
         //const digraph = (graph as any).reverseAdj !== undefined;
 
-        const nodes: vis.Node[] = Array.from(iter.map(iter.range(0, graph.V), i => ({
+        const nodes: vis.Node[] = [...iter.range(0, graph.V)].map(i => ({
             id: i.toString(),
             shape: 'circularImage',
             image: (guards || []).includes(i) ? POLICEMAN : HOUSE
-        })));
+        }));
 
-        const edges: vis.EdgeOptions[] = Array.from(graph.edges()).map(edge =>
+        const edges: vis.EdgeOptions[] = [...graph.edges()].map(edge =>
             ({ id: edge[0] + "," + edge[1], from: edge[0], to: edge[1] })
         )
 

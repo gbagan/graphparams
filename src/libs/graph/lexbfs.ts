@@ -8,7 +8,7 @@ interface LBFSPartition {
     previous: LBFSPartition|null;
 }
 
-export default class LexBFS {
+class LexBFS {
     graph: GenericGraph;
     partitions: (LBFSPartition|null)[];
     firstPartition: LBFSPartition;
@@ -99,3 +99,6 @@ export default class LexBFS {
         }
     }
 }
+
+ const lexbfs = (graph: GenericGraph, v: number) => new LexBFS(graph).execute(v);
+ export default lexbfs;

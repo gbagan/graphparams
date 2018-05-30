@@ -96,7 +96,7 @@ export default function reducer(state: State = initialState, action: Action): St
                 if (!textdata)
                     return state;
                 const data: any = JSON.parse(textdata);
-                const code = data.code;
+                const code = data.code as string;
                 const result = parse(code);
                 if (result instanceof Graph) {
                     graph = result;

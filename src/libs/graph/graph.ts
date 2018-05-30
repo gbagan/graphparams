@@ -3,14 +3,14 @@
     binaryDecode, binaryEncode, allDifferent, subsets, bsubsets, arrayIntersection
 } from "./util";
 import * as iter from "../iter";
-import LexBFS from "./lexbfs";
+import lexbfs from "./lexbfs";
 import maximumMatching from "./matching";
 import treewidth from "./treewidth";
 import { EDSArena } from "./arena";
 
 export interface Result {
-    result: boolean | number;
-    witness: any;
+    readonly result: boolean | number;
+    readonly witness: ReadonlyArray<number> | null
 }
 
 export type PlainGraph = {
@@ -266,7 +266,7 @@ abstract class _Graph<T extends "mutable" | "immutable"> {
         let bestRes: Result = { result: Infinity, witness: null };
         for (const [u, v] of this.edges()) {
             const res = this.alternativePath(u, v);
-            if (res.result !== Infinity && res.result + 1 < bestRes.result)
+            if (res.result !== Infinity && res.result + 1 < bestRes.result!)
                 bestRes = { result: res.result + 1, witness: res.witness };
         }
         return bestRes;
@@ -276,14 +276,14 @@ abstract class _Graph<T extends "mutable" | "immutable"> {
         let bestRes: Result = { result: -1, witness: null }
         for (let i = 0; i < this.V; i++) {
             const res = this.eccentricity(i);
-            if (res.result > bestRes.result)
+            if (res.result! > bestRes.result!)
                 bestRes = res;
         }
         return bestRes;
     }
 
     isChordal(): Result {
-        const lbfs = Array.from(new LexBFS(this).execute(0));
+        const lbfs = [...lexbfs(this, 0)];
         const visited = new Set<number>();
         let isChordal = true;
         let witness: number[] = [];
@@ -292,10 +292,9 @@ abstract class _Graph<T extends "mutable" | "immutable"> {
             const res = this.hasClique(nbor);
             if (!res.result) {
                 isChordal = false;
-                witness = [v, res.witness[0], res.witness[1]];
+                witness = [v, res.witness![0], res.witness![1]];
                 break;
             }
-
             visited.add(v);
         }
         if (isChordal)
@@ -429,7 +428,7 @@ abstract class _Graph<T extends "mutable" | "immutable"> {
                 continue;
             const undom2 = undom.filter((w) => u !== w && !this.hasEdge(u, w));
             const res = this.dominationAux(preset.concat(u), undom2);
-            if (res.result < bestRes.result)
+            if (res.result! < bestRes.result!)
                 bestRes = res;
         }
         return bestRes;
@@ -452,7 +451,7 @@ abstract class _Graph<T extends "mutable" | "immutable"> {
                 continue;
             const undom2 = undom.filter((w) => !this.hasEdge(u, w));
             const res = this.totalDominationAux(preset.concat(u), undom2);
-            if (res.result < bestRes.result)
+            if (res.result! < bestRes.result!)
                 bestRes = res;
         }
         return bestRes;
@@ -480,7 +479,7 @@ abstract class _Graph<T extends "mutable" | "immutable"> {
                     adj2.add(w);
             adj2.delete(u);
             const res = this.connectedDominationAux(preset.concat(u), undom2, adj2);
-            if (res.result < bestRes.result)
+            if (res.result! < bestRes.result!)
                 bestRes = res;
         }
         return bestRes;
@@ -882,3 +881,5 @@ export class MutableGraph extends _Graph<any> {
 }
 
 export type GenericGraph = _Graph<any>
+
+export const edges = (graph: PlainGraph) => fromPlainObject(graph).edges();

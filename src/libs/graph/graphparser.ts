@@ -98,6 +98,8 @@ function* lexer(str: string): Iterable<[LexerToken, any]> {
     }
 }
 
+const path = (n: number) => new MutableGraph(n).addPath(...range(n));
+
 function parse(str: string): Graph | string {
     const constants = new Map([
         ['petersen', () => generatePetersen()]
@@ -106,9 +108,9 @@ function parse(str: string): Graph | string {
     const functions = new Map([
         ['graph',    { arity: 1,  type: ParserToken.Number, fn: (n: number) => new MutableGraph(n)}],
         //['digraph', (n: number) => new Digraph(n)]
-        ['path',     { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n).addPath(...range(n))}],
+        ['path',     { arity: 1, type: ParserToken.Number, fn: (n: number) => path(n)}],
         ['clique',   { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n).addClique(...range(n))}],
-        //['grid',   [1, GraphParserToken.Number, (n: number, m: number) => new Graph('G' + n + ',' + m)]],
+        ['grid',     { arity: 2, type: ParserToken.Number, fn: (n: number, m: number) => path(n).product(path(m))}], 
         ['star',     { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(1).join(new MutableGraph(n))}],
         ['cycle',    { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n).addCycle(...range(n))}],
         ['biclique', { arity: 2, type: ParserToken.Number, fn: (n: number, m: number) => new MutableGraph(n).join(new MutableGraph(m))}],

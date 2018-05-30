@@ -1,19 +1,23 @@
-import registerPromiseWorker from 'promise-worker/register';
+import register from 'promise-worker/register';
 
-import { fromPlainObject, PlainGraph } from "../../libs/graph/graph"
+import { WorkerAction } from "../types";
+import { fromPlainObject } from "../../libs/graph/graph"
 import parse from "../../libs/graph/graphparser"
 
-registerPromiseWorker((action: any) => {
+
+register((action: WorkerAction) => {
     if (action.type === 'graph') {
         const result = parse(action.code);
-        const data = typeof result === "string" ?  { type: 'graph', error: result } : { type: 'graph', graph: result.toPlainObject() };
-        return data;
+        return typeof result === "string" ? { type: 'error', error: result } : { type: 'graph', graph: result.toPlainObject() };
     } else if (action.type === 'param') {
-        const graph = fromPlainObject(action.graph as PlainGraph);
-        const methodName = action.method as string;
-        const res = (graph as any)[methodName]();
-        const data = { type: 'result', task: action.task, result: res };
-        return data;
+        const graph = fromPlainObject(action.graph);
+        const methodName = action.param.method;
+        const result = (graph as any)[methodName]();
+        const result2 = (typeof result === 'boolean' || typeof result === 'number')
+            ? { result: result, witness: null } : result;
+        const result3 = result2.result === Infinity ? { result: 'Infinity', witness: result2.witness} : result2;
+
+        return { ...action.param, result: result3 }
     }
     return null;
 });

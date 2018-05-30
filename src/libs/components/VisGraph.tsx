@@ -54,7 +54,7 @@ export default class VisGraph extends React.Component<Props, State> {
         if (!isEqual((nodes).map(v => v.id).sort(), (this.props.nodes || []).map(v => v.id).sort()))
             return true;
 
-        if (!isEqual((nodes).map(v => v.id).sort(), (this.props.nodes || []).map(v => v.id).sort()))
+        if (!isEqual((edges).map(v => v.id).sort(), (this.props.edges || []).map(v => v.id).sort()))
             return true;
 
         this.nodes.update(nodes.slice());
@@ -78,7 +78,7 @@ export default class VisGraph extends React.Component<Props, State> {
 
     hardUpdate() {
         const { nodes, edges, options, events } = this.props;
-        if (this.network !== null)
+        if (this.network)
             this.network.destroy();
         this.network = null;
         this.edges = null;
@@ -107,15 +107,12 @@ export default class VisGraph extends React.Component<Props, State> {
 
     render() {
         return (
-            <div className={this.props.className} style={divStyle} ref={this.ref}>
-              {this.props.children}
-              </div>
+            <div className={this.props.className} style={divStyle} ref={this.ref} />
         );
     }
 }
 
 const divStyle = {
-    //position: 'absolute',
     width: '100%',
     height: '100%'
 }

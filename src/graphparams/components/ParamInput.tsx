@@ -17,7 +17,7 @@ const ParamInput: React.SFC<Props> = props => {
     return (
         <div style={{width: "100%", height: "100%"}}>{
             [1, 2, 3, 4].map(i =>
-                <Col span={6}>
+                <Col key={i} span={6}>
                     {
                         parameters.filter(param => param.cat === i).map(param =>
                             [<ParamCheckbox key={param.name} data={param} onToggle={onToggleParameter}  />, <br/>]

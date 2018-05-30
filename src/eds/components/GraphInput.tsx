@@ -98,13 +98,10 @@ export class GraphInput extends React.Component<Props, State> {
 }
 
 function localStorageKeys(): string[] {
-    return Array.from(
-        iter.map(
-            iter.filter(
-                iter.map(iter.range(localStorage.length),
-                    i => localStorage.key(i) || ""),
-                key => key.startsWith("graph-")),
-            key => key.slice(6)));
+    return [...iter.range(localStorage.length)]
+            .map(i => localStorage.key(i) || "")
+            .filter(key => key.startsWith("graph-"))
+            .map(key => key.slice(6));
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphInput)

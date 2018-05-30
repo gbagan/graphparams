@@ -3,7 +3,7 @@ import * as iter from '../../libs/iter';
 import * as actions from './actions';
 
 import { PosAndVal, ModelCell, Boards, Examples, Solution } from '../types.d';
-import Solver from '../solver';
+import solve from '../lib/solver';
 
 export type Action = ActionType<typeof actions>;
 
@@ -69,8 +69,7 @@ export default function reducer(state: State = initialState, action: Action): St
                 return state;
             const fixedCells = cells.map((cell, key) => ({ row: Math.floor(key / size), col: key % size, value: cell.value }))
                 .filter((cell) => cell.value > 0 && cells[cell.row * size + cell.col].fixed);
-            const solver = new Solver(squaresize, fixedCells);
-            const solutions = Array.from(solver.solve(100));
+            const solutions = [...solve(squaresize, fixedCells, 100)];
             if (solutions.length > 0) {
                 const cells2 = addSolution(cells, squaresize, solutions[0]);
                 return { ...state, cells: cells2, solutions }
@@ -93,7 +92,7 @@ export default function reducer(state: State = initialState, action: Action): St
 
 function computeGrid(val: number, fixedCells?: ReadonlyArray<PosAndVal>) {
     const size = val * val;
-    const cells: ModelCell[] = Array.from(iter.map(iter.range(size * size), () => ({ fixed: false, value: 0 })));
+    const cells: ModelCell[] = [...iter.map(iter.range(size * size), () => ({ fixed: false, value: 0 }))];
     if (fixedCells !== undefined && fixedCells !== null) {
         for (const { row, col, value } of fixedCells) {
             cells[row * size + col] = { value, fixed: true }
@@ -104,11 +103,11 @@ function computeGrid(val: number, fixedCells?: ReadonlyArray<PosAndVal>) {
 
 function addSolution(cells: ReadonlyArray<ModelCell>, squaresize: number, solution: Solution | null): ReadonlyArray<ModelCell> {
     const size = squaresize * squaresize;
-    let cellsCopy;
+    let cellsCopy: ModelCell[];
     if (solution === null) {
         cellsCopy = cells.map(cell => cell.fixed ? cell : { fixed: false, value: 0 })
     } else {
-        cellsCopy = Array.from(cells)
+        cellsCopy = [...cells]
         for (const { row, col, value } of solution) {
             const { fixed } = cells[row * size + col];
             cellsCopy[row * size + col] = { fixed, value }

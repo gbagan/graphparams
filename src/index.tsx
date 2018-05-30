@@ -14,6 +14,7 @@ import ChiffresApp from './chiffres/App';
 import { App as SudokuApp } from './sudoku';
 import { App as EdsApp } from './eds';
 import { App as GraphParamsApp } from './graphparams';
+import { App as LightsoutApp } from './lightsout';
 import AppMenu from './menu';
 import {store} from './store';
 
@@ -28,7 +29,7 @@ const menu = [
         title: "Solvers", submenu: [
             { title: "Peg Solitaire", link: "/solvers/pegsolitaire/", component: SudokuApp as any },
             { title: 'Nonogram', link: "/solvers/nonogram", component: SudokuApp as any },
-            { title: 'Light Outs', link: "/solvers/lightsout", component: SudokuApp as any },
+            { title: 'Light Outs', link: "/solvers/lightsout", component: LightsoutApp as any },
             { title: "Le compte est bon", link: "/solvers/chiffres", component: ChiffresApp as any },
             { title: "Sudoku", link: "/solvers/sudoku", component: SudokuApp as any },
         ]
@@ -38,7 +39,7 @@ const menu = [
 export type Menudata = typeof menu;
 
 const routes = (menu: Menudata) =>
-    menu.map(item => item.submenu.map(item2 => <Route path={item2.link} component={item2.component}/>))
+    menu.map(item => item.submenu.map(item2 => <Route key={item2.link} path={item2.link} component={item2.component}/>))
 
 const body = (
     <Provider store={store}>

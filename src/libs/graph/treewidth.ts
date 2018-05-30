@@ -31,7 +31,7 @@ function Q(g: GenericGraph, set: number[], v: number) {
 }
 
 function treewidth(g: GenericGraph): number {
-    const clique: number[] = g.cliqueNumber().witness;
+    const clique = g.cliqueNumber().witness!;
     const n = g.V;
     const nc = n - clique.length;
     let up = n - 1;

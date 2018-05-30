@@ -4,11 +4,10 @@ import * as iter from '../../libs/iter';
 
 interface Props {
     readonly cols: number;
-    readonly onClick?: (val: number) => void;
+    readonly onClick: (val: number) => void;
 }
 
-
-const Console: React.SFC<Props> = (props) => {
+const Console: React.SFC<Props> = props => {
     const { cols, onClick } = props;
 
     return (

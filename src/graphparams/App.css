@@ -1,0 +1,35 @@
+.graphparams .graphinput .ant-card-body {
+    height: 500px;
+    width: 300px;
+}
+
+.graphparams .graphinput textarea {
+    height: 100%;
+    width: 100%;
+}
+
+.graphparams .viz .ant-card-body {
+    height: 400px;
+    width: 400px;
+}
+
+.graphparams .output .ant-card-body {
+    height: 500px;
+    width: 400px;
+}
+
+.graphparams .output .error {
+    color: red;
+}
+
+.graphparams .output .warning {
+    color: orange;
+}
+
+.graphparams .helptext .ant-card-body {
+    height: 700px;
+    width: 400px;
+}
+
+
+
