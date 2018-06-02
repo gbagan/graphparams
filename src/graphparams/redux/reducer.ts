@@ -1,39 +1,39 @@
-import { getType, ActionType, } from 'typesafe-actions';
-import * as actions from './actions';
-import '../custom.d.ts';
-import {Witness, GraphParameter, PlainGraph} from "../types";
+import { ActionType, getType } from "typesafe-actions";
+
+import "../custom.d.ts";
+import {GraphParameter, PlainGraph, Witness} from "../types";
+import * as actions from "./actions";
 
 const GRAPH_PARAMETERS = [
-    { cat: 1, hardness: 0, name: "order", fullname: "order", method: "nbVertices" },
-    { cat: 1, hardness: 0, name: "nbedges", fullname: "number of edges", method: "nbEdges" },
-    { cat: 1, hardness: 0, name: "mindegree", fullname: "minimun degree", method: "minDegree" },
-    { cat: 1, hardness: 0, name: "maxdegree", fullname: "maximum degree", method: "maxDegree" },
-    { cat: 1, hardness: 0, name: "degen", fullname: "degeneracy", method: "degeneracy" },
-    { cat: 1, hardness: 0, name: "diameter", fullname: "diameter", method: "diameter" },
-    { cat: 1, hardness: 0, name: "girth", fullname: "girth", method: "girth" },
-    { cat: 1, hardness: 0, name: "matching", fullname: "maximum matching", method: "maximumMatching" },
-    { cat: 1, hardness: 2, name: "tw", fullname: "treewidth", method: "treewidth" },
+    { cat: 1, hardness: 0, name: "order", fullname: "order" },
+    { cat: 1, hardness: 0, name: "nbedges", fullname: "number of edges" },
+    { cat: 1, hardness: 0, name: "mindegree", fullname: "minimun degree" },
+    { cat: 1, hardness: 0, name: "maxdegree", fullname: "maximum degree" },
+    { cat: 1, hardness: 0, name: "degen", fullname: "degeneracy" },
+    { cat: 1, hardness: 0, name: "diameter", fullname: "diameter" },
+    { cat: 1, hardness: 0, name: "girth", fullname: "girth" },
+    { cat: 1, hardness: 0, name: "matching", fullname: "maximum matching" },
+    { cat: 1, hardness: 2, name: "tw", fullname: "treewidth" },
 
-    { cat: 2, hardness: 0, name: "regular", fullname: "regular", method: "isRegular" },
-    { cat: 2, hardness: 0, name: "connected", fullname: "connected", method: "isConnected" },
-    { cat: 2, hardness: 1, name: "hamilton", fullname: "hamiltonian", method: "isHamiltonian" },
-    { cat: 2, hardness: 0, name: "chordal", fullname: "chordal", method: "isChordal" },
+    { cat: 2, hardness: 0, name: "regular", fullname: "regular" },
+    { cat: 2, hardness: 0, name: "connected", fullname: "connected" },
+    { cat: 2, hardness: 1, name: "hamilton", fullname: "hamiltonian" },
+    { cat: 2, hardness: 0, name: "chordal", fullname: "chordal" },
 
-    { cat: 3, hardness: 1, name: "mis", fullname: "independent set", method: "misOpt" },
-    { cat: 3, hardness: 1, name: "clique", fullname: "clique", method: "cliqueNumberOpt" },
-    { cat: 3, hardness: 1, name: "chromatic", fullname: "chromatic number", method: "chromaticNumber" },
-    { cat: 3, hardness: 2, name: "domcol", fullname: "dominator coloring", method: "dominatorChromaticNumber" },
-    { cat: 3, hardness: 2, name: "totaldomcol", fullname: "total dominator coloring", method: "totalDominatorChromaticNumber" },
-    { cat: 3, hardness: 2, name: "domedcol", fullname: "dominated coloring", method: "dominatedChromaticNumber" },
-    { cat: 4, hardness: 1, name: "dom", fullname: "dominating set", method: "dominationNumber" },
-    { cat: 4, hardness: 1, name: "totaldom", fullname: "total dominating set", method: "totalDominationNumber" },
-    { cat: 4, hardness: 1, name: "inddom", fullname: "independent dominating set", method: "independentDominatingSetOpt" },
-    { cat: 4, hardness: 2, name: "cdom", fullname: "connected dominating set", method: "connectedDominationNumber" },
-    //[4, 3, "idcode", "identifying code", "identifyingCode"],
-    { cat: 4, hardness: 1, name: "idcode", fullname: "identifying code", method: "identifyingCodeOpt" },
-    { cat: 4, hardness: 1, name: "locdom", fullname: "locating dominating set", method: "locatingDominatingSet" },
-    { cat: 4, hardness: 2, name: "edn", fullname: "eternal dominating set", method: "edn" },
-    { cat: 4, hardness: 2, name: "medn", fullname: "m-eternal dominating set", method: "medn" }
+    { cat: 3, hardness: 1, name: "mis", fullname: "independent set" },
+    { cat: 3, hardness: 1, name: "clique", fullname: "clique" },
+    { cat: 3, hardness: 1, name: "chromatic", fullname: "chromatic number" },
+    { cat: 3, hardness: 2, name: "domcol", fullname: "dominator coloring" },
+    { cat: 3, hardness: 2, name: "totaldomcol", fullname: "total dominator coloring" },
+    { cat: 3, hardness: 2, name: "domedcol", fullname: "dominated coloring" },
+    { cat: 4, hardness: 1, name: "dom", fullname: "dominating set" },
+    { cat: 4, hardness: 1, name: "totaldom", fullname: "total dominating set" },
+    { cat: 4, hardness: 1, name: "inddom", fullname: "independent dominating set" },
+    { cat: 4, hardness: 2, name: "cdom", fullname: "connected dominating set" },
+    { cat: 4, hardness: 1, name: "idcode", fullname: "identifying code" },
+    { cat: 4, hardness: 1, name: "locdom", fullname: "locating dominating set" },
+    { cat: 4, hardness: 2, name: "edn", fullname: "eternal dominating set" },
+    { cat: 4, hardness: 2, name: "medn", fullname: "m-eternal dominating set" },
 ];
 
 export const CODE_EXAMPLE = `graph(9)
@@ -105,25 +105,25 @@ export type State = {
     readonly graph: PlainGraph | null;
     readonly computing: boolean;
     readonly witness: Witness | null
-}
+};
 
 const initialState: State = {
     code: CODE_EXAMPLE,
-    parameters: GRAPH_PARAMETERS.map(param => ({...param, checked: param.hardness <= 1, result: null})),
-    helpText: HELP_TEXT,
-    graph: null,
-    error: null,
     computing: false,
-    witness: null
-}
+    error: null,
+    graph: null,
+    helpText: HELP_TEXT,
+    parameters: GRAPH_PARAMETERS.map(param => ({...param, checked: param.hardness <= 1, result: null})),
+    witness: null,
+};
 
 export default function reducer(state: State = initialState, action: Action): State {
-    switch(action.type) {
+    switch (action.type) {
         case getType(actions.changeCode): {
             return {...state, code: action.payload};
         }
         case getType(actions.toggleParameter): {
-            const parameters = state.parameters.map(p => p.name === action.payload 
+            const parameters = state.parameters.map(p => p.name === action.payload
                                                     ?  { ...p, checked: !p.checked }  : p);
             return { ...state, parameters };
         }
@@ -146,10 +146,11 @@ export default function reducer(state: State = initialState, action: Action): St
             return { ...state, graph: action.payload};
         }
         case getType(actions.computeGraphError): {
-            return { ...state, error: action.payload }
+            return { ...state, error: action.payload };
         }
         case getType(actions.startComputingParameter): {
-            const parameters = state.parameters.map<GraphParameter>(p => p.name === action.payload ? { ...p, result: "computing" } : p);
+            const parameters = state.parameters.map<GraphParameter>(p =>
+                p.name === action.payload ? { ...p, result: "computing" } : p);
             return { ...state, parameters};
         }
         case getType(actions.parameterComputed): {
@@ -162,5 +163,4 @@ export default function reducer(state: State = initialState, action: Action): St
         default:
             return state;
     }
-    
-} 
+}

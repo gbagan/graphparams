@@ -1,14 +1,17 @@
-﻿import { GenericGraph, Result } from "./graph";
-import { range } from "../iter";
+﻿import { range } from "../iter";
+import Graph from "./graph";
+import {copy} from "./operators";
+import { Result } from "./types";
 
-function greedyMatching(g: GenericGraph) {
-    const matching: [number, number][] = [];
+function greedyMatching(g: Graph) {
+    const matching: Array<[number, number]> = [];
     const matched = new Array<boolean>(g.V);
     matched.fill(false);
 
     for (let u = 0; u < g.V - 1; u++) {
-        if (matched[u])
+        if (matched[u]) {
             continue;
+        }
         for (const v of g.adj(u)) {
             if (u < v && !matched[v]) {
                 matching.push([u, v]);
@@ -21,18 +24,19 @@ function greedyMatching(g: GenericGraph) {
     return matching;
 }
 
-function contract(g: GenericGraph, set: number[]) {
-    const g2 = g.mutableCopy();
+function contract(g: Graph, set: number[]) {
+    const g2 = copy(g);
     const v = set[0];
     const rset = set.slice(1, set.length);
     for (const u of rset) {
         g2.adj(u).length = 0;
     }
     for (let u = 0; u < g.V; u++) {
-        if (rset.includes(u))
+        if (rset.includes(u)) {
             continue;
+        }
         const adj = g2.adj(u);
-        let n = g2.adj(u).length;
+        const n = g2.adj(u).length;
         for (let i = 0; i < n; i++) {
             if (rset.includes(adj[i])) {
                 adj[i] = v;
@@ -42,8 +46,7 @@ function contract(g: GenericGraph, set: number[]) {
     return g2;
 }
 
-function findAugmentingPath(g: GenericGraph, m: [number, number][]): number[] | null {
-    console.log("augmentingpath")
+function findAugmentingPath(g: Graph, m: Array<[number, number]>): number[] | null {
     const parent = new Array<number>(g.V);
     const distanceToRoot = new Array<number>(g.V);
     const matched = new Array<number>(g.V);
@@ -63,24 +66,24 @@ function findAugmentingPath(g: GenericGraph, m: [number, number][]): number[] | 
             root[i] = i;
         }
     }
-    const unexplored: number[] = Array.from(range(g.V)).filter((w) => matched[w] === -1);
+    const unexplored: number[] = [...range(g.V)].filter(w => matched[w] === -1);
 
-    for (let i = 0; i < unexplored.length; i++) {
-        const v = unexplored[i];
-        if (distanceToRoot[v] % 2 !== 0)
+    for (const v of unexplored) {
+        if (distanceToRoot[v] % 2 !== 0) {
             continue;
+        }
         for (const w of g.adj(v)) {
-            if (matched[w] === v)
+            if (matched[w] === v) {
                 continue;
-            if (root[w] === -1) {
+            } else if (root[w] === -1) {
                 const x = matched[w];
                 parent[w] = v;
                 distanceToRoot[w] = distanceToRoot[v] + 1;
                 parent[x] = w;
                 distanceToRoot[x] = distanceToRoot[w] + 1;
                 root[x] = root[w] = root[v];
-                unexplored.push(w);
-                unexplored.push(x);
+                unexplored.push(w);  ///////
+                unexplored.push(x);  //////
             } else if (distanceToRoot[w] % 2 === 0) {
                 // create a path  root(v) -- ... -- v --w -- .... -- root(w)
                 const path: number[] = [];
@@ -100,12 +103,12 @@ function findAugmentingPath(g: GenericGraph, m: [number, number][]): number[] | 
                 if (root[v] !== root[w]) {
                     return path;
                 } else {
-                    console.log("blossom")
-                    const g2 = contract(g, path);
-                    const m2 = m.filter(([x,]) => !path.includes(x));
+                    const g2 = contract(g, path).freeze();
+                    const m2 = m.filter(([x]) => !path.includes(x));
                     const path2 = findAugmentingPath(g2, m2);
-                    if (path2 === null)
+                    if (!path2) {
                         return null;
+                    }
                     // TODO
                     // return lift(path2)
                 }
@@ -115,14 +118,18 @@ function findAugmentingPath(g: GenericGraph, m: [number, number][]): number[] | 
     return null;
 }
 
-export default function maximumMatching(g: GenericGraph): Result {
+export default function maximumMatching(g: Graph): Result {
     let m = greedyMatching(g);
     let path: number[] | null = null;
 
-    while ((path = findAugmentingPath(g, m)) != null) {
+    while (true) {
+        path = findAugmentingPath(g, m);
+        if (!path) {
+            break;
+        }
         const excludeSet = new Set<number>();
         for (let i = 0; i < path.length; i++) {
-            if (i % 2 == 0) {
+            if (i % 2 === 0) {
                 m.push([path[i], path[i + 1]]);
             } else {
                 excludeSet.add(g.edgeId(path[i], path[i + 1]));
@@ -131,5 +138,5 @@ export default function maximumMatching(g: GenericGraph): Result {
         m = m.filter(([x, y]) => !excludeSet.has(g.edgeId(x, y)));
     }
     const t: number[] = [];
-    return { result: m.length, witness: t.concat(...m) }
+    return { result: m.length, witness: t.concat(...m) };
 }

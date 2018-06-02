@@ -1,37 +1,39 @@
-﻿import { GenericGraph } from "./graph";
-import * as iter from "../iter";
-import { binaryEncode, binaryDecode } from "./util";
+﻿import * as iter from "../iter";
+import {cliqueNumber} from "./basic";
+import Graph from "./graph";
+import { binaryDecode, binaryEncode } from "./util";
 
-function Q(g: GenericGraph, set: number[], v: number) {
+function Q(g: Graph, set: number[], v: number) {
     const visited = new Array(g.V);
     const inset = new Array(g.V);
     visited.fill(false);
     inset.fill(false);
-    for (const x of set)
+    for (const x of set) {
         inset[x] = true;
+    }
 
     const queue = new Array<number>();
-    let nb_visited = 0;
+    let nbVisited = 0;
     queue.push(v);
     visited[v] = true;
     while (queue.length > 0) {
         const u = queue.shift()!;
-        for (let w of g.adj(u)) {
+        for (const w of g.adj(u)) {
             if (!visited[w]) {
                 visited[w] = true;
                 if (!inset[w]) {
-                    nb_visited++;
-                }
-                else
+                    nbVisited++;
+                } else {
                     queue.push(w);
+                }
             }
         }
     }
-    return nb_visited;
+    return nbVisited;
 }
 
-function treewidth(g: GenericGraph): number {
-    const clique = g.cliqueNumber().witness!;
+function treewidth(g: Graph): number {
+    const clique = cliqueNumber(g).witness!;
     const n = g.V;
     const nc = n - clique.length;
     let up = n - 1;
@@ -49,15 +51,17 @@ function treewidth(g: GenericGraph): number {
                 inset[u] = true;
             }
             for (let x = 0; x < n; x++) {
-                if (inset[x])
+                if (inset[x]) {
                     continue;
+                }
                 const q = Q(g, set, x); // averifier
                 const r2 = Math.max(q, r);
                 if (r2 < up) {
                     up = Math.min(up, n - set.length - 1);
                     const setid2 = setid | (1 << x);
-                    if (!tw[i].has(setid2) || tw[i].get(setid2)! > r2)
+                    if (!tw[i].has(setid2) || tw[i].get(setid2)! > r2) {
                         tw[i].set(setid2, r2);
+                    }
                 }
             }
         }

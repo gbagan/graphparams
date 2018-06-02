@@ -4,6 +4,7 @@ const path = require('path');
 //const DashboardPlugin = require('webpack-dashboard/plugin');
 //const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const PATHS = {
     root: path.resolve(__dirname, '..'),
@@ -24,33 +25,41 @@ module.exports = (env = {}) => {
 
         resolve: {
             modules: [PATHS.nodeModules],
-            extensions: ['.ts', '.tsx', '.js', '.jsx'],
-            descriptionFiles: ['package.json'],
+            extensions: [".ts", ".tsx", ".js", ".jsx"],
+            descriptionFiles: ["package.json"],
         },
-        devtool: 'source-map',
+        devtool: "source-map",
         module: {
             rules: [
-                { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
+                { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
                 { test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
-                { test: /\.(png|jpg|gif)$/, use: [{ loader: 'file-loader', options: {} }] },
-                { test: /\.worker\.js$/, use: { loader: 'worker-loader' } }
+                { test: /\.(png|jpg|gif)$/, use: [{ loader: "file-loader", options: {} }] },
+                { test: /\.worker\.js$/, use: { loader: "worker-loader" } }
             ]
         },
         entry: {
             app: [
-                PATHS.src + '/index.tsx',
+                PATHS.src + "/index.tsx",
             ],
         },
         output: {
             path: PATHS.dist + "/static/",
-            publicPath: 'static/',
+            publicPath: "static/",
         },
         plugins: [
             new MiniCssExtractPlugin({
                 filename: "[name].css",
                 chunkFilename: "[id].css",
                 modules: true
+            }),
+            new CircularDependencyPlugin({
+              // exclude detection of files based on a RegExp
+              exclude: /a\.js|node_modules/,
+              // add errors to webpack instead of warnings
+              failOnError: true,
+              // set the current working directory for displaying module paths
+              cwd: process.cwd(),
             })
-        ],
+        ]
     }
 }

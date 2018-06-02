@@ -1,18 +1,18 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import * as React from "react";
+import { connect } from "react-redux";
+import { createSelector } from "reselect";
 
-import Row from 'antd/lib/row';
-import Col from 'antd/lib/col';
-import Card from 'antd/lib/card';
+import Card from "antd/lib/card";
+import Col from "antd/lib/col";
+import Row from "antd/lib/row";
 
-import GraphInput from './GraphInput';
-import VisEds from './VisEds';
-import selector from '../redux/selector';
+import selector from "../redux/selector";
+import GraphInput from "./GraphInput";
+import VisEds from "./VisEds";
 
 const mapStateToProps = createSelector(selector, state => ({ helpText: state.helpText }));
-const mapDispatchToProps = {}
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps
+const mapDispatchToProps = {};
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
 const Main: React.SFC<Props> = (props: Props) => {
     return (
@@ -30,12 +30,9 @@ const Main: React.SFC<Props> = (props: Props) => {
                 </Col>
             </Row>
         </div>
-    )
-}
+    );
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main)
+const htmlize = (text: string) => text.split("\n").map((line, i) => [line, <br key={i}/>]);
 
-
-function htmlize(text: string) {
-    return text.split("\n").map(line => [line, <br/>]);
-}
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

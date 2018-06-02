@@ -1,12 +1,12 @@
-import { getType, ActionType, } from 'typesafe-actions';
+import { ActionType, getType } from "typesafe-actions";
 
-import * as actions from './actions';
- 
-import { Shift } from "../types"
-import { Graph } from '../../libs/graph/graph';
-import { EDSArena } from '../../libs/graph/arena';
-import parse from '../../libs/graph/graphparser';
-import { memoize } from '../../libs/decorators';
+import * as actions from "./actions";
+
+import {makeArena} from "../../libs/arena/edsarena";
+import { memoize } from "../../libs/decorators";
+import Graph from "../../libs/graph/graph";
+import parse from "../../libs/graph/graphparser";
+import { Shift } from "../types";
 
 const HELP_TEXT =
     `petersen     // petersen graph
@@ -47,7 +47,6 @@ const GRAPH_EXAMPLE =
 .addEdge(3, 8)`;
 */
 
-
 export type Action = ActionType<typeof actions>;
 
 export type State = {
@@ -56,22 +55,25 @@ export type State = {
     readonly shift: Shift | null;
     readonly rules: "one" | "all";
     readonly helpText: string;
-}
+};
 
 const initialState: State = {
     graph: null,
     guards: null,
-    shift: null,
+    helpText : HELP_TEXT,
     rules: "all",
-    helpText : HELP_TEXT
-}
+    shift: null,
+};
 
 const getArena = memoize((graph: Graph, rules: "one" | "all") => {
-    let arena: EDSArena | null;
     let i = 1;
-    while (!(arena = EDSArena.computeArena(graph, i, rules)) || !arena.startingConf())
+    while (true) {
+        const arena = makeArena(graph, i, rules);
+        if (arena && arena.startingConf()) {
+            return arena;
+        }
         i++;
-    return arena;
+    }
 });
 
 export default function reducer(state: State = initialState, action: Action): State {
@@ -79,12 +81,14 @@ export default function reducer(state: State = initialState, action: Action): St
         case getType(actions.selectVertex): {
             const { graph, guards, rules } = state;
             const v = action.payload;
-            if (!guards || guards.includes(v))
+            if (!guards || guards.includes(v)) {
                 return state;
+            }
             const arena = getArena(graph, rules);
             const res = arena.guardsAnswer(graph, guards, v);
-            if (!res)
+            if (!res) {
                 return state;
+            }
             const { conf, shift } = res;
             return { ...state, guards: conf, shift };
         }
@@ -93,26 +97,29 @@ export default function reducer(state: State = initialState, action: Action): St
             let graph;
             if (type === "load") {
                 const textdata = localStorage.getItem("graph-" + input);
-                if (!textdata)
+                if (!textdata) {
                     return state;
+                }
                 const data: any = JSON.parse(textdata);
                 const code = data.code as string;
                 const result = parse(code);
                 if (result instanceof Graph) {
                     graph = result;
-                } else
+                } else {
                     return state;
-            } else { //case "generate":
+                }
+            } else { // type === "generate":
                 const result = parse(input);
                 if (result instanceof Graph) {
                     graph = result;
-                } else
+                } else {
                     return state;
+                }
             }
             const arena = getArena(graph, rules);
             const guards = arena.startingConf();
-            const gstate = guards ? { guards } : {}
-            return { ...state, graph, rules, guards, ...gstate }
+            const gstate = guards ? { guards } : {};
+            return { ...state, graph, rules, guards, ...gstate };
         }
         default:
             return state;

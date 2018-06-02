@@ -1,0 +1,12 @@
+{
+    "extends": [
+        "tslint:latest",
+        "tslint-react"
+    ],
+    "rules": {
+        "arrow-parens": false,
+        "interface-over-type-literal": false,
+        "no-bitwise": false,
+        "no-submodule-imports": false
+    }
+}

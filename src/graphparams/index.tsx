@@ -1,5 +1,5 @@
-import './App.css';
+import "./App.css";
 
-export {default as reducer} from './redux/reducer';
-export {default as App} from './components/Main';
-export {default as saga} from './redux/saga';
+export {default as reducer} from "./redux/reducer";
+export {default as App} from "./components/Main";
+export {default as saga} from "./redux/saga";

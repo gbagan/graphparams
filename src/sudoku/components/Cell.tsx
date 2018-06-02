@@ -1,5 +1,6 @@
-import * as React from 'react';
-import * as classNames from 'classnames';
+import * as React from "react";
+import styled, {css} from "styled-components";
+import { ifProp } from "styled-tools";
 
 type Props = {
     readonly row: number,
@@ -9,27 +10,52 @@ type Props = {
     readonly value: number;
     readonly selected: boolean;
     readonly onClick: (row: number, col: number) => void
+    readonly className?: string;
+};
+
+class Cell extends React.Component<Props> {
+    public handleClick = () => this.props.onClick(this.props.row, this.props.col);
+
+    public render() {
+        const {value} = this.props;
+
+        return (
+            <div className={this.props.className} onClick={this.handleClick}>
+                <span>{value === 0 ? "" : value}</span>
+            </div>
+        );
+    }
 }
 
-const Output: React.SFC<Props> = props => {
-    const { row, col, squaresize, fixed, value, selected, onClick } = props;
-    const gridsize = squaresize * squaresize;
+export default styled(Cell)
+        .attrs<Props>({
+            border_h: (props: Props) => props.col % props.squaresize === 0 && props.col !== 0,
+            border_v: (props: Props) => props.row % props.squaresize === 0 && props.row !== 0,
+            gridsize: (props: Props) => props.squaresize * props.squaresize,
+        })`
+    height: ${(props: any) => "" + (100 / props.gridsize) + "%"};
+    width: ${(props: any) => "" + (100 / props.gridsize) + "%"};
+    cursor: pointer;
+    text-align: center;
+    float: left;
+	box-sizing: border-box;
+    background: ${ifProp("fixed", "#ecf0f1", "white")};
+    & > span {
+        color: ${ifProp("fixed", "#7f8c8d", "#2c3e50")};
+        font-size: 20px;
+        text-align: middle;
+    }
 
-    const className = classNames('cell', {
-                                    selected, fixed,
-        border_h: col % squaresize === 0 && col !== 0,
-        border_v: row % squaresize === 0 && row !== 0,
-    });
-    const style = {
-        width: (100 / gridsize).toString() + "%",
-        height: (100 / gridsize).toString() + "%"
-    }   
-        
-    return (
-        <div className={className} style={style} onClick={() => onClick(row, col)}>
-            { value > 0 && <span>{value}</span>  }
-        </div>
-    )
-}
+    box-shadow: 0px 0px 0px 1px #bdc3c7
+        ${ifProp("border_h", ", inset 2px 0px 0 #34495e")}
+        ${ifProp("border_v", ", inset 0px 2px 0 #34495e")};
 
-export default Output;
+    ${ifProp("selected", css`
+        background: #3498db;
+        box-shadow: 0px 0px 3px 3px #bdc3c7;
+        & > span {
+            color: white;
+            font-weight:bold;
+        }
+    `)}
+}`;

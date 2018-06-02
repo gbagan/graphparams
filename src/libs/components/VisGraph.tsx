@@ -1,27 +1,24 @@
-import * as React from 'react';
-import * as vis from 'vis';
+import * as React from "react";
+import * as vis from "vis";
 
-import { isEqual } from '../../libs/iter';
+import { isEqual } from "../../libs/iter";
 
-interface Props {
+type Props = {
     readonly nodes: ReadonlyArray<vis.Node> | null;
     readonly edges: ReadonlyArray<vis.EdgeOptions> | null;
     readonly options?: vis.Options;
     readonly events?: Events
     readonly className?: string;
-}
+};
 
 // todo key: vis.NetworkEvents
-type Events = { [key: string]: (params: any) => void }
+type Events = { [key: string]: (params: any) => void };
 
-
-interface State { }
-
-export default class VisGraph extends React.Component<Props, State> {
-    network: vis.Network | null;
-    nodes: vis.DataSet<vis.Node> | null;
-    edges: vis.DataSet<vis.EdgeOptions> | null;
-    ref: React.RefObject<HTMLDivElement>;
+export default class VisGraph extends React.Component<Props> {
+    public network: vis.Network | null;
+    public ref: React.RefObject<HTMLDivElement>;
+    private nodes: vis.DataSet<vis.Node> | null;
+    private edges: vis.DataSet<vis.EdgeOptions> | null;
 
     constructor(props: Props) {
         super(props);
@@ -33,17 +30,18 @@ export default class VisGraph extends React.Component<Props, State> {
         this.edges = null;
     }
 
-    componentDidMount() {
+    public componentDidMount() {
         this.hardUpdate();
     }
 
-    componentDidUpdate() {
+    public componentDidUpdate() {
         this.hardUpdate();
     }
 
-    shouldComponentUpdate(nextProps: Props) {
-        if (!this.network || !this.nodes || !this.edges)
+    public shouldComponentUpdate(nextProps: Props) {
+        if (!this.network || !this.nodes || !this.edges) {
             return true;
+        }
 
         let { nodes, edges, options, events } = nextProps;
         nodes = nodes || [];
@@ -51,11 +49,13 @@ export default class VisGraph extends React.Component<Props, State> {
         events = events || {};
         options = options || {};
 
-        if (!isEqual((nodes).map(v => v.id).sort(), (this.props.nodes || []).map(v => v.id).sort()))
+        if (!isEqual((nodes).map(v => v.id).sort(), (this.props.nodes || []).map(v => v.id).sort())) {
             return true;
+        }
 
-        if (!isEqual((edges).map(v => v.id).sort(), (this.props.edges || []).map(v => v.id).sort()))
+        if (!isEqual((edges).map(v => v.id).sort(), (this.props.edges || []).map(v => v.id).sort())) {
             return true;
+        }
 
         this.nodes.update(nodes.slice());
         this.edges.update(edges);
@@ -76,10 +76,26 @@ export default class VisGraph extends React.Component<Props, State> {
         return false;
     }
 
-    hardUpdate() {
-        const { nodes, edges, options, events } = this.props;
-        if (this.network)
+    public componentWillunount() {
+        if (this.network !== null) {
             this.network.destroy();
+        }
+        this.network = null;
+        this.edges = null;
+        this.nodes = null;
+    }
+
+    public render() {
+        return (
+            <div className={this.props.className} style={divStyle} ref={this.ref} />
+        );
+    }
+
+    private hardUpdate() {
+        const { nodes, edges, options, events } = this.props;
+        if (this.network) {
+            this.network.destroy();
+        }
         this.network = null;
         this.edges = null;
         this.nodes = null;
@@ -87,32 +103,18 @@ export default class VisGraph extends React.Component<Props, State> {
             this.edges = new vis.DataSet(edges.slice());
             this.nodes = new vis.DataSet(nodes.slice());
             const data = {
-                nodes: this.nodes,
                 edges: this.edges,
-            }
+                nodes: this.nodes,
+            };
             this.network = new vis.Network(this.ref.current!, data, options);
             for (const [name, callback] of Object.entries(events || {})) {
                 this.network.on(name as vis.NetworkEvents, callback);
             }
         }
     }
-
-    componentWillunount() {
-        if (this.network !== null)
-            this.network.destroy();
-        this.network = null;
-        this.edges = null;
-        this.nodes = null;
-    }
-
-    render() {
-        return (
-            <div className={this.props.className} style={divStyle} ref={this.ref} />
-        );
-    }
 }
 
 const divStyle = {
-    width: '100%',
-    height: '100%'
-}
+    height: "100%",
+    width: "100%",
+};

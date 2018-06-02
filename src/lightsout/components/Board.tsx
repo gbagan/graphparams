@@ -1,41 +1,49 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import * as React from "react";
+import { connect } from "react-redux";
+import { createSelector } from "reselect";
 
-import selector from '../redux/selector';
 import * as actions from "../redux/actions";
-
+import selector from "../redux/selector";
 
 const mapStateToProps = createSelector(selector, state => ({
-    rows: state.rows,
-    columns: state.columns,
     board: state.board,
-    solution: state.currentSolution
+    columns: state.columns,
+    rows: state.rows,
+    solution: state.currentSolution,
 }));
 
 const mapDispatchToProps = {
-    onClick: actions.switchCell
-}
-
+    onClick: actions.switchCell,
+};
 
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
 class Board extends React.Component<Props> {
-    ref: React.RefObject<HTMLCanvasElement>;
+    private ref: React.RefObject<HTMLCanvasElement>;
 
     constructor(props: Props) {
         super(props);
         this.ref = React.createRef();
     }
 
-    handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const { rows, columns, board, onClick } = this.props;
-        if (!board)
-            return
-        const el = this.ref.current;
-        if (!el)
-            return;
+    public componentDidMount() {
+        this.draw();
+    }
 
+    public componentDidUpdate() {
+        this.draw();
+    }
+
+    public render() {
+        return <canvas className="board" onClick={this.handleClick} ref={this.ref} />;
+    }
+
+    public handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        const { rows, columns, board, onClick } = this.props;
+        const el = this.ref.current;
+        if (!board || !el) {
+            return;
+        }
         const size = 60;
         const rect = el.getBoundingClientRect();
         const scaleX = el.width / rect.width;
@@ -46,18 +54,18 @@ class Board extends React.Component<Props> {
         const xx = Math.floor((x - 25) / size);
         const yy = Math.floor((y - 25) / size);
 
-        if (xx < 0 || xx >= columns || yy < 0 || yy >= rows)
+        if (xx < 0 || xx >= columns || yy < 0 || yy >= rows) {
             return;
+        }
         onClick({ row: yy, column: xx });
     }
 
-    draw() {
+    private draw() {
         const { rows, columns, board, solution } = this.props;
-        if (!board)
-            return
         const el = this.ref.current;
-        if (!el)
+        if (!el || !board) {
             return;
+        }
         const context = el.getContext("2d")!;
 
         const size = 60;
@@ -110,28 +118,14 @@ class Board extends React.Component<Props> {
                 context.moveTo(dx + 12, dy + 45);
                 context.lineTo(dx + 45, dy + 15);
                 if (value > 1) {
-                    context.font = '14pt Calibri';
-                    context.fillStyle = 'black';
+                    context.font = "14pt Calibri";
+                    context.fillStyle = "black";
                     context.fillText(value.toString(), dx + 48, dy + 54);
                 }
                 context.stroke();
                 context.closePath();
             }
         }
-    }
-
-    componentDidMount() {
-        this.draw();
-    }
-
-    componentDidUpdate() {
-        this.draw();
-    }
-
-    render() {
-        return (
-            <canvas className="board" onClick={this.handleClick} ref={this.ref} />
-        )
     }
 }
 

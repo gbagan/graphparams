@@ -10,17 +10,21 @@
     "moduleResolution": "node",
     "rootDir": ".",
     "strict" : true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
     "experimentalDecorators": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "keyofStringsOnly": true,
+    "plugins": [
+        {
+          "name": "typescript-styled-plugin"
+        }
+    ]
   },
   "exclude": [
     "node_modules",
     "build",
+    "dist",
+    "configs",
     "scripts",
     "acceptance-tests",
     "webpack",

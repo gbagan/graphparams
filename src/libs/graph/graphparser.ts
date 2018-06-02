@@ -1,5 +1,8 @@
-﻿import { Graph, MutableGraph, generatePetersen, generateSun } from "./graph";
-import { range } from "../iter";
+﻿import { range } from "../iter";
+import { petersen, sun } from "./generate";
+import Graph from "./graph";
+import MutableGraph from "./mutablegraph";
+import {complement, join, lineGraph, product, union} from "./operators";
 
 enum LexerToken {
     Comma,
@@ -10,7 +13,7 @@ enum LexerToken {
     Number,
     Edge,
     Begin,
-    Error
+    Error,
 }
 
 enum ParserToken {
@@ -19,77 +22,70 @@ enum ParserToken {
     Number,
     Edge,
     Function,
-    Begin
+    Begin,
 }
 
 type PTokenPair = { type: ParserToken.Graph, data: MutableGraph }
     | { type: ParserToken.Method, data: string }
     | { type: ParserToken.Number, data: number }
     | { type: ParserToken.Edge, data: number }
-    | { type: ParserToken.Function, data: string }
-
+    | { type: ParserToken.Function, data: string };
 
 function* lexer(str: string): Iterable<[LexerToken, any]> {
     let i = 0;
     while (i < str.length) {
         if ([" ", "\n", "\t"].includes(str[i])) {
             i++;
-        }
-        else if (str[i] === ',') {
-            yield [LexerToken.Comma, ','];
+        } else if (str[i] === ",") {
+            yield [LexerToken.Comma, ","];
             i++;
-        }
-        else if (str[i] === '(') {
-            yield [LexerToken.LeftParen, '('];
+        } else if (str[i] === "(") {
+            yield [LexerToken.LeftParen, "("];
             i++;
-        }
-        else if (str[i] === ')') {
-            yield [LexerToken.RightParen, ')'];
+        } else if (str[i] === ")") {
+            yield [LexerToken.RightParen, ")"];
             i++;
-        }
-        else if ('a' <= str[i] && str[i] <= 'z' || ('A' <= str[i] && str[i] <= 'Z')) {
-            let val = '';
-            while ('a' <= str[i] && str[i] <= 'z' || ('A' <= str[i] && str[i] <= 'Z')) {
+        } else if ("a" <= str[i] && str[i] <= "z" || ("A" <= str[i] && str[i] <= "Z")) {
+            let val = "";
+            while ("a" <= str[i] && str[i] <= "z" || ("A" <= str[i] && str[i] <= "Z")) {
                 val += str[i];
                 i++;
             }
             yield [LexerToken.Litteral, val];
-        }
-        else if (str[i] === '.') {
-            let val = '';
+        } else if (str[i] === ".") {
+            let val = "";
             i++;
-            while ('a' <= str[i] && str[i] <= 'z' || ('A' <= str[i] && str[i] <= 'Z')) {
+            while ("a" <= str[i] && str[i] <= "z" || ("A" <= str[i] && str[i] <= "Z")) {
                 val += str[i];
                 i++;
             }
-            if (val !== '')
+            if (val !== "") {
                 yield [LexerToken.Method, val];
-            else {
+            } else {
                 yield [LexerToken.Error, null];
                 return;
             }
-        }
-        else if ('0' <= str[i] && str[i] <= '9') {
-            let val = '';
-            while ('0' <= str[i] && str[i] <= '9') {
+        } else if ("0" <= str[i] && str[i] <= "9") {
+            let val = "";
+            while ("0" <= str[i] && str[i] <= "9") {
                 val += str[i];
                 i++;
             }
-            if (str[i] === '-') {
-                let val2 = '';
+            if (str[i] === "-") {
+                let val2 = "";
                 i++;
-                while ('0' <= str[i] && str[i] <= '9') {
+                while ("0" <= str[i] && str[i] <= "9") {
                     val2 += str[i];
                     i++;
                 }
-                if (val2 !== '')
-                    yield [LexerToken.Edge, [parseInt(val), parseInt(val2)]];
-                else {
+                if (val2 !== "") {
+                    yield [LexerToken.Edge, [parseInt(val, 10), parseInt(val2, 10)]];
+                } else {
                     yield [LexerToken.Error, null];
                     return;
                 }
             } else {
-                yield [LexerToken.Number, parseInt(val)];
+                yield [LexerToken.Number, parseInt(val, 10)];
             }
         } else {
             yield [LexerToken.Error, null];
@@ -98,139 +94,136 @@ function* lexer(str: string): Iterable<[LexerToken, any]> {
     }
 }
 
+const graph = (n: number) => new MutableGraph(n);
 const path = (n: number) => new MutableGraph(n).addPath(...range(n));
+const cycle = (n: number) => new MutableGraph(n).addCycle(...range(n));
+const clique = (n: number) => new MutableGraph(n).addClique(...range(n));
+
+const addEdge = (g: MutableGraph, u: number, v: number) => g.addEdge(u, v);
+const addPath = (g: MutableGraph, ...args: number[]) => g.addPath(...args);
+const addCycle = (g: MutableGraph, ...args: number[]) => g.addCycle(...args);
+const addClique = (g: MutableGraph, ...args: number[]) => g.addClique(...args);
+const addEdges = (g: MutableGraph, ...args: number[][]) => g.addEdges(...args);
 
 function parse(str: string): Graph | string {
     const constants = new Map([
-        ['petersen', () => generatePetersen()]
+        ["petersen", () => petersen()],
     ]);
 
     const functions = new Map([
-        ['graph',    { arity: 1,  type: ParserToken.Number, fn: (n: number) => new MutableGraph(n)}],
-        //['digraph', (n: number) => new Digraph(n)]
-        ['path',     { arity: 1, type: ParserToken.Number, fn: (n: number) => path(n)}],
-        ['clique',   { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n).addClique(...range(n))}],
-        ['grid',     { arity: 2, type: ParserToken.Number, fn: (n: number, m: number) => path(n).product(path(m))}], 
-        ['star',     { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(1).join(new MutableGraph(n))}],
-        ['cycle',    { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n).addCycle(...range(n))}],
-        ['biclique', { arity: 2, type: ParserToken.Number, fn: (n: number, m: number) => new MutableGraph(n).join(new MutableGraph(m))}],
-        ['sun',      { arity: 1, type: ParserToken.Number, fn: (n: number) => generateSun(n)}]
+        ["graph",    { arity: 1, type: ParserToken.Number, fn: (n: number) => new MutableGraph(n)}],
+        ["path",     { arity: 1, type: ParserToken.Number, fn: (n: number) => path(n)}],
+        ["clique",   { arity: 1, type: ParserToken.Number, fn: (n: number) => clique(n)}],
+        ["grid",     { arity: 2, type: ParserToken.Number, fn: (n: number, m: number) => product(path(n), path(m))}],
+        ["star",     { arity: 1, type: ParserToken.Number, fn: (n: number) => join(graph(1), graph(n))}],
+        ["cycle",    { arity: 1, type: ParserToken.Number, fn: (n: number) => cycle(n) }],
+        ["biclique", { arity: 2, type: ParserToken.Number, fn: (n: number, m: number) => join(graph(n), graph(m))}],
+        ["sun",      { arity: 1, type: ParserToken.Number, fn: (n: number) => sun(n)}],
     ]);
 
     const methods = new Map([
-        ['addEdge',    {arity: 2,  type: ParserToken.Number}],
-        ['addClique',  {arity: -1, type: ParserToken.Number}],
-        ['addPath',    {arity: -1, type: ParserToken.Number}],
-        ['addCycle',   {arity: -1, type: ParserToken.Number}],
-        ['addEdges',   {arity: -1, type: ParserToken.Edge}],
-        ['complement', {arity: 0,  type: ParserToken.Number}],
-        ['lineGraph',  {arity: 0,  type: ParserToken.Number}],
-        ['union',      {arity: 1,  type: ParserToken.Graph}],
-        ['join',       {arity: 1,  type: ParserToken.Graph}],
+        ["addEdge",    {arity: 2,  type: ParserToken.Number, fn: addEdge}],
+        ["addClique",  {arity: -1, type: ParserToken.Number, fn: addClique}],
+        ["addPath",    {arity: -1, type: ParserToken.Number, fn: addPath}],
+        ["addCycle",   {arity: -1, type: ParserToken.Number, fn: addCycle}],
+        ["addEdges",   {arity: -1, type: ParserToken.Edge,   fn: addEdges}],
+        ["complement", {arity: 0,  type: ParserToken.Number, fn: complement}],
+        ["lineGraph",  {arity: 0,  type: ParserToken.Number, fn: lineGraph}],
+        ["union",      {arity: 1,  type: ParserToken.Graph, fn: union}],
+        ["join",       {arity: 1,  type: ParserToken.Graph, fn: join}],
     ]);
-
 
     const stack: PTokenPair[] = [];
     let lastToken: LexerToken = LexerToken.Begin;
     let topToken = ParserToken.Begin;
-    for (const [token, value] of lexer(str)) {
-        if (stack.length > 0)
+    for (const [currentToken, value] of lexer(str)) {
+        if (stack.length > 0) {
             topToken = stack[stack.length - 1].type;
-        if (token === LexerToken.Number) {
+        }
+        if (currentToken === LexerToken.Number) {
             if (![LexerToken.Comma, LexerToken.LeftParen].includes(lastToken)) {
-                return 'syntax error';
+                return "syntax error";
             } else {
                 stack.push({ type: ParserToken.Number, data: value });
             }
-        }
-
-        else if (token === LexerToken.Edge) {
+        } else if (currentToken === LexerToken.Edge) {
             if (![LexerToken.Comma, LexerToken.LeftParen].includes(lastToken)) {
-                return 'syntax error';
+                return "syntax error";
             } else {
                 stack.push({ type: ParserToken.Edge, data: value });
             }
-        }
-
-        else if (token === LexerToken.LeftParen) {
+        } else if (currentToken === LexerToken.LeftParen) {
             if (![ParserToken.Function, ParserToken.Method].includes(topToken) ||
                 lastToken === LexerToken.LeftParen) {
-                return 'syntax error';
+                return "syntax error";
             }
-        }
-        else if (token === LexerToken.Comma) {
+        } else if (currentToken === LexerToken.Comma) {
             if (![ParserToken.Graph, ParserToken.Number, ParserToken.Edge].includes(topToken) ||
                 lastToken === LexerToken.Comma) {
-                return 'syntax error';
+                return "syntax error";
             }
-        }
-
-        else if (token === LexerToken.Litteral) {
+        } else if (currentToken === LexerToken.Litteral) {
             if (![LexerToken.Comma, LexerToken.LeftParen, LexerToken.Begin].includes(lastToken)) {
-                return 'syntax error';
+                return "syntax error";
             } else if (constants.has(value)) {
-                const graph = constants.get(value)!();
-                stack.push({ type: ParserToken.Graph, data: graph });
+                const g = constants.get(value)!();
+                stack.push({ type: ParserToken.Graph, data: g });
             } else if (functions.has(value)) {
                 stack.push({ type: ParserToken.Function, data: value });
             } else {
-                return 'function not found: ' + value;
+                return "function not found: " + value;
             }
-        }
-        else if (token === LexerToken.Method) {
+        } else if (currentToken === LexerToken.Method) {
             if (topToken !== ParserToken.Graph) {
-                return 'syntax error';
+                return "syntax error";
             } else if (!methods.has(value)) {
-                return 'method not found: ' + value;
+                return "method not found: " + value;
             } else {
                 stack.push({ type: ParserToken.Method, data: value });
             }
-        }
-
-        else if (token === LexerToken.RightParen) {
+        } else if (currentToken === LexerToken.RightParen) {
             const parameters: PTokenPair[] = [];
-            while (stack.length >= 2 && ![ParserToken.Method, ParserToken.Method].includes(stack[stack.length - 1].type)) {
+            while (stack.length >= 2 &&
+                ![ParserToken.Method, ParserToken.Method].includes(stack[stack.length - 1].type)) {
                 const parameter = stack.pop()!;
                 parameters.unshift(parameter);
             }
             const ttoken = stack.pop();
             if (!ttoken) {
-                return 'unexpected error'
+                return "unexpected error";
             } else if (ttoken.type === ParserToken.Function) {
                 const fn = functions.get(ttoken.data)!;
                 if (parameters.length !== fn.arity) {
-                    return 'invalid number of arguments: ' + ttoken.data;
+                    return "invalid number of arguments: " + ttoken.data;
                 } else if (!parameters.every(p => p.type === fn.type)) {
-                    return 'invalid argument types: ' + ttoken.data;
+                    return "invalid argument types: " + ttoken.data;
                 } else {
                     const rgraph = (fn.fn as any)(...parameters.map(x => x.data)) as MutableGraph;
                     stack.push({ type: ParserToken.Graph, data: rgraph });
                 }
             } else if (ttoken.type === ParserToken.Method) {
                 const token2 = stack.pop();
-                if (!token2 || token2.type !== ParserToken.Graph)
-                    return 'unexcepted error'
+                if (!token2 || token2.type !== ParserToken.Graph) {
+                    return "unexcepted error";
+                }
                 const method = methods.get(ttoken.data)!;
                 if (parameters.length !== method.arity && method.arity !== -1) {
-                    return 'invalid number of arguments: ' + ttoken.data;
+                    return "invalid number of arguments: " + ttoken.data;
                 } else if (!parameters.every(p => p.type === method.type)) {
-                    return 'invalid argument types: ' + ttoken.data;
+                    return "invalid argument types: " + ttoken.data;
                 } else {
-                    const rgraph = (token2.data as any)[ttoken.data](...parameters.map(x => x.data)) as MutableGraph;
+                    const fn = method.fn;
+                    const rgraph = (fn as any)(token2.data, ...parameters.map(x => x.data)) as MutableGraph;
                     stack.push({ type: ParserToken.Graph, data: rgraph });
                 }
             }
-        }
-        else if (token === LexerToken.Error) {
+        } else if (currentToken === LexerToken.Error) {
             return "lexer error";
         }
-        lastToken = token;
+        lastToken = currentToken;
     }
     const token = stack.pop();
-    if (!token || token.type !== ParserToken.Graph)
-        return 'invalid type';
-    else
-        return token.data.freeze();
+    return !token || token.type !== ParserToken.Graph ? "invalid type" : token.data.freeze();
 }
 
 export default parse;

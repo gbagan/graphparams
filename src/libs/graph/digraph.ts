@@ -1,4 +1,5 @@
-﻿import { uniq } from "./util";
+﻿/*
+import { uniq } from "./util";
 import {range} from "../iter"
 
 export default class Digraph {
@@ -102,10 +103,6 @@ export default class Digraph {
         return !visited.includes(false);
     }
 
-
-
-
-
     static generateGraph(name: string) {
         let res;
 
@@ -123,3 +120,4 @@ export default class Digraph {
     }
 
 }
+*/

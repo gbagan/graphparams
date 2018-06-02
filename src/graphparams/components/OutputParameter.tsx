@@ -1,35 +1,39 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { GraphParameter, Result, Witness } from '../types.d';
+import { GraphParameter, Result, Witness } from "../types.d";
 
-interface Props {
+type Props = {
     parameter: GraphParameter,
-    onShowWitness: (w: Witness|null) => void,
-}
+    onShowWitness: (w: Witness | null) => void,
+};
 
-const OutputParameter: React.SFC<Props> = (props) => {
-    const { parameter } = props;
-    const { result } = parameter;
-    if (!result) return <span></span>  /////////////
-    return (
-        <span>{parameter.fullname} : {outputResult(props, parameter.name, result)}</span>
-    )
-}
+export default class OutputParameter extends React.Component<Props> {
+    public render() {
+        const { parameter } = this.props;
+        const { result } = parameter;
+        return !result ? <span /> : <span>{parameter.fullname} : {this.outputResult(result)}</span>;
+    }
 
-function outputResult(props: Props, name: string, result: Result | "computing") {
-    if (result === "computing")
-        return <span className="warning">Computing</span>
-    else if (result.witness === null)
-        return result.result.toString();
-    else {
-        const witness = {name, witness: result.witness};
-        return [result.result.toString(),
-                " (", <a href="#" onMouseOver={() => props.onShowWitness(witness)} onMouseOut={() => props.onShowWitness(null)}>
-                    {result.witness.toString()}</a>,
-                ")"]
+    private handleMouseOver = () => {
+        const result = this.props.parameter.result;
+        if (result && result !== "computing" && result.witness) {
+            const witness = { name: this.props.parameter.name, witness: result.witness };
+            this.props.onShowWitness(witness);
+        }
+    }
+    private handleMouseOut = () => this.props.onShowWitness(null);
+
+    private outputResult(result: Result | "computing") {
+        if (result === "computing") {
+            return <span className="warning">Computing</span>;
+        } else if (result.witness === null) {
+            return result.result.toString();
+        } else {
+            const aEl = (
+                <a href="#" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
+                    {result.witness.toString()}
+                </a>);
+            return [result.result.toString(), " (", aEl, ")"];
+        }
     }
 }
-
-
-
-export default OutputParameter;

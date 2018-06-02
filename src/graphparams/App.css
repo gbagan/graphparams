@@ -16,6 +16,7 @@
 .graphparams .output .ant-card-body {
     height: 500px;
     width: 400px;
+    overflow: auto;
 }
 
 .graphparams .output .error {
@@ -30,6 +31,3 @@
     height: 700px;
     width: 400px;
 }
-
-
-

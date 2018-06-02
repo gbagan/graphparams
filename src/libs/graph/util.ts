@@ -8,12 +8,11 @@ export function Map_dec<T>(m: Map<string, number>, key: T) {
 }
 
 export function* sublists(n: number, k: number): Iterable<number[]> {
-    if (k == 0) {
+    if (k === 0) {
         yield [];
     } else if (k <= n) {
-        for (let l of sublists(n - 1, k))
-            yield l;
-        for (let l of sublists(n - 1, k - 1)) {
+        yield * sublists(n - 1, k);
+        for (const l of sublists(n - 1, k - 1)) {
             yield l.concat(n - 1);
         }
     }
@@ -21,8 +20,8 @@ export function* sublists(n: number, k: number): Iterable<number[]> {
 
 export function uniq<T>(l: T[]) {
     l.sort();
-    let pred: T|null = null;
-    const l2: T[] = []
+    let pred: T | null = null;
+    const l2: T[] = [];
     for (const x of l) {
         if (x !== pred) {
             l2.push(x);
@@ -33,7 +32,7 @@ export function uniq<T>(l: T[]) {
 }
 
 export function allDifferent<T>(l: ReadonlyArray<T>) {
-    let pred: T|null = null;
+    let pred: T | null = null;
     for (const x of l) {
         if (x === pred) {
             return false;
@@ -43,13 +42,12 @@ export function allDifferent<T>(l: ReadonlyArray<T>) {
     return true;
 }
 
-
 export function arrayIntersection<T>(l1: ReadonlyArray<T>, l2: ReadonlyArray<T>) {
     const l: T[] = [];
     let i = 0;
     let j = 0;
     while (i < l1.length && j < l2.length) {
-        if (l1[i] == l2[j]) {
+        if (l1[i] === l2[j]) {
             l.push(l1[i]);
             i++;
             j++;
@@ -63,22 +61,24 @@ export function arrayIntersection<T>(l1: ReadonlyArray<T>, l2: ReadonlyArray<T>)
 }
 
 export function equalArrays<T>(t1: T[], t2: T[]) {
-    if (t1.length !== t2.length)
+    if (t1.length !== t2.length) {
         return false;
+    }
     for (let i = 0; i < t1.length; i++) {
-        if (t1[i] !== t2[i])
+        if (t1[i] !== t2[i]) {
             return false;
+        }
     }
     return true;
 }
 
-// return subsets of [0, n-1] of size k 
+// return subsets of [0, n-1] of size k
 export function* subsets(n: number, k: number): Iterable<number[]> {
-    if (k == 0)
+    if (k === 0) {
         yield [];
-    else if (n == k)
+    } else if (n === k) {
         yield Array.from(iter.range(n));
-    else {
+    } else {
         yield* subsets(n - 1, k);
         for (const set of subsets(n - 1, k - 1)) {
             yield set.concat(n - 1);
@@ -95,12 +95,13 @@ export function binaryEncode(set: ReadonlyArray<number>) {
 }
 
 export function binaryDecode(x: number) {
-    let s: number[] = [];
+    const s: number[] = [];
     let y = x;
     let i = 0;
     while (y > 0) {
-        if ((y & 1) === 1)
+        if ((y & 1) === 1) {
             s.push(i);
+        }
         i++;
         y >>= 1;
     }
@@ -109,11 +110,11 @@ export function binaryDecode(x: number) {
 
 // return subsets of [0, n-1] of size k  encoded in binary
 export function* bsubsets(n: number, k: number): Iterable<number> {
-    if (k == 0)
+    if (k === 0) {
         yield 0;
-    else if (n == k)
+    } else if (n === k) {
         yield (1 << n) - 1;
-    else {
+    } else {
         yield* bsubsets(n - 1, k);
         for (const set of bsubsets(n - 1, k - 1)) {
             yield set | (1 << (n - 1));

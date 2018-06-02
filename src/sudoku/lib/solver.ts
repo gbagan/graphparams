@@ -1,14 +1,14 @@
-﻿import dlx from './dlx';
-
-import {PosAndVal, Solution} from '../types';
+﻿
+import {PosAndVal, Solution} from "../types";
+import dlx from "./dlx";
 
 class Solver {
-    readonly dim: number;  // dimension of a square
-    readonly size: number; // dimension of the grid
-    readonly size2: number; // size * size
-    readonly size3: number; // size * size * size
-    readonly matrix: [number, number][];
-    readonly fixedCells: ReadonlyArray<PosAndVal>;
+    private readonly dim: number;  // dimension of a square
+    private readonly size: number; // dimension of the grid
+    private readonly size2: number; // size * size
+    private readonly size3: number; // size * size * size
+    private readonly matrix: Array<[number, number]>;
+    private readonly fixedCells: ReadonlyArray<PosAndVal>;
 
     constructor(n: number, fixedCells: ReadonlyArray<PosAndVal>) {
         this.dim = n;
@@ -20,24 +20,35 @@ class Solver {
         this.fixedCells = fixedCells;
     }
 
-
-    cellToNumber(cell: PosAndVal) {
-        return cell.row * this.size2 + cell.col * this.size + cell.value - 1;
-    }
-
-    numberToCell(n: number): PosAndVal {
-        return {
-            row: Math.floor(n / this.size2),
-            col: Math.floor(n / this.size) % this.size,
-            value: n % this.size + 1
+    public *solve(limit?: number): Iterable<Solution> {
+        const fixedCells2 = this.fixedCells.map((x) => this.cellToNumber(x));
+        let i = 0;
+        for (const sol of dlx(this.size3, 4 * this.size2, this.matrix, fixedCells2)) {
+            yield sol.map((x) => this.numberToCell(x));
+            i++;
+            if (limit !== undefined && i === limit) {
+                return;
+            }
         }
     }
 
-    square(i: number, j: number) {
+    private cellToNumber(cell: PosAndVal) {
+        return cell.row * this.size2 + cell.col * this.size + cell.value - 1;
+    }
+
+    private numberToCell(n: number): PosAndVal {
+        return {
+            col: Math.floor(n / this.size) % this.size,
+            row: Math.floor(n / this.size2),
+            value: n % this.size + 1,
+        };
+    }
+
+    private square(i: number, j: number) {
         return i - i % this.dim + Math.floor(j / this.dim);
     }
 
-    generateMatrix() {
+    private generateMatrix() {
         const size = this.size;
         const size2 = this.size2;
         let v = 0;
@@ -53,23 +64,11 @@ class Solver {
             }
         }
     }
-
-
-    *solve(limit?: number): Iterable<Solution> {
-        const fixedCells2 = this.fixedCells.map((x) => this.cellToNumber(x));
-        let i = 0;
-        for (const sol of dlx(this.size3, 4 * this.size2, this.matrix, fixedCells2)) {
-            yield sol.map((x) => this.numberToCell(x));
-            i++;
-            if (limit !== undefined && i === limit)
-                return;
-        }
-    }
 }
 
 const solve = (n: number, fixedCells: ReadonlyArray<PosAndVal>, limit?: number) => {
     const solver = new Solver(n, fixedCells);
     return solver.solve(limit);
-}
+};
 
 export default solve;

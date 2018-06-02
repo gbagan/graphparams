@@ -1,104 +1,111 @@
-﻿import {GenericGraph} from "./graph";
-import { range } from "../iter";
+﻿import { range } from "../iter";
+import Graph from "./graph";
 
-interface LBFSPartition {
+type LBFSPartition = {
     set: Set<number>;
-    new: boolean;
-    next: LBFSPartition|null;
-    previous: LBFSPartition|null;
-}
+    new_: boolean;
+    next: LBFSPartition | null;
+    previous: LBFSPartition | null;
+};
 
 class LexBFS {
-    graph: GenericGraph;
-    partitions: (LBFSPartition|null)[];
-    firstPartition: LBFSPartition;
+    private graph: Graph;
+    private partitions: Array<LBFSPartition | null>;
+    private firstPartition: LBFSPartition;
 
-    constructor(graph: GenericGraph) {
+    constructor(graph: Graph) {
         this.graph = graph;
         const partition: LBFSPartition = {
-            set: new Set(range(graph.V)),
-            new: false,
+            new_: false,
             next: null,
-            previous: null
-        }
+            previous: null,
+            set: new Set(range(graph.V)),
+        };
         this.firstPartition = partition;
         this.partitions = new Array(graph.V);
         this.partitions.fill(partition);
     }
 
-    firstElement() {
+    public *execute(n: number) {
+        let v = n;
+        while (true) {
+            yield v;
+            this.refine(v);
+            if (this.firstPartition === null) {
+                return;
+            }
+            v = this.firstElement();
+        }
+    }
+
+    private firstElement() {
         return this.firstPartition.set.values().next().value;
     }
 
-    addToPartitionBefore(partition: LBFSPartition, v: number) {
-        if (partition.previous === null)
+    private addToPartitionBefore(partition: LBFSPartition, v: number) {
+        if (partition.previous === null) {
             partition.previous = {
-                set: new Set(),
-                new: true,
+                new_: true,
+                next: partition,
                 previous: null,
-                next: partition
-            }
-        else if (!partition.previous.new) {
-            partition.previous = {
                 set: new Set(),
-                new: true,
+            };
+        } else if (!partition.previous.new_) {
+            partition.previous = {
+                new_: true,
+                next: partition,
                 previous: partition.previous,
-                next: partition
-            }
-            if (partition.previous.previous)
+                set: new Set(),
+            };
+            if (partition.previous.previous) {
                 partition.previous.previous.next = partition.previous;
+            }
         }
-        if (partition === this.firstPartition)
+        if (partition === this.firstPartition) {
             this.firstPartition = partition.previous;
+        }
         partition.previous.set.add(v);
         this.partitions[v] = partition.previous;
     }
 
-    removePartition(part: LBFSPartition) {
-        if (part.previous !== null)
+    private removePartition(part: LBFSPartition) {
+        if (part.previous) {
             part.previous.next = part.next;
-        if (part.next !== null)
+        }
+        if (part.next) {
             part.next.previous = part.previous;
-        if (part === this.firstPartition)
-            this.firstPartition = part.next as LBFSPartition;
+        }
+        if (part === this.firstPartition) {
+            this.firstPartition = part.next!;
+        }
     }
 
-    refine(v: number) {
-        const partition = this.partitions[v] as LBFSPartition;
+    private refine(v: number) {
+        const partition = this.partitions[v]!;
         partition.set.delete(v);
         if (partition.set.size === 0) {
             this.removePartition(partition);
         }
         this.partitions[v] = null;
-        
+
         for (const u of this.graph.adj(v)) {
-            const partition = this.partitions[u];
-            if (partition === null)
+            const partition2 = this.partitions[u];
+            if (!partition2) {
                 continue;
-            partition.set.delete(u);
-            this.addToPartitionBefore(this.partitions[u] as LBFSPartition, u);
+            }
+            partition2.set.delete(u);
+            this.addToPartitionBefore(this.partitions[u]!, u);
         }
-        let part2: LBFSPartition|null = this.firstPartition;
-        while (part2 !== null) {
-            part2.new = false;
+        let part2: LBFSPartition | null = this.firstPartition;
+        while (part2) {
+            part2.new_ = false;
             if (part2.set.size === 0) {
                 this.removePartition(part2);
             }
             part2 = part2.next;
         }
     }
-
-    *execute(n: number) {
-        let v = n;
-        while (true) {
-            yield v;
-            this.refine(v);
-            if (this.firstPartition === null)
-                return;
-            v = this.firstElement();
-        }
-    }
 }
 
- const lexbfs = (graph: GenericGraph, v: number) => new LexBFS(graph).execute(v);
- export default lexbfs;
+const lexbfs = (graph: Graph, v: number) => new LexBFS(graph).execute(v);
+export default lexbfs;

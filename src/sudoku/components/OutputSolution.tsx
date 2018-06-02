@@ -1,18 +1,24 @@
-import * as React from 'react';
+import * as React from "react";
 
-import {Solution } from '../types.d';
+import { Solution } from "../types";
 
-interface Props {
+type Props = {
     index: number,
     solution: Solution,
     onSelect: (solution: Solution | null) => void;
-}
+};
 
-const OutputSolution: React.SFC<Props> = (props) => {
-    const { index, solution, onSelect } = props;
-    return (
-        <a href="#" onMouseOver={() => onSelect(solution)} onMouseOut={() => onSelect(null)}>solution {index + 1}</a>
-    );
+class OutputSolution extends React.Component<Props> {
+    public handleMouseOver = () => this.props.onSelect(this.props.solution);
+    public handleMouseOut = () => this.props.onSelect(null);
+
+    public render() {
+        return (
+            <a href="#" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
+                solution {this.props.index + 1}
+            </a>
+        );
+    }
 }
 
 export default OutputSolution;
