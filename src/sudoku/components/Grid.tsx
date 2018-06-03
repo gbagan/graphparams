@@ -80,8 +80,8 @@ class Grid extends React.Component<Props, State> {
 const styledGrid = styled(Grid).attrs<Props>({
     divsize: (props: Props) => Math.min(800, 40 * props.squaresize * props.squaresize + 10),
 })`
-    width: ${(props: any) => props.divsize}px;
-    height: ${(props: any) => props.divsize}px;
+    width: ${(p: any) => p.divsize}px;
+    height: ${(p: any) => p.divsize}px;
     margin: 6px auto;
     overflow: hidden;
     user-select: none;

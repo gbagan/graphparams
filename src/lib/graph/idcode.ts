@@ -1,37 +1,6 @@
+import { allDifferent, binaryDecode, binaryEncode, bsubsets } from "../util";
 import Graph from "./graph";
 import { Result } from "./types";
-import { allDifferent, binaryDecode, binaryEncode, bsubsets } from "./util";
-
-/*
-function isIdentifyingCode(g: Graph, set: number[]) {
-    const nborInSet: number[][] = [];
-    for (let i = 0; i < g.V; i++) {
-        const s = arrayIntersection(this.adj(i), set);
-        if (s.length == 0 && !set.includes(i))
-            return false;
-        nborInSet.push(s);
-    }
-    for (let i = 0; i < this.V - 1; i++) {
-        for (let j = i + 1; j < this.V; j++) {
-            if (equalArrays(nborInSet[i], nborInSet[j])) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-identifyingCode(): Result {   // graph must be clean
-    let i = 1;
-    while (true) {
-        for (const set of subsets(this.V, i)) {
-            if (this.isIdentifyingCode(set))
-                return { result: set.length, witness: set };
-        }
-        i++;
-    }
-}
-*/
 
 function isIdentifyingCodeOpt(g: Graph, binNbors: number[], bset: number) {
     const nborInSet: number[] = [];

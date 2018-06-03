@@ -5,6 +5,8 @@
     ],
     "rules": {
         "arrow-parens": false,
+        "jsx-boolean-value": false,
+        "jsx-alignment": false,
         "interface-over-type-literal": false,
         "no-bitwise": false,
         "no-submodule-imports": false

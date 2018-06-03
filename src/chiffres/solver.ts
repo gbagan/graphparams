@@ -1,4 +1,4 @@
-import { range } from "../libs/iter";
+import { range } from "../lib/iter";
 
 export type Calc = {
     readonly val: number,

@@ -7,7 +7,7 @@ import Radio, { RadioChangeEvent } from "antd/lib/radio";
 import Row from "antd/lib/row";
 import Select, { SelectValue } from "antd/lib/select";
 
-import * as iter from "../../libs/iter";
+import * as iter from "../../lib/iter";
 import * as actions from "../redux/actions";
 
 const mapStateToProps = () => ({});

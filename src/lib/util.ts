@@ -1,4 +1,4 @@
-﻿import * as iter from "../iter";
+﻿import * as iter from "./iter";
 
 export function Map_dec<T>(m: Map<string, number>, key: T) {
     let v = m.get(key.toString()) as number;
@@ -18,8 +18,7 @@ export function* sublists(n: number, k: number): Iterable<number[]> {
     }
 }
 
-export function uniq<T>(l: T[]) {
-    l.sort();
+export function uniq<T>(l: ReadonlyArray<T>) {
     let pred: T | null = null;
     const l2: T[] = [];
     for (const x of l) {
@@ -60,18 +59,6 @@ export function arrayIntersection<T>(l1: ReadonlyArray<T>, l2: ReadonlyArray<T>)
     return l;
 }
 
-export function equalArrays<T>(t1: T[], t2: T[]) {
-    if (t1.length !== t2.length) {
-        return false;
-    }
-    for (let i = 0; i < t1.length; i++) {
-        if (t1[i] !== t2[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
 // return subsets of [0, n-1] of size k
 export function* subsets(n: number, k: number): Iterable<number[]> {
     if (k === 0) {
@@ -109,6 +96,7 @@ export function binaryDecode(x: number) {
 }
 
 // return subsets of [0, n-1] of size k  encoded in binary
+
 export function* bsubsets(n: number, k: number): Iterable<number> {
     if (k === 0) {
         yield 0;

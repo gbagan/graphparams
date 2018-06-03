@@ -1,5 +1,5 @@
 import Graph from "../graph/graph";
-import {allDifferent} from "../graph/util";
+import {allDifferent} from "../util";
 import OneRules from "./onerules";
 
 export default class AllRules extends OneRules {

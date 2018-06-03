@@ -3,12 +3,12 @@ import { connect } from "react-redux";
 import { createSelector } from "reselect";
 import * as vis from "vis";
 
-import * as iter from "../../libs/iter";
+import * as iter from "../../lib/iter";
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
 import { Shift } from "../types";
 
-import VisWithTraffic, { EdgeTraffic } from "../../libs/components/VisWithTraffic";
+import VisWithTraffic, { EdgeTraffic } from "../../lib/components/VisWithTraffic";
 
 // import POLICEMAN  "../img/policeman.png";
 // import HOUSE from "../img/house.png"

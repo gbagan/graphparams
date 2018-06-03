@@ -16,18 +16,6 @@ export function * map<T1, T2>(it: Iterable<T1>, f: (x: T1) => T2): Iterable<T2> 
     }
 }
 
-export function* permutations<T>(list: ReadonlyArray<T>): Iterable<ReadonlyArray<T>> {
-    if (list.length <= 1) {
-        yield list;
-    } else {
-        for (let i = 0; i < list.length; i++) {
-            for (const perm of permutations(list.slice(0, i).concat(list.slice(i + 1, list.length)))) {
-                  yield [list[i]].concat(perm);
-            }
-        }
-    }
-}
-
 export function * zip<T1, T2>(i1: Iterable<T1>, i2: Iterable<T2>): Iterable<Readonly<[T1, T2]>> {
     const it1 = i1[Symbol.iterator]();
     const it2 = i2[Symbol.iterator]();
@@ -60,7 +48,7 @@ export function count<T>(it: Iterable<T>, f: (x: T) => boolean): number {
     return i;
 }
 
-export function iterfind<T>(it: Iterable<T>, f: (x: T) => boolean): T | null {
+export function find<T>(it: Iterable<T>, f: (x: T) => boolean): T | null {
     for (const v of it) {
         if (f(v)) {
             return v;
@@ -76,6 +64,15 @@ export function some<T>(it: Iterable<T>, f: (x: T) => boolean) {
         }
     }
     return false;
+}
+
+export function every<T>(it: Iterable<T>, f: (x: T) => boolean) {
+    for (const x of it) {
+        if (!f(x)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 export function min<T>(it: Iterable<T>, f: (x: T) => number) {
@@ -119,6 +116,18 @@ export function isEqual<T>(i1: Iterable<T>, i2: Iterable<T>): boolean {
             return true;
         } else if (res1.done || res2.done || res1.value !== res2.value) {
             return false;
+        }
+    }
+}
+
+export function* permutations<T>(list: ReadonlyArray<T>): Iterable<ReadonlyArray<T>> {
+    if (list.length <= 1) {
+        yield list;
+    } else {
+        for (let i = 0; i < list.length; i++) {
+            for (const perm of permutations(list.slice(0, i).concat(list.slice(i + 1, list.length)))) {
+                  yield [list[i]].concat(perm);
+            }
         }
     }
 }

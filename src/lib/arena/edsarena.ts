@@ -1,7 +1,7 @@
 import Graph from "../graph/graph";
 import {Result} from "../graph/types";
-import {sublists} from "../graph/util";
 import {filter, permutations, zip} from "../iter";
+import {sublists} from "../util";
 import Arena from "./arena";
 import makeRules from "./rules";
 import {Answer, Conf, Shift} from "./types";

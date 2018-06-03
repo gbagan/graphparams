@@ -1,6 +1,5 @@
 import * as React from "react";
 import styled from "styled-components";
-import { ifProp } from "styled-tools";
 
 type Props = {
     readonly value: number,
@@ -35,6 +34,6 @@ export default styled(ConsoleNum)`
     box-shadow: 0px 0px 0px 1px lightsteelblue;
     &:hover {
         color: white;
-        background: ${ifProp({value: 0}, "firebrick", "gold")};
+        background: ${p => p.value === 0 ? "firebrick" : "gold"};
     }
 `;

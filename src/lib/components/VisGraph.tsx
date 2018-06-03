@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as vis from "vis";
 
-import { isEqual } from "../../libs/iter";
+import { isEqual } from "../../lib/iter";
 
 type Props = {
     readonly nodes: ReadonlyArray<vis.Node> | null;

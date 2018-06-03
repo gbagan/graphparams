@@ -5,8 +5,6 @@ import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
 import { TransitionGroup } from "react-transition-group";
 import styled from "styled-components";
 
-// import 'antd/dist/antd.css';
-
 import ChiffresApp from "./chiffres/App";
 import { App as EdsApp } from "./eds";
 import { App as GraphParamsApp } from "./graphparams";
@@ -51,29 +49,21 @@ const MySwitch = (props: any) => (
     </Switch>
 );
 
-const Perspective = styled.div`
+const Container = styled.div`
     width: 100vw;
     height: 100vh;
-    perspective: 1200px;
 `;
 
-/*            childFactory={(child: any) => React.cloneElement(child, {
-                classNames: ,
-                timeout:
-            })}
-            */
-
 /* tslint:disable */
-
 export const AAA = (props: any) => (
-    <Perspective>
+    <Container>
         <AppMenu menu={mainmenu} />
         <TransitionGroup>
             <Slide key={props.location.pathname}>
                 <MySwitch location={props.location} />
             </Slide>
         </TransitionGroup>
-    </Perspective>
+    </Container>
 );
 
 const Test2 = withRouter(AAA);

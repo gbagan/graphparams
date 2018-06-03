@@ -1,8 +1,8 @@
 import * as iter from "../iter";
+import {binaryDecode, binaryEncode} from "../util";
 import Graph from "./graph";
 import {complement} from "./operators";
 import {Result} from "./types";
-import {binaryDecode, binaryEncode} from "./util";
 
 export const nbVertices = (g: Graph) => g.V;
 export const nbEdges = (g: Graph) => iter.sum(g.adjs(), nbor => nbor.length) / 2;
@@ -10,7 +10,7 @@ export const minDegree = (g: Graph) => iter.min(g.adjs(), nbor => nbor.length).v
 export const maxDegree = (g: Graph) => iter.max(g.adjs(), nbor => nbor.length).value;
 export const isRegular = (g: Graph)  => minDegree(g) === maxDegree(g);
 
-export function isConnected(g: Graph) {
+export function isConnected(g: Graph): boolean {
     const visited = new Array<boolean>(g.V);
     const stack = new Array<number>();
     let nbVisited = 1;
@@ -29,12 +29,15 @@ export function isConnected(g: Graph) {
     return nbVisited === g.V;
 }
 
-export const isHamiltonian = (g: Graph) => hamiltonAux(g, [0]);
+export const isHamiltonian = (g: Graph) => g.V === 1 && { result: true, witness: [0] }
+                                        || g.V === 2  && { result: false, witness: null }
+                                        || hamiltonAux(g, [0]);
 
 function hamiltonAux(g: Graph, path: number[]): Result {
     const last = path[path.length - 1];
     if (path.length === g.V) {
-        return g.hasEdge(path[0], last) ? { result: true, witness: path } : { result: false, witness: null };
+        return g.V === 1 || g.hasEdge(path[0], last) ?
+                    { result: true, witness: path } : { result: false, witness: null };
     } else {
         for (const v of g.adj(last)) {
             if (path.includes(v)) {

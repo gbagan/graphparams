@@ -1,17 +1,17 @@
 import register from "promise-worker/register";
 
-import Graph, {fromPlainObject} from "../../libs/graph/graph";
-import parse from "../../libs/graph/graphparser";
+import Graph, {fromPlainObject} from "../../lib/graph/graph";
+import parse from "../../lib/graph/parser";
 import { Result, WorkerAction } from "../types";
 
-import * as basic from "../../libs/graph/basic";
-import isChordal from "../../libs/graph/chordal";
-import * as coloring from "../../libs/graph/coloring";
-import * as domination from "../../libs/graph/domination";
-import * as eds from "../../libs/graph/eds";
-import * as idcode from "../../libs/graph/idcode";
-import maximumMatching from "../../libs/graph/matching";
-import treewidth from "../../libs/graph/treewidth";
+import * as basic from "../../lib/graph/basic";
+import isChordal from "../../lib/graph/chordal";
+import * as coloring from "../../lib/graph/coloring";
+import * as domination from "../../lib/graph/domination";
+import * as eds from "../../lib/graph/eds";
+import * as idcode from "../../lib/graph/idcode";
+import maximumMatching from "../../lib/graph/matching";
+import treewidth from "../../lib/graph/treewidth";
 
 const functions = new Map<string, (g: Graph) => boolean | number | Result>([
     ["order", basic.nbVertices],
@@ -38,7 +38,7 @@ const functions = new Map<string, (g: Graph) => boolean | number | Result>([
 
     ["dom",  domination.dominatingSet],
     ["totaldom", domination.totalDominatingSet],
-    ["inddom", domination.independentDominatingSetOpt],
+    ["inddom", domination.independentDominatingSet],
     ["cdom", domination.connectedDominatingSet],
     ["idcode", idcode.identifyingCodeOpt],
     ["locdom", idcode.locatingDominatingSet],

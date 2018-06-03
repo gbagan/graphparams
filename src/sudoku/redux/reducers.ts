@@ -1,5 +1,5 @@
 import { ActionType, getType } from "typesafe-actions";
-import * as iter from "../../libs/iter";
+import * as iter from "../../lib/iter";
 import * as actions from "./actions";
 
 import solve from "../lib/solver";

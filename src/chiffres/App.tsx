@@ -1,22 +1,22 @@
 import * as React from "react";
-import {generate as shortid} from "shortid";
+import { generate as shortid } from "shortid";
+import styled from "styled-components";
 
 import Card from "antd/lib/card";
 import Col from "antd/lib/col";
 import Layout from "antd/lib/layout";
 import Row from "antd/lib/row";
 
-import "./App.css";
 import Form from "./Form";
 import { Calc, solve } from "./solver";
 
 const calcList: (c: Calc) => Calc[] = calc => calc.left ? calcList(calc.left).concat(calcList(calc.right!), calc) : [];
 
 const calcToHTML = (c: Calc) =>
-        calcList(c).map(calc => [
-            <span key={shortid()}>{`${calc.left!.val} ${calc.operator} ${calc.right!.val} = ${calc.val}`}</span>,
-            <br key={shortid()} />,
-        ]);
+    calcList(c).map(calc => [
+        <span key={shortid()}>{`${calc.left!.val} ${calc.operator} ${calc.right!.val} = ${calc.val}`}</span>,
+        <br key={shortid()} />,
+    ]);
 
 type State = {
     readonly output: Calc | null;
@@ -33,7 +33,7 @@ export default class ChiffresApp extends React.Component<Props, State> {
         };
     }
 
-    public handleSubmit = (values: ReadonlyArray<number>, target: number)  => {
+    public handleSubmit = (values: ReadonlyArray<number>, target: number) => {
         const output = solve(values, target);
         this.setState({ output });
     }
@@ -42,15 +42,22 @@ export default class ChiffresApp extends React.Component<Props, State> {
         const result = !this.state.output ? "" : calcToHTML(this.state.output);
 
         return (
-            <Layout>
-                <h1>Le compte est bon</h1>
-                <Row type="flex">
-                    <Col>
-                        <Form onSubmit={this.handleSubmit} />
-                        <Card title="Output">{result}</Card>
-                    </Col>
-                </Row>
+            <Layout style={{ height: "100vh" }}>
+                <div>
+                    <h1>Le compte est bon</h1>
+                    <Row type="flex">
+                        <Col>
+                            <Form onSubmit={this.handleSubmit} />
+                            <Output>{result}</Output>
+                        </Col>
+                    </Row>
+                </div>
             </Layout>
         );
     }
 }
+
+const Output = styled(Card)`
+    width: 400px;
+    height: 400px;
+`;

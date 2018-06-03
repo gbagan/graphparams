@@ -1,7 +1,7 @@
-export {Result} from "../libs/graph/types";
-import {Result} from "../libs/graph/types";
-import {PlainGraph} from '../libs/graph/types';
-export {PlainGraph} from '../libs/graph/types';
+export {Result} from "../lib/graph/types";
+import {Result} from "../lib/graph/types";
+import {PlainGraph} from '../lib/graph/types';
+export {PlainGraph} from '../lib/graph/types';
 
 export type GraphParameter = {
     readonly cat: number;

@@ -1,4 +1,4 @@
-﻿import { Map_dec } from "../graph/util";
+﻿import { Map_dec } from "../util";
 
 export default abstract class Arena<T> {
     public adj: Map<string, T[]>;

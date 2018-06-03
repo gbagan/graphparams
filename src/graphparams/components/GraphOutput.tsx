@@ -6,11 +6,10 @@ import * as vis from "vis";
 
 import Card from "antd/lib/card";
 
-import {PlainGraph} from "../../libs/graph/types";
-import { range } from "../../libs/iter";
+import VisGraph from "../../lib/components/VisGraph";
+import {range} from "../../lib/iter";
 import selector from "../redux/selector";
-
-import VisGraph from "../../libs/components/VisGraph";
+import {PlainGraph} from "../types";
 
 const colors = ["red", "blue", "green", "cyan", "magenta", "orange", "gray", "black", "yellow"];
 

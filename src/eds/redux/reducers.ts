@@ -2,10 +2,10 @@ import { ActionType, getType } from "typesafe-actions";
 
 import * as actions from "./actions";
 
-import {makeArena} from "../../libs/arena/edsarena";
-import { memoize } from "../../libs/decorators";
-import Graph from "../../libs/graph/graph";
-import parse from "../../libs/graph/graphparser";
+import {makeArena} from "../../lib/arena/edsarena";
+import { memoize } from "../../lib/decorators";
+import Graph from "../../lib/graph/graph";
+import parse from "../../lib/graph/parser";
 import { Shift } from "../types";
 
 const HELP_TEXT =

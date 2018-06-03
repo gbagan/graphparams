@@ -1,36 +1,7 @@
 import {range} from "../iter";
+import { binaryDecode, binaryEncode } from "../util";
 import Graph from "./graph";
 import { Result } from "./types";
-import { binaryDecode, binaryEncode } from "./util";
-
-export function independentDominatingSetOpt(g: Graph) {
-    const nbors: number[] = [];
-    for (const adj of g.adjs()) {
-        nbors.push(binaryEncode(adj));
-    }
-
-    let isets: Array<[number, number]> = [[0, 0]];
-    let i = 0;
-    while (true) {
-        const isets2: Array<[number, number]> = [];
-
-        for (const [iset, dom] of isets) {
-            const begin = (i === 0) ? 0 : (32 - Math.clz32(iset));
-            for (let ii = begin; ii < g.V; ii++) {
-                if ((iset & nbors[ii]) === 0) {
-                    const iset2 = iset | (1 << ii);
-                    const dom2 = dom | (1 << ii) | nbors[ii];
-                    if (dom2 + 1 === (1 << g.V)) {
-                        return { result: i, witness: binaryDecode(iset2) };
-                    }
-                    isets2.push([iset2, dom2]);
-                }
-            }
-        }
-        isets = isets2;
-        i++;
-    }
-}
 
 export const dominatingSet = (g: Graph) => dominationAux(g, [], [...range(g.V)]);
 
@@ -53,6 +24,35 @@ function dominationAux(g: Graph, preset: number[], undom: number[]): Result {
         }
     }
     return bestRes;
+}
+
+export function independentDominatingSet(g: Graph): Result {
+    const nbors: number[] = [];
+    for (const adj of g.adjs()) {
+        nbors.push(binaryEncode(adj));
+    }
+
+    let isets: Array<[number, number]> = [[0, 0]];
+    let i = 0;
+    while (true) {
+        const isets2: Array<[number, number]> = [];
+
+        for (const [iset, dom] of isets) {
+            const begin = (i === 0) ? 0 : (32 - Math.clz32(iset));
+            for (let ii = begin; ii < g.V; ii++) {
+                if ((iset & nbors[ii]) === 0) {
+                    const iset2 = iset | (1 << ii);
+                    const dom2 = dom | (1 << ii) | nbors[ii];
+                    if (dom2 + 1 === (1 << g.V)) {
+                        return { result: i + 1, witness: binaryDecode(iset2) };
+                    }
+                    isets2.push([iset2, dom2]);
+                }
+            }
+        }
+        isets = isets2;
+        i++;
+    }
 }
 
 export const totalDominatingSet = (g: Graph) => totalDominationAux(g, [], [...range(g.V)]);

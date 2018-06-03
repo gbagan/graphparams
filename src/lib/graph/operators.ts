@@ -25,16 +25,16 @@ export function complement(g: Graph) {
 export function product(g1: Graph, g2: Graph) {
     const g = new MutableGraph(g1.V * g2.V);
     for (let i = 0; i < g1.V; i++) {
-        for (let j = 0; j < g.V; j++) {
+        for (let j = 0; j < g2.V; j++) {
             for (const ii of g1.adj(i)) {
-                g.addEdge(i * g.V + j, ii * g.V + j);
+                g.addEdge(i * g2.V + j, ii * g2.V + j);
             }
             for (const jj of g2.adj(j)) {
-                g.addEdge(i * g.V + j, i * g.V + jj);
+                g.addEdge(i * g2.V + j, i * g2.V + jj);
             }
         }
     }
-    return g2;
+    return g;
 }
 
 export function inducedGraph(g: Graph, set: ReadonlyArray<number>) {

@@ -1,5 +1,13 @@
 import {range} from "../iter";
 import MutableGraph from "./mutablegraph";
+import {join, product} from "./operators";
+
+export const graph = (n: number) => new MutableGraph(n);
+export const path = (n: number) => new MutableGraph(n).addPath(...range(n));
+export const cycle = (n: number) => new MutableGraph(n).addCycle(...range(n));
+export const clique = (n: number) => new MutableGraph(n).addClique(...range(n));
+export const biclique = (n: number, m: number) => join(graph(n), graph(m));
+export const grid = (n: number, m: number) => product(path(n), path(m));
 
 export function petersen() {
     const g = new MutableGraph(10);

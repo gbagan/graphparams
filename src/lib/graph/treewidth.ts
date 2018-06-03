@@ -1,11 +1,11 @@
-﻿import * as iter from "../iter";
-import {cliqueNumber} from "./basic";
+﻿import {range} from "../iter";
+import { binaryDecode, binaryEncode } from "../util";
+// import { cliqueNumber } from "./basic";
 import Graph from "./graph";
-import { binaryDecode, binaryEncode } from "./util";
 
 function Q(g: Graph, set: number[], v: number) {
-    const visited = new Array(g.V);
-    const inset = new Array(g.V);
+    const visited: boolean[] = new Array(g.V);
+    const inset: boolean[] = new Array(g.V);
     visited.fill(false);
     inset.fill(false);
     for (const x of set) {
@@ -21,10 +21,10 @@ function Q(g: Graph, set: number[], v: number) {
         for (const w of g.adj(u)) {
             if (!visited[w]) {
                 visited[w] = true;
-                if (!inset[w]) {
-                    nbVisited++;
-                } else {
+                if (inset[w]) {
                     queue.push(w);
+                } else { // if (u !== v) {
+                    nbVisited++;
                 }
             }
         }
@@ -33,16 +33,13 @@ function Q(g: Graph, set: number[], v: number) {
 }
 
 function treewidth(g: Graph): number {
-    const clique = cliqueNumber(g).witness!;
     const n = g.V;
-    const nc = n - clique.length;
     let up = n - 1;
     const tw = new Array<Map<number, number>>(n);
-    for (let i = 0; i < n; i++) {
-        tw[i] = new Map();
-    }
+    tw[0] = new Map();
     tw[0].set(0, -Infinity);
-    for (let i = 1; i <= nc; i++) {
+    for (let i = 1; i <= n; i++) {
+        tw[i] = new Map();
         for (const [setid, r] of tw[i - 1].entries()) {
             const set = binaryDecode(setid);
             const inset = new Array(n);
@@ -59,15 +56,17 @@ function treewidth(g: Graph): number {
                 if (r2 < up) {
                     up = Math.min(up, n - set.length - 1);
                     const setid2 = setid | (1 << x);
-                    if (!tw[i].has(setid2) || tw[i].get(setid2)! > r2) {
+                    const t = tw[i].get(setid2);
+                    if (t === undefined || t > r2) {
                         tw[i].set(setid2, r2);
                     }
                 }
             }
         }
     }
-    const vcId = binaryEncode(Array.from(iter.range(n))) - binaryEncode(clique);
-    return tw[nc].get(vcId) || up;
+    // const vcId = binaryEncode([...iter.range(n)]) - binaryEncode(clique);
+    const vcId = binaryEncode([...range(n)]);
+    return tw[n].get(vcId) || up;
 }
 
 export default treewidth;

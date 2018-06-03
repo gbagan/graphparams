@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
+import styled from "styled-components";
 
 import Card from "antd/lib/card";
 import Col from "antd/lib/col";
@@ -14,7 +15,7 @@ const mapStateToProps = createSelector(selector, state => ({ helpText: state.hel
 const mapDispatchToProps = {};
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
-const Main: React.SFC<Props> = (props: Props) => {
+const Main = ({helpText}: Props) => {
     return (
         <div className="eds" >
             <h1>Eternal dominating set</h1>
@@ -26,12 +27,20 @@ const Main: React.SFC<Props> = (props: Props) => {
                     <VisEds />
                 </Col>
                 <Col>
-                    <Card title="Help">{htmlize(props.helpText)}</Card>
+                    <HelpText title="Help">{htmlize(helpText)}</HelpText>
                 </Col>
             </Row>
         </div>
     );
 };
+
+const HelpText = styled(Card)`
+    height: 500px;
+    width: 420px;
+    background-color: lightgray;
+    font-family: monospace;
+    font-size: 10pt;
+`;
 
 const htmlize = (text: string) => text.split("\n").map((line, i) => [line, <br key={i}/>]);
 

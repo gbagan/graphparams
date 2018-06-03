@@ -1,7 +1,7 @@
 import {range} from "../iter";
+import {uniq} from "../util";
 import AbstractGraph from "./abstractgraph";
 import Graph from "./graph";
-import {uniq} from "./util";
 
 export default class MutableGraph extends AbstractGraph<"mutable"> {
     private padj: ReadonlyArray<number[]>;
@@ -62,7 +62,7 @@ export default class MutableGraph extends AbstractGraph<"mutable"> {
 
     public clean() {
         for (let i = 0; i < this.V; i++) {
-            const adj = uniq(this.padj[i]);
+            const adj = uniq(this.padj[i].sort());
             this.padj[i].length = 0;
             this.padj[i].push(...adj);
         }
@@ -70,6 +70,6 @@ export default class MutableGraph extends AbstractGraph<"mutable"> {
     }
 
     public freeze(): Graph {
-        return new Graph(this.V, this.padj.map(adj => Array.from(adj)));
+        return new Graph(this.V, this.padj.map(adj => [...adj]));
     }
 }

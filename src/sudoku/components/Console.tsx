@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 
-import {range} from "../../libs/iter";
+import {range} from "../../lib/iter";
 import ConsoleNum from "./ConsoleNum";
 
 type Props = {
