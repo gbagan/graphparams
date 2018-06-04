@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import styled from "styled-components";
 
 import Button from "antd/lib/button";
 import Input from "antd/lib/input";
@@ -12,7 +13,7 @@ import * as actions from "../redux/actions";
 
 const mapStateToProps = () => ({});
 const mapDispatchToProps = { onSubmit: actions.submitInput };
-type Props = typeof mapDispatchToProps;
+type Props = typeof mapDispatchToProps & {className?: string};
 
 type State = {
     readonly code: string;
@@ -78,7 +79,7 @@ export class GraphInput extends React.Component<Props, State> {
                     <Button type="primary" onClick={onLoadSubmit}>Load</Button>
                     <Button type="danger" onClick={onRemove}>Remove</Button>
                 </Row>
-                <Input.TextArea rows={10} className="graphinput" onChange={this.handleCodeChange} value={code} />
+                <GraphArea rows={10} className="graphinput" onChange={this.handleCodeChange} value={code} />
                 <Button type="primary" onClick={onCodeSubmit}>Generate</Button>
             </div>
         );
@@ -108,5 +109,12 @@ function localStorageKeys(): string[] {
             .filter(key => key.startsWith("graph-"))
             .map(key => key.slice(6));
 }
+
+const GraphArea = styled(Input.TextArea)`
+height: 320px;
+width: 280px;
+font-family: monospace;
+font-size: 10pt;
+`;
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphInput);

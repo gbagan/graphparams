@@ -8,6 +8,7 @@ export const cycle = (n: number) => new MutableGraph(n).addCycle(...range(n));
 export const clique = (n: number) => new MutableGraph(n).addClique(...range(n));
 export const biclique = (n: number, m: number) => join(graph(n), graph(m));
 export const grid = (n: number, m: number) => product(path(n), path(m));
+export const star = (n: number) => biclique(1, n);
 
 export function petersen() {
     const g = new MutableGraph(10);

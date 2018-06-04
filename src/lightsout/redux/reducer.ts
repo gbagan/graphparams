@@ -1,5 +1,7 @@
 import { ActionType, getType } from "typesafe-actions";
-import solve from "../libs/solver";
+
+import {sum} from "../../lib/iter";
+import solve from "../../lib/lightsout/solver";
 import {Solution} from "../types";
 import * as actions from "./actions";
 
@@ -46,7 +48,7 @@ export default function reducer(state: State = initialState, action: Action): St
                 return state;
             }
             const solutions = [...solve(state.board, state.rows, state.columns, state.nbColors, state.toroidal, 250)];
-            solutions.sort((a, b) => a.length - b.length);
+            solutions.sort((a, b) => sum(a) - sum(b));
             const currentSolution = solutions.length === 0 ? null : solutions[0];
             return {...state, solutions, currentSolution};
         }

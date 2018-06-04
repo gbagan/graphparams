@@ -1,8 +1,4 @@
-export type PosAndVal = {
-    readonly row: number,
-    readonly col: number,
-    readonly value: number
-}
+export {PosAndVal, Solution} from "../lib/sudoku/types";
 
 export type Position = {
     readonly row: number,
@@ -31,4 +27,3 @@ type NameAndBoard = {
 
 export type Examples = ReadonlyArray<NameAndExample>;
 export type Boards = ReadonlyArray<NameAndBoard>;
-export type Solution = ReadonlyArray<PosAndVal>;

@@ -1,6 +1,6 @@
 ﻿
-import {PosAndVal, Solution} from "../types";
 import dlx from "./dlx";
+import {PosAndVal, Solution} from "./types";
 
 class Solver {
     private readonly dim: number;  // dimension of a square

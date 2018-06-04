@@ -2,8 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import Card from "antd/lib/card";
-
+import Text from "../../styled/Text";
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
 import OutputParameter from "./OutputParameter";
@@ -17,15 +16,15 @@ const mapDispatchToProps = {
     onShowWitness: actions.showWitness,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps & { className?: string };
 
 const Output: React.SFC<Props> = (props) => {
-    const data = props.error ? <span className="error">{props.error}</span>
+    const data = props.error ? <Text color="error">{props.error}</Text>
         : props.parameters.filter(p => p.result !== null).map(param =>
             [<OutputParameter key={param.name} parameter={param} onShowWitness={props.onShowWitness} />,
             <br key={param.name + "BR"} />]);
 
-    return <Card className="output" title="Output">{data}</Card>;
+    return <div className={props.className} title="Output">{data}</div>;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Output);

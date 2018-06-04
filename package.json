@@ -3,7 +3,6 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@types/react-transition-group": "^2.0.11",
         "antd": "^3.6.1",
         "promise-worker": "^1.1.1",
         "react": "^16.4.0",
@@ -16,12 +15,11 @@
         "redux-saga": "^0.16.0",
         "reselect": "^3.0.1",
         "shortid": "^2.2.8",
-        "styled-components": "^3.3.1",
-        "styled-tools": "^0.5.0",
+        "styled-components": "^3.3.2",
         "styled-transition-group": "^1.0.0",
         "typesafe-actions": "^2.0.4",
         "vis": "^4.21.0",
-        "worker-loader": "^1.1.1"
+        "worker-loader": "^2.0.0"
     },
     "devDependencies": {
         "@types/jest": "^23.0.0",
@@ -29,19 +27,16 @@
         "@types/react-dom": "^16.0.5",
         "@types/react-redux": "^6.0.1",
         "@types/react-router-dom": "^4.2.7",
+        "@types/react-transition-group": "^2.0.11",
         "@types/redux-form": "^7.2.6",
         "@types/shortid": "0.0.29",
         "@types/vis": "^4.21.5",
         "awesome-typescript-loader": "^5.0.0",
-        "babel-core": "^6.26.3",
-        "babel-jest": "^23.0.1",
         "circular-dependency-plugin": "^5.0.2",
         "css-loader": "^0.28.11",
         "jest": "^23.1.0",
         "mini-css-extract-plugin": "^0.4.0",
-        "react-hot-loader": "^4.2.0",
         "redux-devtools-extension": "^2.13.2",
-        "regenerator-runtime": "^0.11.1",
         "source-map-explorer": "^1.5.0",
         "style-loader": "^0.21.0",
         "ts-jest": "^22.4.6",
@@ -50,8 +45,8 @@
         "typescript": "^2.9.1",
         "typescript-styled-plugin": "^0.6.3",
         "webpack": "^4.10.2",
-        "webpack-cli": "^2.1.5",
-        "webpack-dashboard": "^1.1.1",
+        "webpack-cli": "^3.0.1",
+        "webpack-dashboard": "^2.0.0",
         "webpack-dev-server": "^3.1.4",
         "webpack-serve": "^1.0.2"
     },
@@ -61,8 +56,7 @@
         "lint": "tslint --project tsconfig.json",
         "tsc": "tsc -p . --noEmit",
         "test": "jest --config jest.json",
-        "test:watch": "jest --config jest.json --watch",
         "test:clear": "jest --config jest.json --clearCache",
-        "analyze": "source-map-explorer dist/static/app.js"
+        "analyze": "source-map-explorer --html dist/static/app.js > tree.html"
     }
 }

@@ -2,7 +2,7 @@ import { allDifferent, binaryDecode, binaryEncode, bsubsets } from "../util";
 import Graph from "./graph";
 import { Result } from "./types";
 
-function isIdentifyingCodeOpt(g: Graph, binNbors: number[], bset: number) {
+function isIdentifyingCode(g: Graph, binNbors: number[], bset: number) {
     const nborInSet: number[] = [];
     for (let i = 0; i < g.V; i++) {
         const s = binNbors[i] & bset;
@@ -11,19 +11,21 @@ function isIdentifyingCodeOpt(g: Graph, binNbors: number[], bset: number) {
         }
         nborInSet.push(s);
     }
-    nborInSet.sort();
-    return allDifferent(nborInSet);
+    return allDifferent(nborInSet.sort());
 }
 
-export function identifyingCodeOpt(g: Graph): Result {
+export function identifyingCode(g: Graph): Result {
     const binNbors: number[] = [];
     for (let j = 0; j < g.V; j++) {
         binNbors.push(binaryEncode(g.adj(j).concat(j)));
     }
+    if (!allDifferent(binNbors.slice().sort())) {
+        return { result: Infinity, witness: null };
+    }
     let i = 1;
     while (true) {
         for (const bset of bsubsets(g.V, i)) {
-            if (isIdentifyingCodeOpt(g, binNbors, bset)) {
+            if (isIdentifyingCode(g, binNbors, bset)) {
                 return { result: i, witness: binaryDecode(bset) };
             }
         }
@@ -31,7 +33,7 @@ export function identifyingCodeOpt(g: Graph): Result {
     }
 }
 
-export function isLocatingDominatingSet(g: Graph, binNbors: number[], bset: number) {
+function isLocatingDominatingSet(g: Graph, binNbors: number[], bset: number) {
     const nborInSet: number[] = [];
     for (let i = 0; i < g.V; i++) {
         if (((1 << i) & bset) === 0) {
@@ -42,8 +44,7 @@ export function isLocatingDominatingSet(g: Graph, binNbors: number[], bset: numb
             nborInSet.push(s);
         }
     }
-    nborInSet.sort();
-    return allDifferent(nborInSet);
+    return allDifferent(nborInSet.sort());
 }
 
 export function locatingDominatingSet(g: Graph): Result {

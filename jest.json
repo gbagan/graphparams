@@ -1,5 +1,6 @@
 {
-    "cache": false,
+    "verbose": true,
+    "cache": true,
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "testPathIgnorePatterns": [ "/dist/", "/build/", "/node_modules/",  "\\.d\\.ts$"],
     "coveragePathIgnorePatterns": ["\\.d\\.ts$"],

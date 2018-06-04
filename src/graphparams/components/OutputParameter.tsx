@@ -1,4 +1,5 @@
 import * as React from "react";
+import Text from "../../styled/Text";
 
 import { GraphParameter, Result, Witness } from "../types.d";
 
@@ -25,7 +26,7 @@ export default class OutputParameter extends React.Component<Props> {
 
     private outputResult(result: Result | "computing") {
         if (result === "computing") {
-            return <span className="warning">Computing</span>;
+            return <Text color="warning">Computing</Text>;
         } else if (result.witness === null) {
             return result.result.toString();
         } else {

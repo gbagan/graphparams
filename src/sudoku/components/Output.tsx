@@ -2,9 +2,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 import { generate as shortid } from "shortid";
-import styled from "styled-components";
-
-import Card from "antd/lib/card";
 
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
@@ -37,14 +34,7 @@ const Output: React.SFC<Props> = (props) => {
             ), <br key={shortid()} />])]
     );
 
-    return <Card title="Output" className={className}>{data}</Card>;
+    return <div className={className}>{data}</div>;
 };
 
-const styledOutput = styled(Output)`
-    width: 350px;
-    height: 500px;
-    font-family: monospace;
-    font-size: 10pt;
-`;
-
-export default connect(mapStateToProps, mapDispatchToProps)(styledOutput);
+export default connect(mapStateToProps, mapDispatchToProps)(Output);

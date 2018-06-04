@@ -1,4 +1,3 @@
-import { Solution } from "../types";
 import equasSolve from "./equations";
 
 function generateMatrix(n: number, m: number, torus?: boolean): ReadonlyArray<ReadonlyArray<number>> {
@@ -23,7 +22,7 @@ function generateMatrix(n: number, m: number, torus?: boolean): ReadonlyArray<Re
 }
 
 export default function* solve(conf: ReadonlyArray<number>, rows: number, columns: number, nbColors: number,
-                               torus: boolean = false, limit?: number): Iterable<Solution> {
+                               torus: boolean = false, limit?: number): Iterable<ReadonlyArray<number>> {
     const conf2: number[] = [];
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < columns; j++) {
@@ -33,7 +32,7 @@ export default function* solve(conf: ReadonlyArray<number>, rows: number, column
     const mat = generateMatrix(rows, columns, torus);
     let ii = 0;
     for (const sol of equasSolve(mat, conf2, nbColors)) {
-        yield sol.map((value, position) => ({ position, value })).filter(x => x.value > 0);
+        yield sol;
         ii++;
         if (limit !== undefined && ii === limit) {
             return;

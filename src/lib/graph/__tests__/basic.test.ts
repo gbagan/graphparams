@@ -1,7 +1,9 @@
 import {every, range} from "../../iter";
 import * as basic from "../basic";
-import {biclique, clique, graph, path, petersen} from "../generate";
+import {biclique, clique, cycle, graph, path, petersen, star, sun} from "../generate";
+import Graph from "../graph";
 import MutableGraph from "../mutablegraph";
+import {union} from "../operators";
 
 const checkHamiltonian = (g: MutableGraph, expectedRes: boolean) => () => {
     const res = basic.isHamiltonian(g.freeze());
@@ -13,6 +15,12 @@ const checkHamiltonian = (g: MutableGraph, expectedRes: boolean) => () => {
         expect(test).toBe(true);
     }
 };
+
+const isIndependent = (g: Graph, set: ReadonlyArray<number>) =>
+    set.every(i => set.every(j => !g.hasEdge(i, j)));
+
+const isClique = (g: Graph, set: ReadonlyArray<number>) =>
+    set.every(i => set.every(j => i === j || g.hasEdge(i, j)));
 
 it("isConnected(I1)", () => {
     const g = graph(1).freeze();
@@ -49,3 +57,54 @@ it("hamiltonian(P2)", checkHamiltonian(path(2), false));
 it("hamiltonian(K3,3)", checkHamiltonian(biclique(3, 3), true));
 it("hamiltonian(K3,4)", checkHamiltonian(biclique(3, 4), false));
 it("hamiltonian(petersen)", checkHamiltonian(petersen(), false));
+
+it("girth(petersen)", () => {
+    const g = petersen().freeze();
+    const res = basic.girth(g);
+    expect(res.result).toBe(5);
+    expect(res.witness!.length).toBe(5);
+});
+
+it("girth(star(4))", () => {
+    const g = star(4).freeze();
+    const res = basic.girth(g);
+    expect(res.result).toBe(Infinity);
+    expect(res.witness).toBeNull();
+});
+
+it("diameter(P8)", () => {
+    const g = path(8).freeze();
+    const res = basic.diameter(g);
+    expect(res.result).toBe(7);
+    expect(res.witness!.length).toBe(8);
+});
+
+it("diameter(C7)", () => {
+    const g = cycle(7).freeze();
+    const res = basic.diameter(g);
+    expect(res.result).toBe(3);
+    expect(res.witness!.length).toBe(4);
+});
+
+it("diameter(C3 + C3)", () => {
+    const g = union(cycle(3), cycle(3)).freeze();
+    const res = basic.diameter(g);
+    expect(res.result).toBe(Infinity);
+    expect(res.witness).toBeNull();
+});
+
+it("mis(sun(4))", () => {
+    const g = sun(4).freeze();
+    const res = basic.mis(g);
+    expect(res.result).toBe(4);
+    expect(res.witness!.length).toBe(4);
+    expect(isIndependent(g, res.witness!)).toBe(true);
+});
+
+it("cliqueNumber(sun(4))", () => {
+    const g = sun(4).freeze();
+    const res = basic.cliqueNumber(g);
+    expect(res.result).toBe(4);
+    expect(res.witness!.length).toBe(4);
+    expect(isClique(g, res.witness!)).toBe(true);
+});

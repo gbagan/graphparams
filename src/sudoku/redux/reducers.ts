@@ -2,7 +2,7 @@ import { ActionType, getType } from "typesafe-actions";
 import * as iter from "../../lib/iter";
 import * as actions from "./actions";
 
-import solve from "../lib/solver";
+import solve from "../../lib/sudoku/solver";
 import { Boards, Examples, ModelCell, PosAndVal, Solution } from "../types";
 
 export type Action = ActionType<typeof actions>;

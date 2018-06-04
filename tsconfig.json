@@ -25,6 +25,7 @@
         "build",
         "dist",
         "configs",
+        "coverage",
         "scripts",
         "acceptance-tests",
         "webpack",

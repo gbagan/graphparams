@@ -7,6 +7,7 @@ import Card from "antd/lib/card";
 import Col from "antd/lib/col";
 import Row from "antd/lib/row";
 
+import Layout from "../../styled/Layout";
 import selector from "../redux/selector";
 import GraphInput from "./GraphInput";
 import VisEds from "./VisEds";
@@ -15,33 +16,42 @@ const mapStateToProps = createSelector(selector, state => ({ helpText: state.hel
 const mapDispatchToProps = {};
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
-const Main = ({helpText}: Props) => {
+const Main = ({ helpText }: Props) => {
     return (
-        <div className="eds" >
-            <h1>Eternal dominating set</h1>
-            <Row type="flex">
-                <Col>
-                    <GraphInput />
-                </Col>
-                <Col>
-                    <VisEds />
-                </Col>
-                <Col>
-                    <HelpText title="Help">{htmlize(helpText)}</HelpText>
-                </Col>
-            </Row>
-        </div>
+        <Layout>
+            <div>
+                <h1>Eternal dominating set</h1>
+                <Row type="flex" gutter={32}>
+                    <Col>
+                        <GraphInput />
+                    </Col>
+                    <Col>
+                        <Card title="Graph">
+                            <   StyledVisEds />
+                        </Card>
+                    </Col>
+                    <Col>
+                        <Card title="Help">
+                            <HelpText>{htmlize(helpText)}</HelpText>
+                        </Card>
+                    </Col>
+                </Row>
+            </div>
+        </Layout>
     );
 };
 
-const HelpText = styled(Card)`
-    height: 500px;
-    width: 420px;
-    background-color: lightgray;
-    font-family: monospace;
-    font-size: 10pt;
+const StyledVisEds = styled(VisEds)`
+height: 600px;
+width: 700px;
 `;
 
-const htmlize = (text: string) => text.split("\n").map((line, i) => [line, <br key={i}/>]);
+const HelpText = styled.div`
+height: 700px;
+width: 400px;
+overflow: auto;
+`;
+
+const htmlize = (text: string) => text.split("\n").map((line, i) => [line, <br key={i} />]);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

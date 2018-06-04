@@ -1,5 +1,5 @@
-export {Result} from "../lib/graph/types";
 import {Result} from "../lib/graph/types";
+export {Result} from "../lib/graph/types";
 import {PlainGraph} from '../lib/graph/types';
 export {PlainGraph} from '../lib/graph/types';
 

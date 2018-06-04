@@ -25,7 +25,7 @@ const mapDispatchToProps = {
     onSelectVertex: actions.selectVertex,
 };
 
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps & {className?: string};
 
 class VisEds extends React.Component<Props> {
     private animateTraffic: ((e: EdgeTraffic[]) => void) | null;
@@ -36,9 +36,9 @@ class VisEds extends React.Component<Props> {
     }
 
     public render() {
-        const { graph, guards, onSelectVertex } = this.props;
+        const { className, graph, guards, onSelectVertex } = this.props;
         if (!graph) {
-            return <div className="viz" />;
+            return <div className={className} />;
         }
         // const digraph = (graph as any).reverseAdj !== undefined;
 
@@ -57,7 +57,7 @@ class VisEds extends React.Component<Props> {
 
         return (
             <VisWithTraffic
-                className="viz"
+                className={className}
                 nodes={nodes}
                 edges={edges}
                 options={options}
@@ -117,5 +117,6 @@ function edgeTraffic(shift: Shift) {
         size: 5,
     }));
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(VisEds);

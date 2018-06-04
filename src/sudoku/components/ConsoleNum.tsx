@@ -22,18 +22,18 @@ class ConsoleNum extends React.Component<Props> {
 }
 
 export default styled(ConsoleNum)`
-    width: ${(props: Props) => props.value === 0 ? 100 : (100 / props.cols)}%;
-    color: darkslategray;
-    padding: 1px;
-    display: inline-block;
-    font-weight: bold;
-    font-size: 24px;
-    text-align: center;
-    cursor: pointer;
-    box-sizing: border-box;
-    box-shadow: 0px 0px 0px 1px lightsteelblue;
-    &:hover {
-        color: white;
-        background: ${p => p.value === 0 ? "firebrick" : "gold"};
-    }
+width: ${p => p.value === 0 ? 100 : (100 / p.cols)}%;
+color: darkslategray;
+padding: 1px;
+display: inline-block;
+font-weight: bold;
+font-size: 24px;
+text-align: center;
+cursor: pointer;
+box-sizing: border-box;
+box-shadow: 0px 0px 0px 1px lightsteelblue;
+&:hover {
+    color: white;
+    background: ${p => p.value === 0 ? "firebrick" : "gold"};
+}
 `;

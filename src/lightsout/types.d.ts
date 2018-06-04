@@ -15,4 +15,4 @@ export type PosAndVal = {
     readonly value: number
 }
 
-export type Solution = ReadonlyArray<PosAndVal>;
+export type Solution = ReadonlyArray<Number>;

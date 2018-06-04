@@ -4,8 +4,6 @@ import { createSelector } from "reselect";
 
 import * as vis from "vis";
 
-import Card from "antd/lib/card";
-
 import VisGraph from "../../lib/components/VisGraph";
 import {range} from "../../lib/iter";
 import selector from "../redux/selector";
@@ -23,7 +21,7 @@ const mapStateToProps = createSelector(selector, state => ({
 
 const mapDispatchToProps = {};
 
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
+type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps & {className?: string};
 
 function * edges(graph: PlainGraph) {
     for (let i = 0; i < graph.V; i++) {
@@ -36,9 +34,9 @@ function * edges(graph: PlainGraph) {
 }
 
 const GraphOutput: React.SFC<Props> = (props) => {
-    const { graph, witness } = props;
+    const { graph, witness, className } = props;
     if (!graph) {
-        return <Card className="viz" title="Graph" />;
+        return <div className={className}/>;
     }
     const visnodes: vis.Node[] = [...range(graph.V)].map(i => {
         let color: string;
@@ -85,9 +83,9 @@ const GraphOutput: React.SFC<Props> = (props) => {
     });
 
     return (
-        <Card className="viz" title="Graph">
+        <div className={className}>
             <VisGraph nodes={visnodes} edges={visedges} options={options} />
-        </Card>
+        </div>
     );
 };
 

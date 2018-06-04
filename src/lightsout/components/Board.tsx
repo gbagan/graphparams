@@ -108,23 +108,25 @@ class Board extends React.Component<Props> {
         if (solution) {
             context.fillStyle = "black";
             context.beginPath();
-            for (const {position, value}  of solution) {
-                const column = position % columns;
-                const row = Math.floor(position / columns);
-                const dx = spaceX + size * column;
-                const dy = spaceY + size * row;
-                context.moveTo(dx + 15, dy + 15);
-                context.lineTo(dx + 45, dy + 48);
-                context.moveTo(dx + 12, dy + 45);
-                context.lineTo(dx + 45, dy + 15);
-                if (value > 1) {
-                    context.font = "14pt Calibri";
-                    context.fillStyle = "black";
-                    context.fillText(value.toString(), dx + 48, dy + 54);
+            solution.forEach((value, index) => {
+                if (value > 0) {
+                    const column = index % columns;
+                    const row = Math.floor(index / columns);
+                    const dx = spaceX + size * column;
+                    const dy = spaceY + size * row;
+                    context.moveTo(dx + 15, dy + 15);
+                    context.lineTo(dx + 45, dy + 48);
+                    context.moveTo(dx + 12, dy + 45);
+                    context.lineTo(dx + 45, dy + 15);
+                    if (value > 1) {
+                        context.font = "14pt Calibri";
+                        context.fillStyle = "black";
+                        context.fillText(value.toString(), dx + 48, dy + 54);
+                    }
+                    context.stroke();
+                    context.closePath();
                 }
-                context.stroke();
-                context.closePath();
-            }
+            });
         }
     }
 }

@@ -97,10 +97,10 @@ export function max<T>(it: Iterable<T>, f: (x: T) => number) {
     return bestRes as { elem: T, value: number };
 }
 
-export function sum<T>(it: Iterable<T>, f: (x: T) => number) {
+export function sum(it: Iterable<number>) {
     let m = 0;
     for (const v of it) {
-        m += f(v);
+        m += v;
     }
     return m;
 }

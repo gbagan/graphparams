@@ -6,8 +6,8 @@ import styled from "styled-components";
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
 import { Position } from "../types";
-import Cell from "./cell";
-import Console from "./console";
+import Cell from "./Cell";
+import Console from "./Console";
 
 const mapStateToProps = createSelector(selector, state => ({
     cells: state.cells,
@@ -80,13 +80,13 @@ class Grid extends React.Component<Props, State> {
 const styledGrid = styled(Grid).attrs<Props>({
     divsize: (props: Props) => Math.min(800, 40 * props.squaresize * props.squaresize + 10),
 })`
-    width: ${(p: any) => p.divsize}px;
-    height: ${(p: any) => p.divsize}px;
-    margin: 6px auto;
-    overflow: hidden;
-    user-select: none;
-    box-shadow: 0px 0px 5px 5px #bdc3c7;
-    position: relative;
+width: ${(p: any) => p.divsize}px;
+height: ${(p: any) => p.divsize}px;
+margin: 6px auto;
+overflow: hidden;
+user-select: none;
+box-shadow: 0px 0px 5px 5px #bdc3c7;
+position: relative;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(styledGrid);

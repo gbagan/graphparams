@@ -55,7 +55,7 @@ const Container = styled.div`
 `;
 
 /* tslint:disable */
-export const AAA = (props: any) => (
+export const AppWithTransition = (props: any) => (
     <Container>
         <AppMenu menu={mainmenu} />
         <TransitionGroup>
@@ -66,14 +66,14 @@ export const AAA = (props: any) => (
     </Container>
 );
 
-const Test2 = withRouter(AAA);
+const AppWithRouter = withRouter(AppWithTransition);
 
 /* tslint:enable */
 
-export default (props: any) => (
+export default () => (
     <Provider store={store}>
         <HashRouter>
-            <Test2 />
+            <AppWithRouter />
         </HashRouter>
     </Provider>
 );

@@ -4,16 +4,17 @@ import { createSelector } from "reselect";
 import styled from "styled-components";
 
 import Button from "antd/lib/button";
+import Card from "antd/lib/card";
 import Col from "antd/lib/col";
-import Layout from "antd/lib/layout";
 import Row from "antd/lib/row";
 
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
 
-import ActionDropDown from "./actiondropdown";
-import Grid from "./grid";
-import Output from "./output";
+import Layout from "../../styled/Layout";
+import ActionDropDown from "./ActionDropdown";
+import Grid from "./Grid";
+import Output from "./Output";
 
 const mapStateToProps = createSelector(selector, state => ({
     boards: state.boards,
@@ -29,7 +30,7 @@ const mapDispatchToProps = {
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
 const Main = ({ boards, examples, onSelectGrid, onSelectExample, onSolve }: Props) => (
-    <Container>
+    <Layout>
         <div>
             <h1>Sudoku</h1>
             <Row type="flex" gutter={16}>
@@ -40,15 +41,20 @@ const Main = ({ boards, examples, onSelectGrid, onSelectExample, onSolve }: Prop
                     <Grid />
                 </Col>
                 <Col>
-                    <Output />
+                    <Card title="Output">
+                        <StyledOutput />
+                    </Card>
                 </Col>
             </Row>
         </div>
-    </Container>
+    </Layout>
 );
 
-const Container = styled(Layout)`
-   height: 100vh
+const StyledOutput = styled(Output)`
+    width: 350px;
+    height: 500px;
+    font-family: monospace;
+    font-size: 10pt;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

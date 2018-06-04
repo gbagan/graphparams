@@ -80,14 +80,14 @@ it("max([3, 5, 2, 4], x => x + 1)", () => {
     expect(y).toEqual({ elem: 5, value: 6 });
 });
 
-it("sum([], x => x + 1)", () => {
-    const y = iter.sum([], x => x + 1);
+it("sum([])", () => {
+    const y = iter.sum([]);
     expect(y).toBe(0);
 });
 
-it("sum([1, 2, 3], x => x * x)", () => {
-    const y = iter.sum([1, 2, 3], x => x * x);
-    expect(y).toEqual(14);
+it("sum([1, 2, 3])", () => {
+    const y = iter.sum([1, 2, 3]);
+    expect(y).toEqual(6);
 });
 
 it("isEqual([1, 'a', 3.0], [1, 'a', 3.0])", () => {

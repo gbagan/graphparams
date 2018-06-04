@@ -1,13 +1,13 @@
-import * as iter from "../iter";
+import {count, map, max, min, range, sum} from "../iter";
 import {binaryDecode, binaryEncode} from "../util";
 import Graph from "./graph";
 import {complement} from "./operators";
 import {Result} from "./types";
 
 export const nbVertices = (g: Graph) => g.V;
-export const nbEdges = (g: Graph) => iter.sum(g.adjs(), nbor => nbor.length) / 2;
-export const minDegree = (g: Graph) => iter.min(g.adjs(), nbor => nbor.length).value;
-export const maxDegree = (g: Graph) => iter.max(g.adjs(), nbor => nbor.length).value;
+export const nbEdges = (g: Graph) => sum(map(g.adjs(), nbor => nbor.length)) / 2;
+export const minDegree = (g: Graph) => min(g.adjs(), nbor => nbor.length).value;
+export const maxDegree = (g: Graph) => max(g.adjs(), nbor => nbor.length).value;
 export const isRegular = (g: Graph)  => minDegree(g) === maxDegree(g);
 
 export function isConnected(g: Graph): boolean {
@@ -53,14 +53,14 @@ function hamiltonAux(g: Graph, path: number[]): Result {
 }
 
 export function degeneracy(g: Graph): Result {
-    const set = new Set(iter.range(g.V));
+    const set = new Set(range(g.V));
     const order: number[] = [];
     let maxdegree = 0;
     while (set.size > 0) {
         let minDeg = Infinity;
         let bestVertex = null;
         for (const v of set) {
-            const degree = iter.count<number>(g.adj(v), u => set.has(u));
+            const degree = count(g.adj(v), u => set.has(u));
             if (degree < minDeg) {
                 bestVertex = v;
                 minDeg = degree;
@@ -100,7 +100,7 @@ export function eccentricity(g: Graph, v: number): Result {
     if (nbVisited !== g.V) {
         return { result: Infinity, witness: null };
     } else {
-        let u = iter.max(iter.range(g.V), w => distance[w]).elem;
+        let u = max(range(g.V), w => distance[w]).elem;
         const path = [u];
         while (u !== v) {
             u = parent[u];
@@ -169,7 +169,8 @@ export function diameter(g: Graph): Result {
     return bestRes;
 }
 
-export function mis(g: Graph): Result {
+/*
+export function misNonOpt(g: Graph): Result {
     let isets: number[][] = [[]];
     let i = 0;
     while (true) {
@@ -190,9 +191,9 @@ export function mis(g: Graph): Result {
         isets = isets2;
         i++;
     }
-}
+} */
 
-export function misOpt(g: Graph): Result {
+export function mis(g: Graph): Result {
     let isets: number[] = [0];
     let i = 0;
     const nbors: number[] = [];
@@ -219,5 +220,5 @@ export function misOpt(g: Graph): Result {
     }
 }
 
+// const cliqueNumberNonOpt = (g: Graph) => mis(complement(g).freeze());
 export const cliqueNumber = (g: Graph) => mis(complement(g).freeze());
-export const cliqueNumberOpt = (g: Graph) => misOpt(complement(g).freeze());
