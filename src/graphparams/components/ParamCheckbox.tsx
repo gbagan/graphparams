@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import Checkbox from "antd/lib/checkbox";
+// import Checkbox from "antd/lib/checkbox";
+import Checkbox from "../../styled/Checkbox";
 
 import {GraphParameter} from "../types";
 

@@ -5,6 +5,16 @@ import Graph from "../graph";
 import MutableGraph from "../mutablegraph";
 import {union} from "../operators";
 
+it("isRegular(petersen)", () => {
+    const g = petersen().freeze();
+    expect(basic.isRegular(g)).toBe(true);
+});
+
+it("isRegular(P4)", () => {
+    const g = path(4).freeze();
+    expect(basic.isRegular(g)).toBe(false);
+});
+
 const checkHamiltonian = (g: MutableGraph, expectedRes: boolean) => () => {
     const res = basic.isHamiltonian(g.freeze());
     expect(res.result).toBe(expectedRes);

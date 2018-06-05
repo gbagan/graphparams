@@ -4,12 +4,12 @@ import { createSelector } from "reselect";
 import styled from "styled-components";
 
 import Button from "antd/lib/button";
-import Card from "antd/lib/card";
 import Col from "antd/lib/col";
-import Input from "antd/lib/input";
 import Row from "antd/lib/row";
 
+import Card from "../../styled/Card";
 import Layout from "../../styled/Layout";
+import TextArea from "../../styled/TextArea";
 import GraphOutput from "./GraphOutput";
 import Output from "./Output";
 import ParamInput from "./ParamInput";
@@ -41,7 +41,7 @@ const Main: React.SFC<Props> = props => {
             <div>
                 <h1>Graph parameters</h1>
                 <Row type="flex">
-                    <Col span={18}>
+                    <Col span={17}>
                         <Row>
                             <Button type="primary" disabled={props.computing} onClick={props.onSelectAll}>
                                 Select all
@@ -71,7 +71,7 @@ const Main: React.SFC<Props> = props => {
                             </Col>
                         </Row>
                     </Col>
-                    <Col span={6}>
+                    <Col>
                         <Card title="Help">
                             <HelpText>{htmlize(props.helpText)}</HelpText>
                         </Card>
@@ -86,19 +86,19 @@ function htmlize(text: string) {
     return text.split("\n").map((line, i) => [line, <br key={i} />]);
 }
 
-const CodeInput = styled(Input.TextArea)`
-height: 700px;
-width: 400px;
+const CodeInput = styled(TextArea)`
+height: 400px;
+width: 300px;
 `;
 
 const HelpText = styled.div`
-height: 700px;
-width: 400px;
+height: 650px;
+width: 340px;
 overflow: auto;
 `;
 
 const StyledOutput = styled(Output)`
-height: 500px;
+height: 450px;
 width: 400px;
 overflow: auto;
 `;

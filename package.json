@@ -57,6 +57,11 @@
         "tsc": "tsc -p . --noEmit",
         "test": "jest --config jest.json",
         "test:clear": "jest --config jest.json --clearCache",
-        "analyze": "source-map-explorer --html dist/static/app.js > tree.html"
+        "test:show": "explorer.exe coverage\\lcov-report\\index.html",
+        "analyze": "source-map-explorer --html dist/static/app.js > tree.html",
+        "analyze:show": "explorer.exe tree.html",
+        "webpack:stats": "webpack --config configs/webpack.config.js --profile --json > stats.json",
+        "deploy": "scp -r dist/* gbagan@connect.liris.cnrs.fr:~/apps/",
+        "deploy:dev": "scp -r dist/* gbagan@connect.liris.cnrs.fr:~/appstest/"
     }
 }

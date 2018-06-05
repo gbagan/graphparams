@@ -191,7 +191,7 @@ function parse(str: string): Graph | string {
             }
             const fntoken = stack.pop();
             if (!fntoken) {
-                return "unexpected error";
+                throw Error("unexpected error");
             } else if (fntoken.type === ParserToken.Function) {
                 const fn = functions.get(fntoken.data)!;
                 if (parameters.length !== fn.arity) {
