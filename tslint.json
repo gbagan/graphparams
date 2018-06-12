@@ -1,4 +1,5 @@
 {
+    "defaultSeverity": "warning",
     "extends": [
         "tslint:latest",
         "tslint-react"
@@ -9,6 +10,9 @@
         "jsx-alignment": false,
         "interface-over-type-literal": false,
         "no-bitwise": false,
-        "no-submodule-imports": false
+        "no-submodule-imports": false,
+        "no-multiline-js": false,
+        "curly": false,
+        "ordered-imports": false,
     }
 }

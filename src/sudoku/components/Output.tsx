@@ -17,24 +17,26 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps & { className?: string };
 
-const Output: React.SFC<Props> = (props) => {
+const Output: React.SFC<Props> = props => {
     const { solutions, onSelectSolution, className } = props;
 
     const data = !solutions ? "Sudoku" : (solutions.length === 0 ? "No solution" :
-        [<span key={shortid()}>{solutions.length}  solution{solutions.length > 1 ? "s" : ""}</span>,
-        <br key={shortid()} />,
-        solutions.slice(0, 25).map((solution, index) => [
-            (
-                <OutputSolution
-                    key={shortid()}
-                    index={index}
-                    solution={solution}
-                    onSelect={onSelectSolution}
-                />
-            ), <br key={shortid()} />])]
+        [<p key={shortid()}>{solutions.length}  solution{solutions.length > 1 ? "s" : ""}</p>,
+        solutions.slice(0, 25).map((solution, index) =>
+            <OutputSolution
+                key={shortid()}
+                index={index}
+                solution={solution}
+                onSelect={onSelectSolution}
+            />
+        )]
     );
 
-    return <div className={className}>{data}</div>;
+    return (
+        <div className={className}>
+            {data}
+        </div>
+    )
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Output);

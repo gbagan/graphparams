@@ -158,7 +158,13 @@ export default function reducer(state: State = initialState, action: Action): St
             return { ...state, parameters};
         }
         case getType(actions.showWitness): {
-            return { ...state, witness: action.payload };
+            const parameter = action.payload;
+            if (!parameter)
+                return { ...state, witness: null }
+            else if (!parameter.result || typeof parameter.result === "string" || !parameter.result.witness)
+                return state;
+            else
+                return { ...state, witness: {name: parameter.name, witness: parameter.result.witness }};
         }
         default:
             return state;

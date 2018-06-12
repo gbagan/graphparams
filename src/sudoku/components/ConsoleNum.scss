@@ -1,0 +1,29 @@
+.num {
+    color: darkslategray;
+    padding: 1px;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    cursor: pointer;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 0px 1px lightsteelblue;
+
+    @for $i from 2 through 6 {
+        .cols-#{$i} {
+            width: 100% / $i;
+        }
+    }
+    &,.delete {
+        width: 100%;
+    }
+
+    &:hover {
+        color: white;
+        background: gold;
+    }
+    &,.delete:hover {
+        background: firebrick;
+    }
+}
+

@@ -1,4 +1,11 @@
-﻿import {range} from "./iter";
+﻿export function range(n: number, m?: number) {
+    const l: number[] = [];
+    const [a, b] = m === undefined ? [0, n] : [n, m];
+    for (let i = a; i  < b; i++) {
+        l.push(i);
+    }
+    return l;
+}
 
 export function Map_dec<T>(m: Map<string, number>, key: T) {
     let v = m.get(key.toString()) as number;
@@ -64,7 +71,7 @@ export function* subsets(n: number, k: number): Iterable<number[]> {
     if (k === 0) {
         yield [];
     } else if (n === k) {
-        yield Array.from(range(n));
+        yield range(n);
     } else {
         yield* subsets(n - 1, k);
         for (const set of subsets(n - 1, k - 1)) {

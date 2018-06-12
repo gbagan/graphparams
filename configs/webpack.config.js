@@ -27,12 +27,18 @@ module.exports = (env = {}) => {
             modules: [PATHS.nodeModules],
             extensions: [".ts", ".tsx", ".js", ".jsx"],
             descriptionFiles: ["package.json"],
+            alias: {
+                '@': PATHS.src,
+            }
         },
         devtool: "source-map",
         module: {
             rules: [
                 { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
-                { test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
+                { test: /\.(sa|sc|c)ss$/, use: [MiniCssExtractPlugin.loader,
+                                                {loader: "css-loader",
+                                                 options: {modules: true},
+                                                }, "sass-loader"] },
                 { test: /\.(png|jpg|gif)$/, use: [{ loader: "file-loader", options: {} }] },
                 { test: /\.worker\.js$/, use: { loader: "worker-loader" } }
             ]

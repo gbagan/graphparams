@@ -3,21 +3,22 @@ import * as React from "react";
 // import Checkbox from "antd/lib/checkbox";
 import Checkbox from "../../styled/Checkbox";
 
-import {GraphParameter} from "../types";
+import { GraphParameter } from "../types";
 
 type Props = {
     data: GraphParameter;
     onToggle: (name: string) => void;
 };
 
-const Main: React.SFC<Props> = props => {
-    const {name, fullname, checked} = props.data;
-    const {onToggle} = props;
-    const handleChange = () => onToggle(name);
-
+const PCB: React.SFC<Props> = props => {
+    const { onToggle, data } = props;
+    const { checked, fullname, name } = data;
     return (
-       <Checkbox checked={checked} onChange={handleChange}>{fullname}</Checkbox>
+        <React.Fragment>
+            <Checkbox checked={checked} onChange={() => onToggle(name)}>{fullname}</Checkbox>
+            <br/>
+        </React.Fragment>
     );
-};
+}
 
-export default Main;
+export default PCB;

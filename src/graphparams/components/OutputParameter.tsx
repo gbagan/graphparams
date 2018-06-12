@@ -1,40 +1,36 @@
 import * as React from "react";
 import Text from "../../styled/Text";
 
-import { GraphParameter, Result, Witness } from "../types.d";
+import { GraphParameter, Result } from "../types.d";
 
 type Props = {
     parameter: GraphParameter,
-    onShowWitness: (w: Witness | null) => void,
+    onShowWitness: (p: GraphParameter | null) => void,
 };
 
-export default class OutputParameter extends React.Component<Props> {
-    public render() {
-        const { parameter } = this.props;
-        const { result } = parameter;
-        return !result ? <span /> : <span>{parameter.fullname} : {this.outputResult(result)}</span>;
-    }
+ const OutputParameter: React.SFC<Props> = props => {
+    const { result, fullname } = props.parameter;
+    return !result
+        ? <span/>
+        : <React.Fragment>
+            <span>{fullname} : {outputResult(result, props)}</span>
+            <br/>
+         </React.Fragment>
+}
 
-    private handleMouseOver = () => {
-        const result = this.props.parameter.result;
-        if (result && result !== "computing" && result.witness) {
-            const witness = { name: this.props.parameter.name, witness: result.witness };
-            this.props.onShowWitness(witness);
-        }
-    }
-    private handleMouseOut = () => this.props.onShowWitness(null);
-
-    private outputResult(result: Result | "computing") {
-        if (result === "computing") {
-            return <Text color="warning">Computing</Text>;
-        } else if (result.witness === null) {
-            return result.result.toString();
-        } else {
-            const aEl = (
-                <a href="#" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
-                    {result.witness.toString()}
-                </a>);
-            return [result.result.toString(), " (", aEl, ")"];
-        }
+const outputResult = (result: Result | "computing", props: Props) => {
+    if (result === "computing") {
+        return <Text color="warning">Computing</Text>;
+    } else if (result.witness === null) {
+        return result.result.toString();
+    } else {
+        const aEl = (
+            <a href="#" onMouseOver={() => props.onShowWitness(props.parameter)}
+                onMouseOut={() => props.onShowWitness(null)}>
+                {result.witness.toString()}
+            </a>);
+        return [result.result.toString(), " (", aEl, ")"];
     }
 }
+
+export default OutputParameter;

@@ -22,7 +22,7 @@ export default function isChordal(g: Graph): Result {
     let chordal = true;
     let witness: number[] = [];
     for (const v of lbfs) {
-        const nbor = [...iter.filter<number>(g.adj(v), u => visited.has(u))];
+        const nbor = [...iter.filter(g.adj(v), u => visited.has(u))];
         const res = hasClique(g, nbor);
         if (!res.result) {
             chordal = false;

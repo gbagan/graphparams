@@ -1,5 +1,5 @@
 import { createAction, createStandardAction} from "typesafe-actions";
-import { GraphParameter, PlainGraph, Witness } from "../types";
+import { GraphParameter, PlainGraph } from "../types";
 
 export const changeCode = createStandardAction("params/CHANGE_CODE")<string>();
 export const toggleParameter = createStandardAction("params/TOGGLE_PARAMETER")<string>();
@@ -14,4 +14,4 @@ export const graphComputed = createStandardAction("params/GRAPH_COMPUTED")<Plain
 export const computeGraphError = createStandardAction("params/GRAPH_COMPUTE_ERROR")<string>();
 export const startComputingParameter = createStandardAction("params/START_COMPUTING_PARAMETER")<string>();
 export const parameterComputed = createStandardAction("params/PARAMETER_COMPUTED")<GraphParameter>();
-export const showWitness = createStandardAction("params/SHOW_WITNESS")<Witness | null>();
+export const showWitness = createStandardAction("params/SHOW_WITNESS")<GraphParameter | null>();

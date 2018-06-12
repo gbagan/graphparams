@@ -1,0 +1,71 @@
+@import "variables";
+
+.item {
+    float: left;
+
+    & > a {
+        display: block;
+        color: rgba(0, 0, 0, 0.65);
+    }
+    & > a:hover, & > a:hover {
+        color: $primary-color;
+    }
+    & > a:focus {
+        text-decoration: none;
+    }
+    & > a:before {
+        position: absolute;
+        background-color: transparent;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        content: '';
+    }
+
+    .selected, .selected > a {
+        &, & > a {
+            color: $primary-color;
+        }
+    }
+}
+
+.menu {
+    box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: rgba(0, 0, 0, 0.65);
+    background: white;
+    margin: 0pt;
+    transition: background .3s, width .2s;
+    .hidden {
+        display: hidden;
+    }
+
+    :after {
+        visibility: hidden;
+        display: block;
+        height: 0;
+        clear: both;
+    }
+
+    .horizontal {
+        line-height: 46px;
+        border-bottom: 1px solid #e8e8e8;
+
+        & .submenu, & .item {
+            margin-top: -1px;
+        }
+
+        &:hover {
+            background-color: transparent;
+        }
+    }
+}
+
+.submenu {
+    .popup {
+        position: absolute;
+        border-radius: 4px;
+        z-index: 1050;
+    }
+}

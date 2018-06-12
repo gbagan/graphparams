@@ -118,5 +118,4 @@ function edgeTraffic(shift: Shift) {
     }));
 }
 
-
 export default connect(mapStateToProps, mapDispatchToProps)(VisEds);

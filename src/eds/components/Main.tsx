@@ -7,7 +7,7 @@ import Card from "antd/lib/card";
 import Col from "antd/lib/col";
 import Row from "antd/lib/row";
 
-import Layout from "../../styled/Layout";
+import Background from "../../styled/Background";
 import selector from "../redux/selector";
 import GraphInput from "./GraphInput";
 import VisEds from "./VisEds";
@@ -18,26 +18,24 @@ type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
 const Main = ({ helpText }: Props) => {
     return (
-        <Layout>
-            <div>
-                <h1>Eternal dominating set</h1>
-                <Row type="flex" gutter={32}>
-                    <Col>
-                        <GraphInput />
-                    </Col>
-                    <Col>
-                        <Card title="Graph">
-                            <   StyledVisEds />
-                        </Card>
-                    </Col>
-                    <Col>
-                        <Card title="Help">
-                            <HelpText>{htmlize(helpText)}</HelpText>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
-        </Layout>
+        <Background>
+            <h1>Eternal dominating set</h1>
+            <Row type="flex" gutter={32}>
+                <Col>
+                    <GraphInput />
+                </Col>
+                <Col>
+                    <Card title="Graph">
+                        <StyledVisEds />
+                    </Card>
+                </Col>
+                <Col>
+                    <Card title="Help">
+                        <HelpText>{htmlize(helpText)}</HelpText>
+                    </Card>
+                </Col>
+            </Row>
+        </Background>
     );
 };
 

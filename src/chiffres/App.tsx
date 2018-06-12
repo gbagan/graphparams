@@ -6,7 +6,7 @@ import Card from "antd/lib/card";
 import Col from "antd/lib/col";
 import Row from "antd/lib/row";
 
-import Layout from "../styled/Layout";
+import Background from "../styled/Background";
 import Form from "./Form";
 import { Calc, solve } from "./solver";
 
@@ -42,19 +42,17 @@ export default class ChiffresApp extends React.Component<Props, State> {
         const result = !this.state.output ? "" : calcToHTML(this.state.output);
 
         return (
-            <Layout>
-                <div>
-                    <h1>Le compte est bon</h1>
-                    <Row type="flex">
-                        <Col>
-                            <Form onSubmit={this.handleSubmit} />
-                            <Card title="Output">
-                                <Output>{result}</Output>
-                            </Card>
-                        </Col>
-                    </Row>
-                </div>
-            </Layout>
+            <Background>
+                <h1>Le compte est bon</h1>
+                <Row type="flex">
+                    <Col>
+                        <Form onSubmit={this.handleSubmit} />
+                        <Card title="Output">
+                            <Output>{result}</Output>
+                        </Card>
+                    </Col>
+                </Row>
+            </Background>
         );
     }
 }

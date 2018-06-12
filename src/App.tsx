@@ -19,8 +19,8 @@ import Slide from "./transitions/slide";
 const mainmenu = [
     {
         submenu: [
-            { title: "Parameters", link: "/graph/params", component: GraphParamsApp as any },
-            { title: "Eternal Domination", link: "/graph/eds", component: EdsApp as any },
+            { component: GraphParamsApp as any, link: "/graph/params", title: "Parameters"},
+            { component: EdsApp as any,  link: "/graph/eds", title: "Eternal Domination"},
         ],
         title: "Graphs",
     },
