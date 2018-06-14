@@ -10,20 +10,21 @@
     box-shadow: 0px 0px 0px 1px lightsteelblue;
 
     @for $i from 2 through 6 {
-        .cols-#{$i} {
+        &.cols-#{$i} {
             width: 100% / $i;
         }
     }
-    &,.delete {
+
+    &.delete {
         width: 100%;
     }
 
     &:hover {
-        color: white;
+        color: rgb(49, 16, 16);
         background: gold;
     }
-    &,.delete:hover {
+
+    &.delete:hover {
         background: firebrick;
     }
 }
-

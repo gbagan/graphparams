@@ -1,11 +1,4 @@
-﻿export function range(n: number, m?: number) {
-    const l: number[] = [];
-    const [a, b] = m === undefined ? [0, n] : [n, m];
-    for (let i = a; i  < b; i++) {
-        l.push(i);
-    }
-    return l;
-}
+﻿import * as R from "ramda";
 
 export function Map_dec<T>(m: Map<string, number>, key: T) {
     let v = m.get(key.toString()) as number;
@@ -25,7 +18,7 @@ export function* sublists(n: number, k: number): Iterable<number[]> {
     }
 }
 
-export function uniq<T>(l: ReadonlyArray<T>) {
+export function uniq<T>(l: T[]) {
     let pred: T | null = null;
     const l2: T[] = [];
     for (const x of l) {
@@ -48,7 +41,7 @@ export function allDifferent<T>(l: ReadonlyArray<T>) {
     return true;
 }
 
-export function arrayIntersection<T>(l1: ReadonlyArray<T>, l2: ReadonlyArray<T>) {
+export function arrayIntersection<T>(l1: T[], l2: T[]) {
     const l: T[] = [];
     let i = 0;
     let j = 0;
@@ -71,7 +64,7 @@ export function* subsets(n: number, k: number): Iterable<number[]> {
     if (k === 0) {
         yield [];
     } else if (n === k) {
-        yield range(n);
+        yield R.range(0, n);
     } else {
         yield* subsets(n - 1, k);
         for (const set of subsets(n - 1, k - 1)) {
@@ -113,6 +106,18 @@ export function* bsubsets(n: number, k: number): Iterable<number> {
         yield* bsubsets(n - 1, k);
         for (const set of bsubsets(n - 1, k - 1)) {
             yield set | (1 << (n - 1));
+        }
+    }
+}
+
+export function* permutations<T>(list: T[]): Iterable<T[]> {
+    if (list.length <= 1) {
+        yield list;
+    } else {
+        for (let i = 0; i < list.length; i++) {
+            for (const perm of permutations(list.slice(0, i).concat(list.slice(i + 1, list.length)))) {
+                  yield [list[i]].concat(perm);
+            }
         }
     }
 }

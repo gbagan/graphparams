@@ -4,4 +4,4 @@ export type GraphInputData = {
     rules: "one" | "all"
 }
 
-export type Shift = ReadonlyArray<Readonly<[number,number]>>;
+export {Shift} from "@/lib/arena/types";

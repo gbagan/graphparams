@@ -18,7 +18,7 @@ function Q(g: Graph, set: number[], v: number) {
     visited[v] = true;
     while (queue.length > 0) {
         const u = queue.shift()!;
-        for (const w of g.adj(u)) {
+        for (const w of g.adj[u]) {
             if (!visited[w]) {
                 visited[w] = true;
                 if (inset[w]) {

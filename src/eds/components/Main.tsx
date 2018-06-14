@@ -1,37 +1,35 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { createSelector } from "reselect";
-import styled from "styled-components";
 
-import Card from "antd/lib/card";
-import Col from "antd/lib/col";
-import Row from "antd/lib/row";
+import {Background, Card, Col, Row} from "@/ui";
 
-import Background from "../../styled/Background";
-import selector from "../redux/selector";
+import {HELP_TEXT} from "../data";
 import GraphInput from "./GraphInput";
 import VisEds from "./VisEds";
 
-const mapStateToProps = createSelector(selector, state => ({ helpText: state.helpText }));
-const mapDispatchToProps = {};
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
+const style = require("./Main.scss");
 
-const Main = ({ helpText }: Props) => {
+
+const htmlizedHelp =
+    <React.Fragment>
+        {HELP_TEXT.split("\n").map((line, i) => [line, <br/>])}
+    </React.Fragment>
+
+const render: React.SFC<{}> = () => {
     return (
         <Background>
             <h1>Eternal dominating set</h1>
-            <Row type="flex" gutter={32}>
+            <Row gutter={32}>
                 <Col>
                     <GraphInput />
                 </Col>
                 <Col>
                     <Card title="Graph">
-                        <StyledVisEds />
+                        <VisEds className={style.viz} />
                     </Card>
                 </Col>
                 <Col>
                     <Card title="Help">
-                        <HelpText>{htmlize(helpText)}</HelpText>
+                        <div className={style.help}>{htmlizedHelp}</div>
                     </Card>
                 </Col>
             </Row>
@@ -39,17 +37,4 @@ const Main = ({ helpText }: Props) => {
     );
 };
 
-const StyledVisEds = styled(VisEds)`
-height: 600px;
-width: 700px;
-`;
-
-const HelpText = styled.div`
-height: 700px;
-width: 400px;
-overflow: auto;
-`;
-
-const htmlize = (text: string) => text.split("\n").map((line, i) => [line, <br key={i} />]);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default render;

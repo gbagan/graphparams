@@ -1,11 +1,11 @@
 import {identifyingCode /*, locatingDominatingSet */ } from "../idcode";
 
 import {clique, graph, path} from "../generate";
-import MutableGraph from "../mutablegraph";
+import Graph from "../graph";
 import {join} from "../operators";
 
-const testIdCode = (g: MutableGraph, expectedRes: number) => {
-    expect(identifyingCode(g.freeze()).result).toBe(expectedRes);
+const testIdCode = (g: Graph, expectedRes: number) => {
+    expect(identifyingCode(g).result).toBe(expectedRes);
 };
 
 it("identifyingCode(K5)", () => testIdCode(clique(5), Infinity));

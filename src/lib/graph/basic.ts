@@ -1,13 +1,14 @@
-import {count, map, max, min, range, sum} from "../iter";
+import * as R from "ramda";
+import {max} from "../iter";
 import {binaryDecode, binaryEncode} from "../util";
 import Graph from "./graph";
 import {complement} from "./operators";
 import {Result} from "./types";
 
 export const nbVertices = (g: Graph) => g.V;
-export const nbEdges = (g: Graph) => sum(map(g.adjs(), nbor => nbor.length)) / 2;
-export const minDegree = (g: Graph) => min(g.adjs(), nbor => nbor.length).value;
-export const maxDegree = (g: Graph) => max(g.adjs(), nbor => nbor.length).value;
+export const nbEdges = (g: Graph) => R.sum(g.adj.map(nbor => nbor.length)) / 2;
+export const minDegree = (g: Graph) => Math.min(...g.adj.map(nbor => nbor.length));
+export const maxDegree = (g: Graph) => Math.max(...g.adj.map(nbor => nbor.length));
 export const isRegular = (g: Graph)  => minDegree(g) === maxDegree(g);
 
 export function isConnected(g: Graph): boolean {
@@ -18,7 +19,7 @@ export function isConnected(g: Graph): boolean {
     stack.push(0);
     while (stack.length > 0) {
         const u = stack.pop()!;
-        for (const w of g.adj(u)) {
+        for (const w of g.adj[u]) {
             if (!visited[w]) {
                 stack.push(w);
                 visited[w] = true;
@@ -39,7 +40,7 @@ function hamiltonAux(g: Graph, path: number[]): Result {
         return g.V === 1 || g.hasEdge(path[0], last) ?
                     { result: true, witness: path } : { result: false, witness: null };
     } else {
-        for (const v of g.adj(last)) {
+        for (const v of g.adj[last]) {
             if (path.includes(v)) {
                 continue;
             }
@@ -53,14 +54,14 @@ function hamiltonAux(g: Graph, path: number[]): Result {
 }
 
 export function degeneracy(g: Graph): Result {
-    const set = new Set(range(g.V));
+    const set = new Set(R.range(0, g.V));
     const order: number[] = [];
     let maxdegree = 0;
     while (set.size > 0) {
         let minDeg = Infinity;
         let bestVertex = null;
         for (const v of set) {
-            const degree = count(g.adj(v), u => set.has(u));
+            const degree = R.sum(g.adj[v].map(u => set.has(u) ? 1: 0));
             if (degree < minDeg) {
                 bestVertex = v;
                 minDeg = degree;
@@ -87,7 +88,7 @@ export function eccentricity(g: Graph, v: number): Result {
     queue.push(v);
     while (queue.length > 0) {
         const u = queue.shift()!;
-        for (const w of g.adj(u)) {
+        for (const w of g.adj[u]) {
             if (distance[w] === -1) {
                 queue.push(w);
                 distance[w] = distance[u] + 1;
@@ -100,7 +101,7 @@ export function eccentricity(g: Graph, v: number): Result {
     if (nbVisited !== g.V) {
         return { result: Infinity, witness: null };
     } else {
-        let u = max(range(g.V), w => distance[w]).elem;
+        let u = max(R.range(0, g.V), w => distance[w]).elem;
         const path = [u];
         while (u !== v) {
             u = parent[u];
@@ -121,7 +122,7 @@ export function alternativePath(g: Graph, v1: number, v2: number) {
     queue.push(v1);
     while (queue.length > 0) {
         const u = queue.shift()!;
-        for (const w of g.adj(u)) {
+        for (const w of g.adj[u]) {
             if (u === v1 && w === v2) {
                 continue;
             }
@@ -196,10 +197,7 @@ export function misNonOpt(g: Graph): Result {
 export function mis(g: Graph): Result {
     let isets: number[] = [0];
     let i = 0;
-    const nbors: number[] = [];
-    for (const adj of g.adjs()) {
-        nbors.push(binaryEncode(adj));
-    }
+    const nbors = g.adj.map(adj => binaryEncode(adj));
 
     while (true) {
         const isets2: number[] = [];
@@ -221,4 +219,4 @@ export function mis(g: Graph): Result {
 }
 
 // const cliqueNumberNonOpt = (g: Graph) => mis(complement(g).freeze());
-export const cliqueNumber = (g: Graph) => mis(complement(g).freeze());
+export const cliqueNumber = (g: Graph) => mis(complement(g));

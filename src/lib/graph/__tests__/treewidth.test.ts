@@ -1,9 +1,9 @@
 import {biclique, clique, cycle, graph, path, sun} from "../generate";
-import MutableGraph from "../mutablegraph";
+import Graph from "../graph";
 import treewidth from "../treewidth";
 
-const testTw = (g: MutableGraph, expectedRes: number) => {
-    expect(treewidth(g.freeze())).toBe(expectedRes);
+const testTw = (g: Graph, expectedRes: number) => {
+    expect(treewidth(g)).toBe(expectedRes);
 };
 
 it("treewidth(I6)",   () => testTw(graph(6), 0));

@@ -1,6 +1,6 @@
 import equasSolve from "./equations";
 
-function generateMatrix(n: number, m: number, torus?: boolean): ReadonlyArray<ReadonlyArray<number>> {
+function generateMatrix(n: number, m: number, torus?: boolean): number[][] {
     const mat: number[][] = new Array(n * m);
     for (let i = 0; i < mat.length; i++) {
         mat[i] = new Array(n * m);
@@ -21,8 +21,8 @@ function generateMatrix(n: number, m: number, torus?: boolean): ReadonlyArray<Re
     return mat;
 }
 
-export default function* solve(conf: ReadonlyArray<number>, rows: number, columns: number, nbColors: number,
-                               torus: boolean = false, limit?: number): Iterable<ReadonlyArray<number>> {
+export default function* solve(conf: number[], rows: number, columns: number, nbColors: number,
+                               torus: boolean = false, limit?: number): Iterable<number[]> {
     const conf2: number[] = [];
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < columns; j++) {

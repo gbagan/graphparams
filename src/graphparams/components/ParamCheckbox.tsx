@@ -1,7 +1,6 @@
 import * as React from "react";
-
-// import Checkbox from "antd/lib/checkbox";
-import Checkbox from "../../styled/Checkbox";
+import {withHandlers} from "recompose";
+import {Checkbox} from "@/ui";
 
 import { GraphParameter } from "../types";
 
@@ -10,15 +9,23 @@ type Props = {
     onToggle: (name: string) => void;
 };
 
-const PCB: React.SFC<Props> = props => {
-    const { onToggle, data } = props;
-    const { checked, fullname, name } = data;
-    return (
-        <React.Fragment>
-            <Checkbox checked={checked} onChange={() => onToggle(name)}>{fullname}</Checkbox>
-            <br/>
-        </React.Fragment>
-    );
+type HandlerProps = {
+    handleToggle: () => void;
 }
 
-export default PCB;
+const render: React.SFC<Props & HandlerProps> = ({ onToggle, data, handleToggle }) => {
+    const { checked, fullname } = data;
+    return (
+        <React.Fragment>
+            <Checkbox checked={checked} onChange={handleToggle}>
+                {fullname}
+            </Checkbox>
+            <br />
+        </React.Fragment>
+    );
+};
+
+export default
+withHandlers<Props, HandlerProps>({
+    handleToggle: ({data, onToggle}) => () => onToggle(data.name)
+})(render);

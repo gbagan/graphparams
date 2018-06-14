@@ -12,8 +12,8 @@ it("product P3 x P4", () => {
 });
 
 it("copy(petersen)", () => {
-    const g = petersen().freeze();
+    const g = petersen();
     const g2 = copy(g);
     expect(g2.V).toBe(g.V);
-    expect([...g2.adjs()]).toEqual([...g.adjs()]);
+    expect(g2.adj).toEqual(g.adj);
 });

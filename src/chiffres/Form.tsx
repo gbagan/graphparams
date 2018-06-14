@@ -8,10 +8,10 @@ import InputNumber from "antd/lib/input-number";
 
 type Props = {
     form: WrappedFormUtils;
-    onSubmit: (vals: ReadonlyArray<number>, target: number) => void;
+    onSubmit: (vals: number[], target: number) => void;
 };
 
-export function toArrayOfNumbers(data: string): ReadonlyArray<number> | null {
+export function toArrayOfNumbers(data: string): number[] | null {
     const values = data.split(" ").filter(val => val !== "")
         .map(val => parseInt(val, 10))
         .filter(val => val && val > 0);

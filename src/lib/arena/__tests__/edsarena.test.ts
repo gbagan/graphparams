@@ -1,9 +1,8 @@
 import {makeArena} from "../edsarena";
-
 import {cycle, sun} from "../../graph/generate";
 
 it("C6, all guards rules, k=2", () => {
-    const g = cycle(6).freeze();
+    const g = cycle(6);
     const arena = makeArena(g, 2, "all");
     expect(arena).not.toBeNull();
     const conf = arena!.startingConf();
@@ -12,7 +11,7 @@ it("C6, all guards rules, k=2", () => {
 });
 
 it("sun(3), one guard rules, only one guard moves", () => {
-    const g = sun(3).freeze();
+    const g = sun(3);
     const arena = makeArena(g, 3, "one");
     expect(arena).not.toBeNull();
     const answer = arena!.guardsAnswer(g, [0, 1, 2], 3);

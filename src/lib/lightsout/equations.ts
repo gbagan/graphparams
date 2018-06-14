@@ -6,7 +6,7 @@ class FiniteFieldEquations {
     private pivots: number[];
     private divTable: number[][];
 
-    constructor(mat: ReadonlyArray<ReadonlyArray<number>>, b: ReadonlyArray<number>, k: number) {
+    constructor(mat: number[][], b: number[], k: number) {
         this.k = k;
         this.mat = mat.map(l => l.slice());
         this.b = b.slice();
@@ -109,7 +109,7 @@ class FiniteFieldEquations {
         return true;
     }
 
-    private * solvePivotedMatrixAux(sol: number[], row: number, col: number): Iterable<ReadonlyArray<number>> {
+    private * solvePivotedMatrixAux(sol: number[], row: number, col: number): Iterable<number[]> {
         const k = this.k;
         const n = this.n;
         if (row < 0 || col < 0) {
@@ -137,7 +137,7 @@ class FiniteFieldEquations {
     }
 }
 
-const solve = (mat: ReadonlyArray<ReadonlyArray<number>>, b: ReadonlyArray<number>, k: number) => {
+const solve = (mat: number[][], b: number[], k: number) => {
     const equas = new FiniteFieldEquations(mat, b, k);
     equas.eliminate();
     return equas.solvePivotedMatrix();

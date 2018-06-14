@@ -3,7 +3,7 @@ import { storiesOf } from "@storybook/react";
 /* tslint:enable */
 import * as React from "react";
 
-import Button from "../src/styled/Button";
+import {Button} from "@/ui";
 
 storiesOf("Button", module)
 .add("standard", () => <Button>Standard</Button>)

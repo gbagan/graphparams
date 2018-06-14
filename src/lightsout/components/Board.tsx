@@ -5,12 +5,9 @@ import { createSelector } from "reselect";
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
 
-const mapStateToProps = createSelector(selector, state => ({
-    board: state.board,
-    columns: state.columns,
-    rows: state.rows,
-    solution: state.currentSolution,
-}));
+const mapStateToProps = createSelector(selector,
+    ({board, columns, rows, currentSolution}) => ({board, columns, rows, currentSolution})
+);
 
 const mapDispatchToProps = {
     onClick: actions.switchCell,
@@ -61,7 +58,7 @@ class Board extends React.Component<Props> {
     }
 
     private draw() {
-        const { rows, columns, board, solution } = this.props;
+        const { rows, columns, board, currentSolution } = this.props;
         const el = this.ref.current;
         if (!el || !board) {
             return;
@@ -105,10 +102,10 @@ class Board extends React.Component<Props> {
             }
         }
 
-        if (solution) {
+        if (currentSolution) {
             context.fillStyle = "black";
             context.beginPath();
-            solution.forEach((value, index) => {
+            currentSolution.forEach((value, index) => {
                 if (value > 0) {
                     const column = index % columns;
                     const row = Math.floor(index / columns);

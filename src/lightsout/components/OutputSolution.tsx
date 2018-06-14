@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import {withHandlers} from "recompose";
 import { Solution } from "../types";
 
 type Props = {
@@ -8,17 +8,18 @@ type Props = {
     onSelect: (solution: Solution | null) => void;
 };
 
-class OutputSolution extends React.Component<Props> {
-    public render() {
-        return (
-            <a href="#" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
-                solution {this.props.index + 1}
-            </a>
-        );
-    }
-
-    private handleMouseOver = () => this.props.onSelect(this.props.solution);
-    private handleMouseOut = () => this.props.onSelect(null);
+type HandlerProps = {
+    handleMouseOver: () => void;
+    handleMouseOut: () => void;
 }
 
-export default OutputSolution;
+const render: React.SFC<Props & HandlerProps> = ({index, handleMouseOver, handleMouseOut}) =>
+    <a href="#" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+        solution {index + 1}
+    </a>
+
+export default
+withHandlers<Props, HandlerProps>({
+    handleMouseOver: ({onSelect, solution}) => () => onSelect(solution),
+    handleMouseOut: ({onSelect}) => () => onSelect(null),
+})(render)

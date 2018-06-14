@@ -1,15 +1,10 @@
-import Graph from "./graph";
-import MutableGraph from "./mutablegraph";
-
 export type Result = {
-    readonly result: boolean | number;
-    readonly witness: ReadonlyArray<number> | null
+    result: boolean | number;
+    witness: number[] | null
 };
 
 export type PlainGraph = {
-    readonly digraph: boolean;
-    readonly V: number;
-    readonly adj: ReadonlyArray<ReadonlyArray<number>>;
+    digraph: boolean;
+    V: number;
+    adj: number[][];
 };
-
-export type GenericGraph = Graph | MutableGraph

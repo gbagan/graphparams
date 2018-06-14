@@ -1,25 +1,21 @@
+import * as R from "ramda";
 import * as React from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 import * as vis from "vis";
 
-import * as iter from "../../lib/iter";
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
 import { Shift } from "../types";
 
-import VisWithTraffic, { EdgeTraffic } from "../../lib/components/VisWithTraffic";
+import VisWithTraffic, { EdgeTraffic } from "@/lib/components/VisWithTraffic";
 
-// import POLICEMAN  "../img/policeman.png";
-// import HOUSE from "../img/house.png"
-const POLICEMAN = "static/policeman.png";
-const HOUSE = "static/house.png";
+const POLICEMAN = require("../img/policeman.png");
+const HOUSE = require("../img/house.png");
 
-const mapStateToProps = createSelector(selector, state => ({
-    graph: state.graph,
-    guards: state.guards,
-    shift: state.shift,
-}));
+const mapStateToProps = createSelector(selector, ({graph, guards, shift}) => (
+    {graph, guards, shift}
+));
 
 const mapDispatchToProps = {
     onSelectVertex: actions.selectVertex,
@@ -42,7 +38,7 @@ class VisEds extends React.Component<Props> {
         }
         // const digraph = (graph as any).reverseAdj !== undefined;
 
-        const nodes: vis.Node[] = [...iter.range(0, graph.V)].map(i => ({
+        const nodes: vis.Node[] = R.range(0, graph.V).map(i => ({
             id: i.toString(),
             image: (guards || []).includes(i) ? POLICEMAN : HOUSE,
             shape: "circularImage",
@@ -111,9 +107,9 @@ function edgeId(u: number, v: number, isDigraph: boolean) {
 function edgeTraffic(shift: Shift) {
     const isDigraph = false;
 
-    return shift.map(pair => ({
-        id: edgeId(pair[0], pair[1], isDigraph),
-        isBackward: !isDigraph && pair[0] > pair[1],
+    return shift.map(({from, to}) => ({
+        id: edgeId(from, to, isDigraph),
+        isBackward: !isDigraph && from > to,
         size: 5,
     }));
 }

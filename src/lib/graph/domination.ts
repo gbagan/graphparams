@@ -1,16 +1,16 @@
-import {range} from "../iter";
+import * as R from "ramda";
 import { binaryDecode, binaryEncode } from "../util";
 import Graph from "./graph";
 import { Result } from "./types";
 
-export const dominatingSet = (g: Graph) => dominationAux(g, [], [...range(g.V)]);
+export const dominatingSet = (g: Graph) => dominationAux(g, [], R.range(0, g.V));
 
 function dominationAux(g: Graph, preset: number[], undom: number[]): Result {
     if (undom.length === 0) {
         return { result: preset.length, witness: preset };
     }
     const v = undom[0];
-    const nbor = g.adj(v).concat(v);
+    const nbor = g.adj[v].concat(v);
 
     let bestRes: Result = { result: Infinity, witness: null };
     for (const u of nbor) {
@@ -28,7 +28,7 @@ function dominationAux(g: Graph, preset: number[], undom: number[]): Result {
 
 export function independentDominatingSet(g: Graph): Result {
     const nbors: number[] = [];
-    for (const adj of g.adjs()) {
+    for (const adj of g.adj) {
         nbors.push(binaryEncode(adj));
     }
 
@@ -55,14 +55,14 @@ export function independentDominatingSet(g: Graph): Result {
     }
 }
 
-export const totalDominatingSet = (g: Graph) => totalDominationAux(g, [], [...range(g.V)]);
+export const totalDominatingSet = (g: Graph) => totalDominationAux(g, [], R.range(0, g.V));
 
 function totalDominationAux(g: Graph, preset: number[], undom: number[]): Result {
     if (undom.length === 0) {
         return { result: preset.length, witness: preset };
     }
     const v = undom[0];
-    const nbor = g.adj(v).concat(v);
+    const nbor = g.adj[v].concat(v);
 
     let bestRes: Result = { result: Infinity, witness: null };
     for (const u of nbor) {
@@ -78,7 +78,7 @@ function totalDominationAux(g: Graph, preset: number[], undom: number[]): Result
     return bestRes;
 }
 
-export const connectedDominatingSet = (g: Graph) => connectedDominationAux(g, [], [...range(g.V)], new Set());
+export const connectedDominatingSet = (g: Graph) => connectedDominationAux(g, [], R.range(0, g.V), new Set());
 
 function connectedDominationAux(g: Graph, preset: number[], undom: number[], adj: Set<number>): Result {
     if (undom.length === 0) {
@@ -86,13 +86,13 @@ function connectedDominationAux(g: Graph, preset: number[], undom: number[], adj
     }
 
     const v = 0;
-    const candidates = preset.length === 0 ? new Set(g.adj(v).concat(v)) : adj;
+    const candidates = preset.length === 0 ? new Set(g.adj[v].concat(v)) : adj;
 
     let bestRes: Result = { result: Infinity, witness: null };
     for (const u of candidates) {
         const undom2 = undom.filter((w) => u !== w && !g.hasEdge(u, w));
         const adj2 = new Set<number>(adj);
-        for (const w of g.adj(u)) {
+        for (const w of g.adj[u]) {
             if (!preset.includes(w)) {
                 adj2.add(w);
             }

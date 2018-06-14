@@ -1,6 +1,5 @@
 import * as React from "react";
-
-import { Solution } from "../types";
+import {Solution} from "../types";
 
 type Props = {
     index: number,
@@ -14,9 +13,12 @@ class OutputSolution extends React.Component<Props> {
 
     public render() {
         return (
-            <a href="#" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
-                solution {this.props.index + 1}
-            </a>
+            <React.Fragment>
+                <a href="#" onMouseOver={this.handleMouseOver} onMouseOut={this.handleMouseOut}>
+                    solution {this.props.index + 1}
+                </a>
+                <br/>
+            </React.Fragment>
         );
     }
 }

@@ -2,21 +2,20 @@ import {every, range} from "../../iter";
 import * as basic from "../basic";
 import {biclique, clique, cycle, graph, path, petersen, star, sun} from "../generate";
 import Graph from "../graph";
-import MutableGraph from "../mutablegraph";
-import {union} from "../operators";
+import {addPath, union} from "../operators";
 
 it("isRegular(petersen)", () => {
-    const g = petersen().freeze();
+    const g = petersen();
     expect(basic.isRegular(g)).toBe(true);
 });
 
 it("isRegular(P4)", () => {
-    const g = path(4).freeze();
+    const g = path(4);
     expect(basic.isRegular(g)).toBe(false);
 });
 
-const checkHamiltonian = (g: MutableGraph, expectedRes: boolean) => () => {
-    const res = basic.isHamiltonian(g.freeze());
+const checkHamiltonian = (g: Graph, expectedRes: boolean) => () => {
+    const res = basic.isHamiltonian(g);
     expect(res.result).toBe(expectedRes);
     if (expectedRes) {
         const p = res.witness;
@@ -33,32 +32,32 @@ const isClique = (g: Graph, set: ReadonlyArray<number>) =>
     set.every(i => set.every(j => i === j || g.hasEdge(i, j)));
 
 it("isConnected(I1)", () => {
-    const g = graph(1).freeze();
+    const g = graph(1);
     expect(basic.isConnected(g)).toBe(true);
 });
 
 it("isConnected(P6)", () => {
-    const g = graph(6).addPath(3, 2, 4, 1, 0, 5).freeze();
+    const g = addPath(graph(6), 3, 2, 4, 1, 0, 5);
     expect(basic.isConnected(g)).toBe(true);
 });
 
 it("isConnected(P2 + P4)", () => {
-    const g = graph(6).addPath(0, 1).addPath(4, 3, 2, 5).freeze();
+    const g = addPath(addPath(graph(6), 0, 1), 4, 3, 2, 5);
     expect(basic.isConnected(g)).toBe(false);
 });
 
 it("degeneracy(I6)", () => {
-    const g = graph(6).freeze();
+    const g = graph(6);
     expect(basic.degeneracy(g).result).toBe(0);
 });
 
 it("degeneracy(P6)", () => {
-    const g = graph(6).addPath(3, 2, 4, 1, 0, 5).freeze();
+    const g = addPath(graph(6), 3, 2, 4, 1, 0, 5);
     expect(basic.degeneracy(g).result).toBe(1);
 });
 
 it("degeneracy(K6)", () => {
-    const g = clique(6).freeze();
+    const g = clique(6);
     expect(basic.degeneracy(g).result).toBe(5);
 });
 
@@ -69,42 +68,42 @@ it("hamiltonian(K3,4)", checkHamiltonian(biclique(3, 4), false));
 it("hamiltonian(petersen)", checkHamiltonian(petersen(), false));
 
 it("girth(petersen)", () => {
-    const g = petersen().freeze();
+    const g = petersen();
     const res = basic.girth(g);
     expect(res.result).toBe(5);
     expect(res.witness!.length).toBe(5);
 });
 
 it("girth(star(4))", () => {
-    const g = star(4).freeze();
+    const g = star(4);
     const res = basic.girth(g);
     expect(res.result).toBe(Infinity);
     expect(res.witness).toBeNull();
 });
 
 it("diameter(P8)", () => {
-    const g = path(8).freeze();
+    const g = path(8);
     const res = basic.diameter(g);
     expect(res.result).toBe(7);
     expect(res.witness!.length).toBe(8);
 });
 
 it("diameter(C7)", () => {
-    const g = cycle(7).freeze();
+    const g = cycle(7);
     const res = basic.diameter(g);
     expect(res.result).toBe(3);
     expect(res.witness!.length).toBe(4);
 });
 
 it("diameter(C3 + C3)", () => {
-    const g = union(cycle(3), cycle(3)).freeze();
+    const g = union(cycle(3), cycle(3));
     const res = basic.diameter(g);
     expect(res.result).toBe(Infinity);
     expect(res.witness).toBeNull();
 });
 
 it("mis(sun(4))", () => {
-    const g = sun(4).freeze();
+    const g = sun(4);
     const res = basic.mis(g);
     expect(res.result).toBe(4);
     expect(res.witness!.length).toBe(4);
@@ -112,7 +111,7 @@ it("mis(sun(4))", () => {
 });
 
 it("cliqueNumber(sun(4))", () => {
-    const g = sun(4).freeze();
+    const g = sun(4);
     const res = basic.cliqueNumber(g);
     expect(res.result).toBe(4);
     expect(res.witness!.length).toBe(4);

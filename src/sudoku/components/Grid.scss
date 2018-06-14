@@ -7,7 +7,7 @@
 
     @for $i from 2 through 6 {
         $size: min(40px * $i * $i + 10px, 800px);
-        .squaresize-#{$i} {
+        &.squaresize-#{$i} {
             width: $size;
             height: $size;
         }

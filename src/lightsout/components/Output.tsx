@@ -18,16 +18,25 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
-const Output: React.SFC<Props> = (props) => {
-    const { solutions, onSelectSolution } = props;
+const Output: React.SFC<Props> = ({solutions, onSelectSolution}) => {
+    const data =
+        !solutions ? "Lights Out" 
+        : solutions.length === 0 ? "No solution"
+        :
+        <React.Fragment>
+            <span>{solutions.length} solution{solutions.length > 1 ? "s" : ""}</span>
+            <br />
+            {
+                solutions.slice(0, 25).map((solution, index) =>
+                    <React.Fragment>
+                        <OutputSolution index={index} solution={solution} onSelect={onSelectSolution} />,
+                        <br/>
+                    </React.Fragment>
+                )
+            }
+        </React.Fragment>
 
-    const data = !solutions ? "Lights Out" : (solutions.length === 0 ? "No solution" :
-        [<span key={0}>{solutions.length} solution{solutions.length > 1 ? "s" : ""}</span>, (<br />),
-        solutions.slice(0, 25).map((solution, index) => [
-            <OutputSolution key={index} index={index} solution={solution} onSelect={onSelectSolution} />,
-            <br key={index} />])]);
-
-    return <Card title="Output" className="output">{data}</Card>;
+    return <Card title="Output" className="output">{data}</Card>
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Output);

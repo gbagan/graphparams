@@ -1,36 +1,53 @@
 import * as React from "react";
-import Text from "../../styled/Text";
+import {withHandlers} from "recompose";
+import {Text} from "@/ui";
 
-import { GraphParameter, Result } from "../types.d";
+import {GraphParameter} from "../types";
 
 type Props = {
-    parameter: GraphParameter,
-    onShowWitness: (p: GraphParameter | null) => void,
+    parameter: GraphParameter;
+    onShowWitness: (p: GraphParameter | null) => void;
 };
 
- const OutputParameter: React.SFC<Props> = props => {
-    const { result, fullname } = props.parameter;
-    return !result
-        ? <span/>
-        : <React.Fragment>
-            <span>{fullname} : {outputResult(result, props)}</span>
-            <br/>
-         </React.Fragment>
+type HandlerProps = {
+    handleShowWitness: () => void;
+    handleHideWitness: () => void;
 }
 
-const outputResult = (result: Result | "computing", props: Props) => {
+const render: React.SFC<Props & HandlerProps> = ({parameter, handleShowWitness, handleHideWitness}) => {
+    const { result, fullname } = parameter;
+    if (!result) return <span />;
+
+    let resultJsx: JSX.Element | string;
     if (result === "computing") {
-        return <Text color="warning">Computing</Text>;
+        resultJsx = <Text color="warning">Computing</Text>;
     } else if (result.witness === null) {
-        return result.result.toString();
+        resultJsx = result.result.toString();
     } else {
-        const aEl = (
-            <a href="#" onMouseOver={() => props.onShowWitness(props.parameter)}
-                onMouseOut={() => props.onShowWitness(null)}>
-                {result.witness.toString()}
-            </a>);
-        return [result.result.toString(), " (", aEl, ")"];
+        const result2 = result.result.toString();
+        const witness = result.witness.toString();
+        resultJsx = (
+            <React.Fragment>
+                {result2}
+                (
+                <a href="#" onMouseOver={handleShowWitness} onMouseOut={handleHideWitness}>
+                    {witness}
+                </a>
+                )
+            </React.Fragment>
+        );
     }
-}
 
-export default OutputParameter;
+    return (
+        <React.Fragment>
+            <span>{fullname} : {resultJsx}</span>
+            <br />
+        </React.Fragment>
+    )
+};
+
+export default
+withHandlers<Props, HandlerProps>({
+    handleShowWitness: ({onShowWitness, parameter}) => () => onShowWitness(parameter),
+    handleHideWitness: ({onShowWitness}) => () => onShowWitness(null),
+})((render));

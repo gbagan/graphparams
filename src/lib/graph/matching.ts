@@ -12,7 +12,7 @@ function greedyMatching(g: Graph) {
         if (matched[u]) {
             continue;
         }
-        for (const v of g.adj(u)) {
+        for (const v of g.adj[u]) {
             if (u < v && !matched[v]) {
                 matching.push([u, v]);
                 matched[u] = true;
@@ -29,14 +29,14 @@ function contract(g: Graph, set: number[]) {
     const v = set[0];
     const rset = set.slice(1, set.length);
     for (const u of rset) {
-        g2.adj(u).length = 0;
+        g2.adj[u].length = 0;
     }
     for (let u = 0; u < g.V; u++) {
         if (rset.includes(u)) {
             continue;
         }
-        const adj = g2.adj(u);
-        const n = g2.adj(u).length;
+        const adj = g2.adj[u];
+        const n = g2.adj[u].length;
         for (let i = 0; i < n; i++) {
             if (rset.includes(adj[i])) {
                 adj[i] = v;
@@ -72,7 +72,7 @@ function findAugmentingPath(g: Graph, m: Array<[number, number]>): number[] | nu
         if (distanceToRoot[v] % 2 !== 0) {
             continue;
         }
-        for (const w of g.adj(v)) {
+        for (const w of g.adj[v]) {
             if (matched[w] === v) {
                 continue;
             } else if (root[w] === -1) {
@@ -103,7 +103,7 @@ function findAugmentingPath(g: Graph, m: Array<[number, number]>): number[] | nu
                 if (root[v] !== root[w]) {
                     return path;
                 } else {
-                    const g2 = contract(g, path).freeze();
+                    const g2 = contract(g, path);
                     const m2 = m.filter(([x]) => !path.includes(x));
                     const path2 = findAugmentingPath(g2, m2);
                     if (!path2) {

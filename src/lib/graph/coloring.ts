@@ -1,6 +1,7 @@
-import * as iter from "../iter";
+import * as R from "ramda";
 import Graph from "./graph";
 import { Result } from "./types";
+import * as iter from "../iter";
 
 export const chromaticNumber = (g: Graph) => chromaticNumberAux(g, () => true);
 
@@ -8,7 +9,7 @@ function chromaticNumberAux(g: Graph, predicate: (x: number[]) => boolean) {
     let i = 2;
     const precol = new Array(g.V);
     precol.fill(-1);
-    const uncol = new Set(iter.range(g.V));
+    const uncol = new Set(R.range(0, g.V));
     while (true) {
         const usedColor = new Array<boolean>(i);
         usedColor.fill(false);
@@ -25,12 +26,12 @@ function chromaticAux(g: Graph, precol: number[], uncol: Set<number>, maxcol: nu
     if (uncol.size === 0) {
         return predicate(precol) ? { result: true, witness: precol } : { result: false, witness: null };
     }
-    const v = iter.min(uncol, (w) => iter.count<number>(g.adj(w), (u) => precol[u] !== -1)).elem;
+    const v = iter.min(uncol, (w) => iter.count<number>(g.adj[w], (u) => precol[u] !== -1)).elem;
     const uncol2 = new Set(uncol);
     uncol2.delete(v);
     let newColor = true;
     for (let i = 0; i < maxcol; i++) {
-        if (g.adj(v).some(u => precol[u] === i) || (!usedColor[i] && !newColor)) {
+        if (g.adj[v].some(u => precol[u] === i) || (!usedColor[i] && !newColor)) {
             continue;
         }
         let usedColor2: boolean[];
@@ -128,7 +129,7 @@ function isDominatedColoring(g: Graph, col: number[]) {
 export const dominatorColoring = (g: Graph) => chromaticNumberAux(g, x => isDominatorColoring(g, x));
 
 export const totalDominatorColoring = (g: Graph) =>
-    iter.some(g.adjs(), nbor => nbor.length === 0) ?
+    g.adj.some(nbor => nbor.length === 0) ?
         { result: Infinity, witness: null } : chromaticNumberAux(g, x => isTotalDominatorColoring(g, x));
 
 export const dominatedColoring = (g: Graph) => chromaticNumberAux(g, x => isDominatedColoring(g, x));

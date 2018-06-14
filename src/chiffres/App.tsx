@@ -1,63 +1,59 @@
 import * as React from "react";
+import {withStateHandlers} from "recompose";
 import { generate as shortid } from "shortid";
-import styled from "styled-components";
 
-import Card from "antd/lib/card";
-import Col from "antd/lib/col";
-import Row from "antd/lib/row";
+import {Background, Card, Col, Row} from "@/ui";
 
-import Background from "../styled/Background";
 import Form from "./Form";
-import { Calc, solve } from "./solver";
+import { Calc, solve } from "@/lib/chiffres/solver";
 
-const calcList: (c: Calc) => Calc[] = calc => calc.left ? calcList(calc.left).concat(calcList(calc.right!), calc) : [];
-
-const calcToHTML = (c: Calc) =>
-    calcList(c).map(calc => [
-        <span key={shortid()}>{`${calc.left!.val} ${calc.operator} ${calc.right!.val} = ${calc.val}`}</span>,
-        <br key={shortid()} />,
-    ]);
+const style = require("./App.scss");
 
 type State = {
-    readonly output: Calc | null;
+    output: Calc | null;
 };
 
-type Props = {
+type HandlerProps = {
+    handleSubmit: (values: number[], target: number) => Partial<State>;
 };
 
-export default class ChiffresApp extends React.Component<Props, State> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            output: null,
-        };
-    }
-
-    public handleSubmit = (values: ReadonlyArray<number>, target: number) => {
-        const output = solve(values, target);
-        this.setState({ output });
-    }
-
-    public render() {
-        const result = !this.state.output ? "" : calcToHTML(this.state.output);
-
-        return (
-            <Background>
-                <h1>Le compte est bon</h1>
-                <Row type="flex">
-                    <Col>
-                        <Form onSubmit={this.handleSubmit} />
-                        <Card title="Output">
-                            <Output>{result}</Output>
-                        </Card>
-                    </Col>
-                </Row>
-            </Background>
-        );
-    }
+function calcList (calc: Calc): Calc[] {
+    if (!calc.left)
+        return [];
+    else 
+        return calcList(calc.left).concat(calcList(calc.right!), calc);
 }
 
-const Output = styled.div`
-    width: 400px;
-    height: 400px;
-`;
+const calcToHTML = (c: Calc) =>
+    calcList(c).map(calc =>
+        <React.Fragment key={shortid()}>
+            <span>{`${calc.left!.val} ${calc.operator} ${calc.right!.val} = ${calc.val}`}</span>
+            <br />
+        </React.Fragment>
+    );
+
+const render: React.SFC<State & HandlerProps> = ({output, handleSubmit}) => {
+    const result = !output ? "" : calcToHTML(output);
+
+    return (
+        <Background>
+            <h1>Le compte est bon</h1>
+            <Row>
+                <Col>
+                    <Form onSubmit={handleSubmit} />
+                    <Card title="Output">
+                        <div className={style.output}>{result}</div>
+                    </Card>
+                </Col>
+            </Row>
+        </Background>
+    );
+}
+
+export default
+withStateHandlers<State, HandlerProps, {}>({
+    output: null
+},{
+    handleSubmit: state => (values, target) => ({ output: solve(values, target) })
+})
+(render);

@@ -1,18 +1,18 @@
 export type FormData = {
-    readonly rows: number;
-    readonly columns: number;
-    readonly nbColors: number;
-    readonly toroidal: boolean;
+    rows: number;
+    columns: number;
+    nbColors: number;
+    toroidal: boolean;
 }
 
 export type Position = {
-    readonly row: number,
-    readonly column: number
+    row: number,
+    column: number
 }
 
 export type PosAndVal = {
-    readonly position: number,
-    readonly value: number
+    position: number,
+    value: number
 }
 
-export type Solution = ReadonlyArray<Number>;
+export type Solution = Number[];

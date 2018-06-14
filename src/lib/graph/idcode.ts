@@ -17,7 +17,7 @@ function isIdentifyingCode(g: Graph, binNbors: number[], bset: number) {
 export function identifyingCode(g: Graph): Result {
     const binNbors: number[] = [];
     for (let j = 0; j < g.V; j++) {
-        binNbors.push(binaryEncode(g.adj(j).concat(j)));
+        binNbors.push(binaryEncode(g.adj[j].concat(j)));
     }
     if (!allDifferent(binNbors.slice().sort())) {
         return { result: Infinity, witness: null };
@@ -49,7 +49,7 @@ function isLocatingDominatingSet(g: Graph, binNbors: number[], bset: number) {
 
 export function locatingDominatingSet(g: Graph): Result {
     const binNbors: number[] = [];
-    for (const nbor of g.adjs()) {
+    for (const nbor of g.adj) {
         binNbors.push(binaryEncode(nbor));
     }
 

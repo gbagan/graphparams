@@ -1,10 +1,11 @@
+import * as R from "ramda";
+
 import Graph from "../graph/graph";
 import {Result} from "../graph/types";
-import {filter, permutations, zip} from "../iter";
-import {sublists} from "../util";
+import {permutations, sublists} from "../util";
 import Arena from "./arena";
 import makeRules from "./rules";
-import {Answer, Conf, Shift} from "./types";
+import {Answer, Conf} from "./types";
 
 export default class EDSArena extends Arena<Conf> {
     constructor(public n: number, public k: number) {
@@ -40,7 +41,7 @@ export default class EDSArena extends Arena<Conf> {
         if (!nicePerm) {
             return null;
         }
-        const shift: Shift = [...filter(zip(nicePerm, answer), (pair) => pair[0] !== pair[1])];
+        const shift = R.zipWith((from, to) => ({from, to}), nicePerm, answer).filter(({from, to}) => from !== to);
 
         return {conf: answer, shift};
     }

@@ -1,15 +1,14 @@
+import * as R from "ramda";
 import * as React from "react";
 import { connect } from "react-redux";
-import styled from "styled-components";
 
-import Button from "antd/lib/button";
+import {Button, Row} from "@/ui";
 import Input from "antd/lib/input";
 import Radio, { RadioChangeEvent } from "antd/lib/radio";
-import Row from "antd/lib/row";
 import Select, { SelectValue } from "antd/lib/select";
 
-import * as iter from "../../lib/iter";
 import * as actions from "../redux/actions";
+const style = require("./GraphInput.scss");
 
 const mapStateToProps = () => ({});
 const mapDispatchToProps = { onSubmit: actions.submitInput };
@@ -54,13 +53,9 @@ export class GraphInput extends React.Component<Props, State> {
     }
 
     public render() {
-        const { onSubmit } = this.props;
         const { loadList, code, saveName, loadName, rules } = this.state;
 
-        const onCodeSubmit = !onSubmit ? undefined : () => onSubmit({ type: "generate", input: code, rules });
-        const onLoadSubmit = !onSubmit ? undefined : () => onSubmit({ type: "load", input: loadName, rules });
         // const onSaveSubmit = !onSubmit ? undefined : () => onSubmit({action: "save", input: saveName, rules });
-        const onRemove = () => this.removeFromLocalStorage(loadName);
 
         return (
             <div>
@@ -70,51 +65,56 @@ export class GraphInput extends React.Component<Props, State> {
                 </Radio.Group>
                 <Row>
                     <Input name="values" onChange={this.handleSaveNameChange} value={saveName} />
-                    <Button type="primary">Save</Button>
+                    <Button color="primary">Save</Button>
                 </Row>
                 <Row>
                     <Select onChange={this.handleSelectChange} value={loadName}>
                         {loadList.map((name, i) => <Select.Option key={i} value={name}>{name}</Select.Option>)}
                     </Select>
-                    <Button type="primary" onClick={onLoadSubmit}>Load</Button>
-                    <Button type="danger" onClick={onRemove}>Remove</Button>
+                    <Button color="primary" onClick={this.onLoadSubmit}>Load</Button>
+                    <Button color="danger" onClick={this.onRemove}>Remove</Button>
                 </Row>
-                <GraphArea rows={10} className="graphinput" onChange={this.handleCodeChange} value={code} />
-                <Button type="primary" onClick={onCodeSubmit}>Generate</Button>
+                <Input.TextArea rows={10} className={style.graph} onChange={this.handleCodeChange} value={code} />
+                <Button color="primary" onClick={this.onCodeSubmit}>Generate</Button>
             </div>
         );
     }
 
-    private handleSaveNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleSaveNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
         this.setState({ saveName: e.target.value })
-    private handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-        this.setState({ code: e.target.value })
-    private handleSelectChange = (loadName: SelectValue) => this.setState({ loadName: loadName as string });
-    private handleRulesChange = (e: RadioChangeEvent) => this.setState({ rules: e.target.value });
 
-    private addToLocalStorage(name: string, code: string, positions: Array<[number, number]>) {
+    handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+        this.setState({ code: e.target.value })
+
+    handleSelectChange = (loadName: SelectValue) =>
+        this.setState({ loadName: loadName as string });
+
+    handleRulesChange = (e: RadioChangeEvent) =>
+        this.setState({ rules: e.target.value });
+
+    addToLocalStorage(name: string, code: string, positions: Array<[number, number]>) {
         localStorage.setItem("graph-" + name, JSON.stringify({ code, positions }));
         this.setState({ loadList: localStorageKeys() });
     }
 
-    private removeFromLocalStorage(name: string) {
+    onCodeSubmit = () =>
+        this.props.onSubmit({ type: "generate", input: this.state.code, rules: this.state.rules });
+
+    onLoadSubmit = () =>
+        this.props.onSubmit({ type: "load", input: this.state.loadName, rules: this.state.rules });
+
+    onRemove = () => this.removeFromLocalStorage(this.state.loadName);
+
+    removeFromLocalStorage(name: string) {
         localStorage.removeItem("graph-" + name);
         this.setState({ loadList: localStorageKeys() });
     }
 }
 
-function localStorageKeys(): string[] {
-    return [...iter.range(localStorage.length)]
-            .map(i => localStorage.key(i) || "")
-            .filter(key => key.startsWith("graph-"))
-            .map(key => key.slice(6));
-}
-
-const GraphArea = styled(Input.TextArea)`
-height: 320px;
-width: 280px;
-font-family: monospace;
-font-size: 10pt;
-`;
+const localStorageKeys = () =>
+    R.range(0, localStorage.length)
+        .map(i => localStorage.key(i) || "")
+        .filter(key => key.startsWith("graph-"))
+        .map(key => key.slice(6));
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphInput);

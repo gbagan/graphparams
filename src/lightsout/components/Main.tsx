@@ -12,9 +12,9 @@ import Board from "./Board";
 import Form from "./Form";
 import Output from "./Output";
 
-const mapStateToProps = createSelector(selector, state => ({
-    boardIsNull: !state.board,
-    solutionsComputed: !!state.solutions,
+const mapStateToProps = createSelector(selector, ({board, solutions}) => ({
+    boardIsNull: !board,
+    solutionsComputed: !!solutions,
 }));
 
 const mapDispatchToProps = {
@@ -25,23 +25,21 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
-const Main: React.SFC<Props> = (props) => (
-    <div className="lightsout" >
+const Main: React.SFC<Props> = ({boardIsNull, solutionsComputed, onReverse, onSolve, onFormSubmit}) => (
+    <div>
         <h1>Lights Out</h1>
         <Row type="flex" gutter={16}>
-            <Form onSubmit={props.onFormSubmit} />
+            <Form onSubmit={onFormSubmit} />
         </Row>
         <Row>
-            <Button type="primary" disabled={props.boardIsNull} onClick={props.onReverse} >Reverse</Button>
-            <Button type="primary" disabled={props.boardIsNull || props.solutionsComputed} onClick={props.onSolve}>
-                Solve
-            </Button>
+            <Button type="primary" disabled={boardIsNull} onClick={onReverse} >Reverse</Button>
+            <Button type="primary" disabled={boardIsNull || solutionsComputed} onClick={onSolve}>Solve</Button>
         </Row>
         <Row type="flex" gutter={16}>
             <Col><Board /></Col>
             <Col><Output /></Col>
         </Row>
-    </div >
+    </div>
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

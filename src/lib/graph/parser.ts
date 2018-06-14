@@ -1,7 +1,6 @@
 ﻿import { biclique, clique, cycle, graph, grid, path, petersen, sun } from "./generate";
 import Graph from "./graph";
-import MutableGraph from "./mutablegraph";
-import {complement, join, lineGraph, product, union} from "./operators";
+import {complement, join, lineGraph, product, union, addEdges, addPath, addCycle, addClique} from "./operators";
 
 enum LexerToken {
     Comma,
@@ -24,7 +23,7 @@ enum ParserToken {
     Begin,
 }
 
-type PTokenPair = { type: ParserToken.Graph, data: MutableGraph }
+type PTokenPair = { type: ParserToken.Graph, data: Graph }
     | { type: ParserToken.Method, data: string }
     | { type: ParserToken.Number, data: number }
     | { type: ParserToken.Edge, data: number }
@@ -93,11 +92,7 @@ function* lexer(str: string): Iterable<[LexerToken, any]> {
     }
 }
 
-const addEdge = (g: MutableGraph, u: number, v: number) => g.addEdge(u, v);
-const addPath = (g: MutableGraph, ...args: number[]) => g.addPath(...args);
-const addCycle = (g: MutableGraph, ...args: number[]) => g.addCycle(...args);
-const addClique = (g: MutableGraph, ...args: number[]) => g.addClique(...args);
-const addEdges = (g: MutableGraph, ...args: number[][]) => g.addEdges(...args);
+const addEdge = (g: Graph, u: number, v: number) => g.addEdge(u, v);
 
 function parse(str: string): Graph | string {
     const constants = new Map([
@@ -200,7 +195,7 @@ function parse(str: string): Graph | string {
                     return "invalid argument types: " + fntoken.data;
                 } else {
                     const rgraph = (fn.fn as any)(...parameters.map(x => x.data));
-                    if (!(rgraph instanceof MutableGraph)) {
+                    if (!(rgraph instanceof Graph)) {
                         throw Error("unexpected error");
                     }
                     stack.push({ type: ParserToken.Graph, data: rgraph });
@@ -218,7 +213,7 @@ function parse(str: string): Graph | string {
                     return "invalid argument types: " + fntoken.data;
                 } else {
                     const fn = method.fn;
-                    const rgraph = (fn as any)(graphToken.data, ...parameters.map(x => x.data)) as MutableGraph;
+                    const rgraph = (fn as any)(graphToken.data, ...parameters.map(x => x.data)) as Graph;
                     stack.push({ type: ParserToken.Graph, data: rgraph });
                 }
             }
@@ -228,7 +223,7 @@ function parse(str: string): Graph | string {
         lastLexerToken = currentToken;
     }
     const token = stack.pop();
-    return !token || token.type !== ParserToken.Graph ? "invalid type" : token.data.clean().freeze();
+    return !token || token.type !== ParserToken.Graph ? "invalid type" : token.data.clean();
 }
 
 export default parse;

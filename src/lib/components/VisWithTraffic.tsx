@@ -60,21 +60,20 @@ export default class VisWithTraffic extends React.Component<Props> {
         const network = this.visRef.current.network;
         const visGraph = this.visRef.current;
         const frame = visGraph.ref.current;
-        if (!frame) {
-            return;
-        }
+        if (!frame)
+            return
+
         const visCanvas = frame.getElementsByTagName("canvas")[0];
         const canvas = this.trafficRef.current;
-        if (!canvas || !(visCanvas instanceof HTMLCanvasElement)) {
-            return;
-        }
+        if (!canvas || !(visCanvas instanceof HTMLCanvasElement))
+            return
+
         canvas.width = visCanvas.width;
         canvas.height = visCanvas.height;
 
         const context = canvas.getContext("2d");
-        if (!context) {
-            return;
-        }
+        if (!context)
+            return
 
         const s = network.getScale();
         const t = (network as any).body.view.translation;
@@ -91,9 +90,9 @@ export default class VisWithTraffic extends React.Component<Props> {
         const network = this.visRef.current.network;
         const canvas = this.trafficRef.current;
         const context = canvas.getContext("2d");
-        if (!context) {
-            return;
-        }
+        if (!context)
+            return
+
         const maxOffset = .9;
 
         context.save();
@@ -101,15 +100,14 @@ export default class VisWithTraffic extends React.Component<Props> {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.restore();
 
-        if (offset > maxOffset) {
-            return;
-        }
+        if (offset > maxOffset)
+            return
 
         for (const edgeTraffic of edgesList) {
             const nedge = (network as any).body.edges[edgeTraffic.id];
-            if (!nedge) {
-                continue;
-            }
+            if (!nedge)
+                continue
+
             const p: vis.Position = nedge.edgeType.getPoint(edgeTraffic.isBackward ? maxOffset - offset : offset);
 
             context.beginPath();

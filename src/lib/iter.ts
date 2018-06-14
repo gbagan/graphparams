@@ -119,15 +119,3 @@ export function isEqual<T>(i1: Iterable<T>, i2: Iterable<T>): boolean {
         }
     }
 }
-
-export function* permutations<T>(list: ReadonlyArray<T>): Iterable<ReadonlyArray<T>> {
-    if (list.length <= 1) {
-        yield list;
-    } else {
-        for (let i = 0; i < list.length; i++) {
-            for (const perm of permutations(list.slice(0, i).concat(list.slice(i + 1, list.length)))) {
-                  yield [list[i]].concat(perm);
-            }
-        }
-    }
-}

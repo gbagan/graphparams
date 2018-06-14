@@ -1,25 +1,37 @@
 import * as React from "react";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import Menu from "./styled/Menu";
+const menu = [
+    {
+        submenu: [
+            { link: "/graph/params", title: "Parameters"},
+            { link: "/graph/eds", title: "Eternal Domination"},
+        ],
+        title: "Graphs",
+    },
+    {
+        submenu: [
+            { link: "/solvers/pegsolitaire", title: "Peg Solitaire" },
+            { link: "/solvers/nonogram", title: "Nonogram" },
+            { link: "/solvers/lightsout", title: "Light Outs" },
+            { link: "/solvers/chiffres", title: "Le compte est bon" },
+            { link: "/solvers/sudoku", title: "Sudoku" },
+        ],
+        title: "Solvers",
+    },
+];
 
-import { Menudata } from "./App";
-
-type Props = {
-    menu: Menudata;
-};
-
-type State = {
-    current: string;
-};
-
-export default class Mymenu extends React.Component<Props, State> {
-    public render() {
-        return (
-            <Menu.Menu horizontal>
-                <Menu.Item><a>Test</a></Menu.Item>
-                <Menu.Item><a>Test2</a></Menu.Item>
-            </Menu.Menu>
-        );
+const render: React.SFC<{}> = props =>
+    <span>
+    {
+        menu.map(({submenu}) =>
+            submenu.map(({link, title}) =>
+                <React.Fragment>
+                    <Link to={link}>{title}</Link> | 
+                </React.Fragment>
+            )
+        )
     }
-}
+    </span>
+
+export default render;

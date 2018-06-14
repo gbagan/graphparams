@@ -1,10 +1,4 @@
-﻿function Array_tabulate<t>(n: number, f: (x: number) => t): t[] {
-    const t = new Array(n);
-    for (let i = 0; i < n; i++) {
-        t[i] = f(i);
-    }
-    return t;
-}
+﻿import * as R from "ramda"; 
 
 type DancingCell = {
     left: DancingCell;
@@ -84,97 +78,100 @@ function restoreMatrix(row: DancingCell) {
     }
 }
 
-class DancingMatrix {
-    private root: DancingCell;
-    private rowsDict: ReadonlyArray<DancingCell>;
-    private colsDict: ReadonlyArray<DancingCell>;
-
-    constructor(nbRows: number, nbColumns: number, matrixPairs: ReadonlyArray<[number, number]>,
-                fixedVertices: ReadonlyArray<number>) {
-        this.root = dancingCell();
-
-        this.rowsDict = Array_tabulate(nbRows, i => {
-            const cell = dancingCell();
-            cell.id = i;
-            cell.col = this.root;
-            linkUD(this.root.up, cell);
-            linkUD(cell, this.root);
-            return cell;
-        });
-
-        this.colsDict = Array_tabulate(nbColumns, i => {
-            const cell = dancingCell();
-            cell.id = i;
-            cell.row = this.root;
-            linkLR(this.root.left, cell);
-            linkLR(cell, this.root);
-            return cell;
-        });
-
-        for (const [x, y] of matrixPairs) {
-            this.insertNode(x, y);
-        }
-
-        for (const vertex of fixedVertices) {
-            const row = this.rowsDict[vertex];
-            if (row.down.up !== row) { // v has been pruned
-                return; /////
-            }
-            pruneMatrix(row);
-        }
-    }
-
-    public empty() {
-        return this.root.right === this.root;
-    }
-
-    public chooseMinEdge() {
-        let minCell = this.root.right;
-        let minSize = Infinity;
-        for (let cell = minCell; cell !== this.root; cell = cell.right) {
-            if (cell.size <= minSize) {
-                minSize = cell.size;
-                minCell = cell;
-            }
-        }
-        return minCell;
-    }
-
-    private insertNode(row: number, col: number) {
-        const rowCell = this.rowsDict[row];
-        const colCell = this.colsDict[col];
-        const cell = dancingCell();
-        cell.row = rowCell;
-        cell.col = colCell;
-        colCell.size++;
-        linkUD(colCell.up, cell);
-        linkUD(cell, colCell);
-        linkLR(rowCell.left, cell);
-        linkLR(cell, rowCell);
-    }
+type DancingMatrix = {
+    root: DancingCell;
+    rowsDict: ReadonlyArray<DancingCell>;
+    colsDict: ReadonlyArray<DancingCell>;
 }
 
-function* _dlx(mat: DancingMatrix): Iterable<ReadonlyArray<number>> {
-    if (mat.empty()) {
+function makeDancingMatrix(nbRows: number, nbColumns: number, matrixPairs: [number, number][]) {
+    const root = dancingCell();
+
+    const rowsDict = R.times(i => {
+        const cell = dancingCell();
+        cell.id = i;
+        cell.col = root;
+        linkUD(root.up, cell);
+        linkUD(cell, root);
+        return cell;
+    }, nbRows);
+
+    const colsDict = R.times(i => {
+        const cell = dancingCell();
+        cell.id = i;
+        cell.row = root;
+        linkLR(root.left, cell);
+        linkLR(cell, root);
+        return cell;
+    }, nbColumns);
+
+    const dm = { root, colsDict, rowsDict };
+
+    for (const [x, y] of matrixPairs)
+        insertNode(dm, x, y);
+
+    return dm;
+}
+
+function dmFilter(dm: DancingMatrix, fixedVertices: number[]) {
+    for (const vertex of fixedVertices) {
+        const row = dm.rowsDict[vertex];
+        if (row.down.up !== row) { // v has been pruned
+            return false;
+        }
+        pruneMatrix(row);
+    }
+    return true;
+}
+
+const dmEmpty = (dm: DancingMatrix) => dm.root.right === dm.root;
+
+function chooseMinEdge(dm: DancingMatrix) {
+    let minCell = dm.root.right;
+    let minSize = Infinity;
+    for (let cell = minCell; cell !== dm.root; cell = cell.right) {
+        if (cell.size <= minSize) {
+            minSize = cell.size;
+            minCell = cell;
+        }
+    }
+    return minCell;
+}
+
+function insertNode(dm: DancingMatrix, row: number, col: number) {
+    const rowCell = dm.rowsDict[row];
+    const colCell = dm.colsDict[col];
+    const cell = dancingCell();
+    cell.row = rowCell;
+    cell.col = colCell;
+    colCell.size++;
+    linkUD(colCell.up, cell);
+    linkUD(cell, colCell);
+    linkLR(rowCell.left, cell);
+    linkLR(cell, rowCell);
+}
+
+function* _dlx(dm: DancingMatrix): Iterable<number[]> {
+    if (dmEmpty(dm)) {
         yield [];
         return;
     }
-    const col = mat.chooseMinEdge();
+    const col = chooseMinEdge(dm);
     if (col.size === 0) {
         return;
     }
     for (let cell = col.down; cell !== col; cell = cell.down) {
         const row = cell.row;
         pruneMatrix(row);
-        for (const solution of _dlx(mat)) {
+        for (const solution of _dlx(dm)) {
             yield solution.concat(row.id);
         }
         restoreMatrix(row);
     }
 }
 
-export default function dlx(nbRows: number, nbColumns: number, matrixPairs: ReadonlyArray<[number, number]>,
-                            fixedVertices: ReadonlyArray<number>) {
-    const mat = new DancingMatrix(nbRows, nbColumns, matrixPairs, fixedVertices);
-    return _dlx(mat);
+export default function dlx(nbRows: number, nbColumns: number, matrixPairs: [number, number][], fixedVertices:number[]) {
+    const dm = makeDancingMatrix(nbRows, nbColumns, matrixPairs);
+    const res = dmFilter(dm, fixedVertices);
+    return res ? _dlx(dm) : [];
 }

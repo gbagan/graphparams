@@ -22,7 +22,7 @@ export default function isChordal(g: Graph): Result {
     let chordal = true;
     let witness: number[] = [];
     for (const v of lbfs) {
-        const nbor = [...iter.filter(g.adj(v), u => visited.has(u))];
+        const nbor = [...iter.filter(g.adj[v], u => visited.has(u))];
         const res = hasClique(g, nbor);
         if (!res.result) {
             chordal = false;
@@ -35,7 +35,7 @@ export default function isChordal(g: Graph): Result {
         return { result: true, witness: lbfs };
     }
     const i = lbfs.indexOf(witness[0]);
-    const g2 = inducedGraph(g, lbfs.slice(0, i)).freeze();
+    const g2 = inducedGraph(g, lbfs.slice(0, i));
     const path = alternativePath(g2, lbfs.indexOf(witness[1]), lbfs.indexOf(witness[2])).witness!;
     return {
         result: false,
