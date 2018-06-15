@@ -1,7 +1,6 @@
 import * as React from "react";
 import {connect} from "react-redux";
 import {createSelector} from "reselect";
-import {generate as shortid} from "shortid";
 
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
@@ -28,11 +27,11 @@ const render: React.SFC<Props & ClassProps> = ({ solutions, onSelectSolution, cl
         : solutions.length === 0
             ? "No solution"
             : <React.Fragment>
-                <p key={shortid()}>{solutions.length}  solution{solutions.length > 1 ? "s" : ""}</p>
+                <p>{solutions.length}  solution{solutions.length > 1 ? "s" : ""}</p>
                 {
                     solutions.slice(0, 25).map((solution, index) =>
                         <OutputSolution
-                            key={shortid()}
+                            key={index}
                             index={index}
                             solution={solution}
                             onSelect={onSelectSolution}

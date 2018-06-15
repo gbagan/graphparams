@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import "./antd.css";
+import "@/ui/global.scss";
 import "./modules.d.ts";
 import "./redux.d.ts";
 

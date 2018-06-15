@@ -1,7 +1,7 @@
 export type PosAndVal = {
-    readonly row: number,
-    readonly col: number,
-    readonly value: number
+    row: number,
+    col: number,
+    value: number
 }
 
-export type Solution = ReadonlyArray<PosAndVal>;
+export type Solution = PosAndVal[];

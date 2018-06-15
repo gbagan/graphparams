@@ -30,4 +30,5 @@ const render: React.SFC<Props> = ({ parameters, error, onShowWitness, className 
     </div>
 )
 
-export default connect(mapStateToProps, mapDispatchToProps)(render);
+export default
+connect(mapStateToProps, mapDispatchToProps)(render);

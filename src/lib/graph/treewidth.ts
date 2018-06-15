@@ -8,9 +8,8 @@ function Q(g: Graph, set: number[], v: number) {
     const inset: boolean[] = new Array(g.V);
     visited.fill(false);
     inset.fill(false);
-    for (const x of set) {
+    for (const x of set)
         inset[x] = true;
-    }
 
     const queue = new Array<number>();
     let nbVisited = 0;

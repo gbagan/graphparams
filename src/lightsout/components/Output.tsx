@@ -2,15 +2,15 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import Card from "antd/lib/card";
+import {Card} from "@/ui";
 
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
 import OutputSolution from "./OutputSolution";
 
-const mapStateToProps = createSelector(selector, state => ({
-    solutions: state.solutions,
-}));
+const mapStateToProps = createSelector(selector,
+    ({solutions}) => ({solutions})
+);
 
 const mapDispatchToProps = {
     onSelectSolution: actions.showSolution,
@@ -18,7 +18,7 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
-const Output: React.SFC<Props> = ({solutions, onSelectSolution}) => {
+const render: React.SFC<Props> = ({solutions, onSelectSolution}) => {
     const data =
         !solutions ? "Lights Out" 
         : solutions.length === 0 ? "No solution"
@@ -39,4 +39,4 @@ const Output: React.SFC<Props> = ({solutions, onSelectSolution}) => {
     return <Card title="Output" className="output">{data}</Card>
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Output);
+export default connect(mapStateToProps, mapDispatchToProps)(render);

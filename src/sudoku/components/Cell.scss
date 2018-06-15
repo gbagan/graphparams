@@ -13,22 +13,22 @@
     }
 
     box-shadow: 0px 0px 0px 1px #bdc3c7;
-    &.border_h {
-        box-shadow: 0px 0px 0px 1px #bdc3c7 inset 2px 0px 0 #34495e;
+    &.hborder {
+        box-shadow: 0px 0px 0px 1px #bdc3c7, inset 2px 0px 0 #34495e;
     }
-    &.border_v {
-        box-shadow: 0px 0px 0px 1px #bdc3c7 inset 0px 2px 0 #34495e;
+    &.vborder {
+        box-shadow: 0px 0px 0px 1px #bdc3c7, inset 0px 2px 0 #34495e;
     }
-    &.border_h,.border_v {
-        box-shadow: 0px 0px 0px 1px #bdc3c7 inset 2px 0px 0 #34495e inset 0px 2px 0 #34495e;
+    &.hborder.vborder {
+        box-shadow: 0px 0px 0px 1px #bdc3c7, inset 2px 0px 0 #34495e, inset 0px 2px 0 #34495e;
     }
-
 
     & > span {
         color: #2c3e50;
         font-size: 20px;
         text-align: middle;
     }
+    
     &.fixed {
         background: #ecf0f1;
         & > span {

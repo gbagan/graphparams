@@ -11,14 +11,19 @@ import ParamInput from "./ParamInput";
 
 import * as actions from "../redux/actions";
 import selector from "../redux/selector";
+import {HELP_TEXT} from "../data";
 
 const style = require("./Main.scss");
 
-const mapStateToProps = createSelector(selector, state => ({
-    code: state.code,
-    computing: state.computing,
-    helpText: state.helpText,
-}));
+const htmlizedHelp =
+    <React.Fragment>
+        {HELP_TEXT.split("\n").map((line, i) => [line, <br/>])}
+    </React.Fragment>
+
+
+const mapStateToProps = createSelector(selector,
+    ({code, computing}) => ({code, computing})
+);
 
 const mapDispatchToProps = {
     onCodeChange: actions.changeCode,
@@ -34,8 +39,7 @@ type HandlerProps = {
     handleCodeChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-
-const render: React.SFC<Props & HandlerProps> = ({ computing, handleCodeChange, code, helpText,
+const render: React.SFC<Props & HandlerProps> = ({ computing, code, handleCodeChange,
                                                     onSelectAll, onUnselectAll, onCompute, onSkip }) =>
     <Background>
         <h1>Graph parameters</h1>
@@ -80,21 +84,16 @@ const render: React.SFC<Props & HandlerProps> = ({ computing, handleCodeChange, 
             </div>
             <div>
                 <Card title="Help">
-                    <div className={style.help}>{htmlize(helpText)}</div>
+                    <div className={style.help}>{htmlizedHelp}</div>
                 </Card>
             </div>
         </Row>
     </Background>
 
-function htmlize(text: string) {
-    return text.split("\n").map((line, i) => [line, <br key={i} />]);
-}
-
-
 export default
-    compose<Props & HandlerProps, {}>(
-        connect(mapStateToProps, mapDispatchToProps),
-        withHandlers<Props, HandlerProps>({
-            handleCodeChange: ({ onCodeChange }) => e => onCodeChange(e.target.value)
-        })
-    )(render);
+compose<Props & HandlerProps, {}>(
+    connect(mapStateToProps, mapDispatchToProps),
+    withHandlers<Props, HandlerProps>({
+        handleCodeChange: ({onCodeChange}) => e => onCodeChange(e.target.value)
+    })
+)(render);

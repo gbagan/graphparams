@@ -1,3 +1,4 @@
+import * as R from "ramda";
 import {CellType, Nonogram} from "./types";
 
 export const maxRules = (nonogram: Nonogram) =>
@@ -40,7 +41,6 @@ export function load(data: string): Nonogram | null {
         }
         i++;
     }
-    const cells = new Array<CellType>(width * height);
-    cells.fill(CellType.Unknown);
+    const cells = R.times(_ => CellType.Unknown, width * height);
     return { width, height, rows, columns, cells };
 }

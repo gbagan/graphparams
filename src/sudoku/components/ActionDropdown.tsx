@@ -1,8 +1,11 @@
 import * as React from "react";
 
-import Button from "antd/lib/button";
+/*
+import {Button} from "@/ui";
 import Dropdown from "antd/lib/dropdown";
 import Menu from "antd/lib/menu";
+*/
+import Dropdown from "@/ui/Dropdown";
 
 type NameAndData<T> = {
     readonly name: string;
@@ -15,24 +18,14 @@ type Props = {
     data: ReadonlyArray<NameAndData<any>>;
 };
 
-class ActionDropdown extends React.Component<Props> {
-    public handleAction = (e: any) => this.props.action(this.props.data[e.key].data);
+//  public handleAction = (e: any) => this.props.action(this.props.data[e.key].data);
 
-    public render() {
-        const { label, data } = this.props;
+const render: React.SFC<Props> = ({label, data}) => (
+    <Dropdown title={label} list={
+                                    data.map(({name}, i) => ({ id: i, label: name}))
+                                 }
+    />
+);
 
-        const menu = (
-            <Menu onClick={this.handleAction}>
-                {data.map((el, i) => <Menu.Item key={i}>{el.name}</Menu.Item>)}
-            </Menu>
-        );
 
-        return (
-            <Dropdown overlay={menu}>
-                <Button>{label}</Button>
-            </Dropdown>
-        );
-    }
-}
-
-export default ActionDropdown;
+export default render;

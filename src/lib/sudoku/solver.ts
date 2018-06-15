@@ -2,73 +2,57 @@
 import dlx from "./dlx";
 import {PosAndVal, Solution} from "./types";
 
-class Solver {
-    private readonly dim: number;  // dimension of a square
-    private readonly size: number; // dimension of the grid
-    private readonly size2: number; // size * size
-    private readonly size3: number; // size * size * size
-    private readonly matrix: Array<[number, number]>;
-    private readonly fixedCells: ReadonlyArray<PosAndVal>;
+const square = (squaresize: number) => (i: number, j: number) => 
+    i - i % squaresize + Math.floor(j / squaresize);
 
-    constructor(n: number, fixedCells: ReadonlyArray<PosAndVal>) {
-        this.dim = n;
-        this.size = n * n;
-        this.size2 = this.size * this.size;
-        this.size3 = this.size2 * this.size;
-        this.matrix = [];
-        this.generateMatrix();
-        this.fixedCells = fixedCells;
-    }
+const cellToNumber = (squaresize: number) => (cell: PosAndVal) => {
+    const size = squaresize * squaresize;
+    const size2 = size * size;
+    return cell.row * size2 + cell.col * size + cell.value - 1;
+}
 
-    public *solve(limit?: number): Iterable<Solution> {
-        const fixedCells2 = this.fixedCells.map((x) => this.cellToNumber(x));
-        let i = 0;
-        for (const sol of dlx(this.size3, 4 * this.size2, this.matrix, fixedCells2)) {
-            yield sol.map((x) => this.numberToCell(x));
-            i++;
-            if (limit !== undefined && i === limit) {
-                return;
+const numberToCell = (squaresize: number) => (n: number) => {
+    const size = squaresize * squaresize;
+    const size2 = size * size;
+    return {
+        col: Math.floor(n / size)  % size,
+        row: Math.floor(n / size2),
+        value: n % size + 1,
+    };
+}
+
+function generateMatrix(squaresize: number) {
+    const size = squaresize * squaresize;
+    const size2 = size * size;
+    const matrix: [number, number][] = [];
+    let v = 0;
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            for (let k = 0; k < size; k++) {
+                matrix.push([v, i * size + j]);
+                matrix.push([v, size2 + i * size + k]);
+                matrix.push([v, 2 * size2 + j * size + k]);
+                matrix.push([v, 3 * size2 + square(squaresize)(i, j) * size + k]);
+                v++;
             }
         }
     }
+    return matrix;
+}
 
-    private cellToNumber(cell: PosAndVal) {
-        return cell.row * this.size2 + cell.col * this.size + cell.value - 1;
-    }
+export default function * solve(squaresize: number, fixedCells: PosAndVal[], limit?: number): Iterable<Solution> {
+    const size = squaresize * squaresize;
+    const size2 = size * size;
+    const size3 = size * size * size;
+    const matrix = generateMatrix(squaresize);
 
-    private numberToCell(n: number): PosAndVal {
-        return {
-            col: Math.floor(n / this.size) % this.size,
-            row: Math.floor(n / this.size2),
-            value: n % this.size + 1,
-        };
-    }
-
-    private square(i: number, j: number) {
-        return i - i % this.dim + Math.floor(j / this.dim);
-    }
-
-    private generateMatrix() {
-        const size = this.size;
-        const size2 = this.size2;
-        let v = 0;
-        for (let i = 0; i < this.size; i++) {
-            for (let j = 0; j < this.size; j++) {
-                for (let k = 0; k < this.size; k++) {
-                    this.matrix.push([v, i * size + j]);
-                    this.matrix.push([v, size2 + i * size + k]);
-                    this.matrix.push([v, 2 * size2 + j * size + k]);
-                    this.matrix.push([v, 3 * size2 + this.square(i, j) * size + k]);
-                    v++;
-                }
-            }
+    const fixedCells2 = fixedCells.map(cellToNumber(squaresize));
+    let i = 0;
+    for (const sol of dlx(size3, 4 * size2, matrix, fixedCells2)) {
+        yield sol.map(numberToCell(squaresize));
+        i++;
+        if (limit !== undefined && i === limit) {
+            return;
         }
     }
 }
-
-const solve = (n: number, fixedCells: ReadonlyArray<PosAndVal>, limit?: number) => {
-    const solver = new Solver(n, fixedCells);
-    return solver.solve(limit);
-};
-
-export default solve;

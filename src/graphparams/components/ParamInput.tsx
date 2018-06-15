@@ -33,4 +33,5 @@ const ParamInput: React.SFC<Props> = ({parameters, onToggleParameter}) => (
 )
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ParamInput);
+export default
+connect(mapStateToProps, mapDispatchToProps)(ParamInput);

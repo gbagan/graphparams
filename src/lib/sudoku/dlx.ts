@@ -170,7 +170,7 @@ function* _dlx(dm: DancingMatrix): Iterable<number[]> {
     }
 }
 
-export default function dlx(nbRows: number, nbColumns: number, matrixPairs: [number, number][], fixedVertices:number[]) {
+export default function dlx(nbRows: number, nbColumns: number, matrixPairs: [number, number][], fixedVertices: number[]) {
     const dm = makeDancingMatrix(nbRows, nbColumns, matrixPairs);
     const res = dmFilter(dm, fixedVertices);
     return res ? _dlx(dm) : [];

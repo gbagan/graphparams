@@ -3,7 +3,8 @@ import { ActionType, getType } from "typesafe-actions";
 
 import * as actions from "./actions";
 
-import Arena, {makeArena} from "../../lib/arena/edsarena";
+import {makeEDS, startingConf, guardsAnswer} from "../../lib/arena/edsarena";
+import {EDSGraph} from "../../lib/arena/types";
 import { memoize } from "../../lib/decorators";
 import Graph from "../../lib/graph/graph";
 import parse from "../../lib/graph/parser";
@@ -35,12 +36,12 @@ const initialState: State = {
     shift: null,
 };
 
-const getArena: (graph: Graph, rules: "one" | "all") => Arena
-    = memoize((graph: Graph, rules: "one" | "all") =>
-    R.reduceWhile<number, Arena | null>(
-        (arena, i) => !arena || !arena.startingConf(),
-        (arena, i) =>  makeArena(graph, i + 1, rules),
-        makeArena(graph, 1, rules),
+const getEDS: (graph: Graph, rules: "one" | "all") => EDSGraph =
+    memoize((graph: Graph, rules: "one" | "all") =>
+    R.reduceWhile<number, EDSGraph>(
+        (eds, i) => !startingConf(eds),
+        (eds, i) =>  makeEDS(graph, i + 1, rules),
+        makeEDS(graph, 1, rules),
         R.range(1, graph.V+1)
     )
 );
@@ -53,8 +54,8 @@ export default function reducer(state: State = initialState, action: Action): St
             if (!graph || !guards || guards.includes(v)) {
                 return state;
             }
-            const arena = getArena(graph, rules);
-            const res = arena.guardsAnswer(graph, guards, v);
+            const eds = getEDS(graph, rules);
+            const res = guardsAnswer(eds, guards, v);
             if (!res)
                 return state;
             return { ...state, guards: res.conf, shift: res.shift };
@@ -83,8 +84,8 @@ export default function reducer(state: State = initialState, action: Action): St
                     return state;
                 }
             }
-            const arena = getArena(graph, rules);
-            const guards = arena.startingConf();
+            const eds = getEDS(graph, rules);
+            const guards = startingConf(eds);
             const gstate = guards ? { guards } : {};
             return { ...state, graph, rules, guards, ...gstate };
         }

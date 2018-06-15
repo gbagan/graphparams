@@ -21,8 +21,8 @@ const render: React.SFC<Props & HandlerProps> = ({value, fixed, selected, col, r
     const className = classNames(style.cell, style["squaresize-" + squaresize], {
         [style.fixed]: fixed,
         [style.selected]: selected,
-        [style.border_h]: col % squaresize === 0 && col !== 0,
-        [style.border_v]: row % squaresize === 0 && row !== 0,
+        [style.hborder]: col % squaresize === 0 && col !== 0,
+        [style.vborder]: row % squaresize === 0 && row !== 0,
     });
 
     return (

@@ -1,7 +1,7 @@
 import * as React from "react";
 import {withStateHandlers} from "recompose";
-import { generate as shortid } from "shortid";
 
+import newId from "@/lib/id";
 import {Background, Card, Col, Row} from "@/ui";
 
 import Form from "./Form";
@@ -26,7 +26,7 @@ function calcList (calc: Calc): Calc[] {
 
 const calcToHTML = (c: Calc) =>
     calcList(c).map(calc =>
-        <React.Fragment key={shortid()}>
+        <React.Fragment key={newId()}>
             <span>{`${calc.left!.val} ${calc.operator} ${calc.right!.val} = ${calc.val}`}</span>
             <br />
         </React.Fragment>
