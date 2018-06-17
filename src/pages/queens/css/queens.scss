@@ -1,0 +1,93 @@
+$cellsize: 60px;
+
+.grid {
+    margin: 6px auto;
+    overflow: hidden;
+    user-select: none;
+    box-shadow: 0px 0px 5px 5px #bdc3c7;
+    position: relative;
+
+    @for $i from 5 through 12 {
+        $size: $cellsize * $i;
+        &.size-#{$i} {
+            width: $size;
+            height: $size;
+        }
+    }
+
+    &.init {
+        height: $cellsize;
+    }
+}
+
+.cell {
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+    float: left;
+    background: white;
+
+    &.black {
+        background: #8F8F00;
+    }
+
+    width: $cellsize;
+    height: $cellsize;
+    box-shadow: 0px 0px 0px 1px #bdc3c7;
+    
+    &.selected::after {
+        position: 'absolute';
+        top: 0;
+        left: 0;
+        height: '100%';
+        width: '100%';
+        z-index: 1;
+        opacity: 0.5;
+        background-color: 'yellow';
+    }
+}
+
+.queen {
+    background-color: transparent;
+    opacity: 1;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: move;
+    &.drag {
+        opacity: 0.5;
+    }
+
+    &.error {
+        color: red;
+    }
+}
+
+
+
+.dialog {
+    display: block;
+    position: absolute;
+    width:400px;
+    left: 25%;
+    top: 25%;
+}
+
+
+.dialogcontainer {
+    background-color: rgba(127, 140, 141, 0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+
+    &.hidden {
+        display: none;
+    }
+
+    & button + button {
+        margin-left: 10px;
+    }
+}
+

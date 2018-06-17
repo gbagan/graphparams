@@ -7,16 +7,17 @@ import { StateType } from "typesafe-actions";
 import { composeWithDevTools } from "redux-devtools-extension";
 /* tslint:enable:no-implicit-dependencies */
 
-import { reducer as eds } from "./eds";
-import { reducer as graphparams, saga as graphparamSaga } from "./graphparams";
-import { reducer as lightsout } from "./lightsout";
-import { reducer as sudoku } from "./sudoku";
+import { reducer as eds } from "./pages/eds";
+import { reducer as graphparams, saga as graphparamSaga } from "./pages/graphparams";
+import { reducer as lightsout } from "./pages/lightsout";
+import { reducer as queens } from "./pages/queens";
+import { reducer as sudoku } from "./pages/sudoku";
 
 function* rootSaga() {
     yield all([graphparamSaga()]);
 }
 
-const reducer = combineReducers({ graphparams, eds, sudoku, lightsout });
+const reducer = combineReducers({ graphparams, eds, sudoku, lightsout, queens });
 const sagaMiddleware = createSagaMiddleware();
 
 const composeEnhancers = composeWithDevTools({});
