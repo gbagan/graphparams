@@ -36,10 +36,11 @@ module.exports = (env = {}) => {
             rules: [
                 { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
                 { test: /\.(sa|sc|c)ss$/, use: [MiniCssExtractPlugin.loader,
-                                                {loader: "css-loader",
-                                                 options: {modules: true},
-                                                }, "sass-loader"] },
-                { test: /\.(png|jpg|gif|svg)$/, use: [{ loader: "file-loader", options: {} }] },
+                                                {loader: "css-loader", options: {modules: true} },
+                                                "sass-loader"
+                                               ] },
+                { test: /\.(png|jpg|gif|svg)$/, use: [ { loader: 'url-loader', options: { limit: 8192 } } 
+                                                 ] },
                 { test: /\.worker\.js$/, use: { loader: "worker-loader" } }
             ]
         },
@@ -59,11 +60,8 @@ module.exports = (env = {}) => {
                 modules: true
             }),
             new CircularDependencyPlugin({
-              // exclude detection of files based on a RegExp
               exclude: /a\.js|node_modules/,
-              // add errors to webpack instead of warnings
               failOnError: true,
-              // set the current working directory for displaying module paths
               cwd: process.cwd(),
             })
         ]

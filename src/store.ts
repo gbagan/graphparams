@@ -10,6 +10,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { reducer as eds } from "./pages/eds";
 import { reducer as graphparams, saga as graphparamSaga } from "./pages/graphparams";
 import { reducer as lightsout } from "./pages/lightsout";
+import { reducer as pegsolitaire } from "./pages/pegsolitaire";
 import { reducer as queens } from "./pages/queens";
 import { reducer as sudoku } from "./pages/sudoku";
 
@@ -17,7 +18,7 @@ function* rootSaga() {
     yield all([graphparamSaga()]);
 }
 
-const reducer = combineReducers({ graphparams, eds, sudoku, lightsout, queens });
+const reducer = combineReducers({ graphparams, eds, sudoku, lightsout, pegsolitaire, queens });
 const sagaMiddleware = createSagaMiddleware();
 
 const composeEnhancers = composeWithDevTools({});

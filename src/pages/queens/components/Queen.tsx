@@ -1,43 +1,54 @@
-import {compose, cx, React, toClass} from "@/commonreact";
-import { ConnectDragSource , DragSource,  DragSourceCollector, DragSourceSpec} from "react-dnd";
+import {compose, cxbind, React, toClass, withHandlers} from "@/commonreact";
+import {ConnectDragSource , DragSource} from "react-dnd";
 
-const style = require("../css/queens.scss");
+const style = require("../css/style.scss");
+console.log("style", style);
+const cx = cxbind(style);
 
 type Props = {
     id: number;
-    error: boolean;
+    inConflict: boolean;
+    onQueenHover: (id: number) => void;
 };
 
-const spec: DragSourceSpec<Props> = {
-    beginDrag: ({id}) => ({id}),
-};
+type Handlers = {
+    handleMouseOver: () => void;
+    handleMouseOut: () => void;
+}
 
 type DragProps = {
     connectDragSource?: ConnectDragSource;
     isDragging?: boolean;
 };
 
-const collect: DragSourceCollector = (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-});
-
-const render: React.SFC<Props & DragProps> = ({error, connectDragSource, isDragging}) => {
+const render: React.SFC<Props & Handlers & DragProps> =
+           ({inConflict, handleMouseOver, handleMouseOut, connectDragSource, isDragging}) => {
     const className = cx({
-                        [style.queen]: true,
-                        [style.error]: error,
-                        [style.drag]: isDragging,
+                        queen: true,
+                        conflict: inConflict,
+                        drag: isDragging,
                      });
     return connectDragSource!(
-        <div className={className}>
-            ♛
-        </div>
+        <div className={className} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} />
     );
 };
 
 export default
-compose<Props, Props>(
-    DragSource("queen", spec, collect),
+compose<Props & Handlers, Props>(
+    withHandlers<Props, Handlers>({
+        handleMouseOver: ({onQueenHover, id}) => () => onQueenHover(id),
+        handleMouseOut: ({onQueenHover}) => () => onQueenHover(-1),
+    }),
+    DragSource<Props>(
+        "queen",
+        {
+            beginDrag: p => ({id: p.id}),
+        },
+        (connect, monitor) => ({
+            connectDragSource: connect.dragSource(),
+            isDragging: monitor.isDragging(),
+        })
+    ),
     toClass,
 )
 (render);

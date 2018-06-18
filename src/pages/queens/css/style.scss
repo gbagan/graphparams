@@ -1,7 +1,17 @@
 $cellsize: 60px;
 
+.container {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+}
+
 .grid {
-    margin: 6px auto;
+    margin-left: 10px;
+    margin-top: 30px;
     overflow: hidden;
     user-select: none;
     box-shadow: 0px 0px 5px 5px #bdc3c7;
@@ -20,7 +30,7 @@ $cellsize: 60px;
     }
 }
 
-.cell {
+.square {
     position: relative;
     cursor: pointer;
     text-align: center;
@@ -30,44 +40,39 @@ $cellsize: 60px;
     &.black {
         background: #8F8F00;
     }
+    &.warning {
+        background: orange;
+    }
 
     width: $cellsize;
     height: $cellsize;
     box-shadow: 0px 0px 0px 1px #bdc3c7;
-    
-    &.selected::after {
-        position: 'absolute';
-        top: 0;
-        left: 0;
-        height: '100%';
-        width: '100%';
-        z-index: 1;
-        opacity: 0.5;
-        background-color: 'yellow';
-    }
 }
 
 .queen {
-    background-color: transparent;
-    opacity: 1;
-    font-size: 32px;
-    font-weight: bold;
-    cursor: move;
+    -webkit-mask-image: url("../img/queen.svg");
+            mask-image: url("../img/queen.svg");
+    width: 45px;
+    height: 45px;
+    margin: 7px;
+    background-color: black;
+    background-size: 45px 45px;
+    transition: background-color 0.5s ease;
+
     &.drag {
         opacity: 0.5;
     }
 
-    &.error {
-        color: red;
+    &.conflict {
+        background-color: red;
     }
 }
-
 
 
 .dialog {
     display: block;
     position: absolute;
-    width:400px;
+    width: 400px;
     left: 25%;
     top: 25%;
 }

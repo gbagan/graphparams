@@ -1,4 +1,7 @@
-import * as React from "react";
+import { compose, React, toClass } from "@/commonreact";
+import { DragDropContext } from "react-dnd";
+import HTML5Backend from "react-dnd-html5-backend";
+
 import { Provider } from "react-redux";
 import { withRouter } from "react-router";
 import { HashRouter } from "react-router-dom";
@@ -22,10 +25,16 @@ export const AppWithTransition = (props: any) => (
 
 const AppWithRouter = withRouter(AppWithTransition);
 
-export default () => (
+const AppWithStore = () => (
     <Provider store={store}>
         <HashRouter>
             <AppWithRouter />
         </HashRouter>
     </Provider>
 );
+
+export default
+compose(
+    DragDropContext(HTML5Backend),
+    toClass,
+)(AppWithStore)

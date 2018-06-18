@@ -9,11 +9,11 @@ export type State = {
     queens: Position [];
 };
 
-const initialState: State = {
-    queens: [],
-};
-
 const initQueens = R.times(i => ({ row: -1, col: i }));
+
+const initialState: State = {
+    queens: initQueens(8),
+};
 
 export default function reducer(state: State = initialState, action: Action): State {
     switch (action.type) {

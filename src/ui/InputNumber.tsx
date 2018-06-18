@@ -1,7 +1,6 @@
-import * as cx from "classnames";
-import * as React from "react";
-import {withHandlers} from "recompose";
+import {cxbind, React, withHandlers} from "@/commonreact";
 const style = require("./InputNumber.scss");
+const cx = cxbind(style);
 
 type Props = {
     className?: string;
@@ -11,36 +10,31 @@ type Props = {
     name?: string;
     onChange?: (value: number) => void;
     onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-}
+};
 
 type Handlers = {
     increment: () => void;
     decrement: () => void;
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+};
 
 // span unselectable=unselectable
 
-const render: React.SFC<Props & Handlers> = ({className, children, value, increment, decrement, handleChange, ...rest}) => (
+const render: React.SFC<Props & Handlers> = ({className, children, value,
+                                              increment, decrement, handleChange, ...rest}) => (
     <div className={style.inputnumber}>
         <div className={style.handlerwrap}>
             <span
                 role="button"
                 onClick={increment}
-                className={cx(style.handler,
-                             style.handlerup,
-                            {[style.disabled]: value === rest.max}
-                          )}
+                className={cx("handler", "handlerup", {disabled: value === rest.max})}
             >
-                <span className={style.inner} />
+                <span className={cx("inner")} />
             </span>
             <span
                 role="button"
                 onClick={decrement}
-                className={cx(style.handler,
-                              style.handlerdown,
-                             {[style.disabled]: value === rest.min}
-                           )}
+                className={cx("handler", "handlerdown", {disabled: value === rest.min})}
             >
                 <span className={style.inner} />
             </span>
@@ -53,7 +47,7 @@ const render: React.SFC<Props & Handlers> = ({className, children, value, increm
 
 export default
 withHandlers<Props, Handlers>({
-    increment: ({onChange, value, max}) => () => value !== max && value !== undefined && onChange && onChange(value+1),
     decrement:  ({onChange, value, min}) => () => value !== min && value !== undefined && onChange && onChange(value-1),
+    increment: ({onChange, value, max}) => () => value !== max && value !== undefined && onChange && onChange(value+1),
     handleChange: ({onChange}) => e => onChange && onChange(parseInt(e.target.value, 10))
 })(render);

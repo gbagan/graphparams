@@ -1,6 +1,6 @@
-import {connect, createSelector, React} from "@/commonreact";
+import {connect, React} from "@/commonreact";
 import {Background, Button, Card, Col, Row} from "@/ui";
-import {actions, selector} from "../redux";
+import {actions} from "../redux";
 
 import ActionDropDown from "./ActionDropdown";
 import Grid from "./Grid";
@@ -8,9 +8,9 @@ import Output from "./Output";
 
 const style = require("../css/Main.scss");
 
-const mapStateToProps = createSelector(selector,
-    ({boards, examples}) => ({boards, examples})
-);
+import {boards, examples} from "../data";
+
+const mapStateToProps = () => ({});
 
 const mapDispatchToProps = {
     onSelectExample: actions.selectExample,
@@ -20,7 +20,7 @@ const mapDispatchToProps = {
 
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
-const render: React.SFC<Props> = ({ boards, examples, onSelectGrid, onSelectExample, onSolve }) => (
+const render: React.SFC<Props> = ({ onSelectGrid, onSelectExample, onSolve }) => (
     <Background>
         <h1>Sudoku</h1>
         <Row gutter={16}>

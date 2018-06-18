@@ -1,5 +1,6 @@
-import {cx, withHandlers, React} from "@/commonreact";
+import {cxbind, React, withHandlers} from "@/commonreact";
 const style = require("../css/Cell.scss");
+const cx = cxbind(style);
 
 type Props = {
     row: number,
@@ -16,11 +17,11 @@ type Handlers = {
 }
 
 const render: React.SFC<Props & Handlers> = ({value, fixed, selected, col, row, squaresize, handleClick}) => {
-    const className = cx(style.cell, style["squaresize-" + squaresize], {
-        [style.fixed]: fixed,
-        [style.selected]: selected,
-        [style.hborder]: col % squaresize === 0 && col !== 0,
-        [style.vborder]: row % squaresize === 0 && row !== 0,
+    const className = cx("cell", "squaresize-" + squaresize, {
+            fixed,
+            selected,
+            hborder: col % squaresize === 0 && col !== 0,
+            vborder: row % squaresize === 0 && row !== 0,
     });
 
     return (

@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 
 const menu = [
     {
+        title: "Graphs",
         submenu: [
             { link: "/graph/params", title: "Parameters"},
             { link: "/graph/eds", title: "Eternal Domination"},
         ],
-        title: "Graphs",
     },
     {
+        title: "Solvers",
         submenu: [
             { link: "/solvers/pegsolitaire", title: "Peg Solitaire" },
             { link: "/solvers/nonogram", title: "Nonogram" },
@@ -17,8 +18,13 @@ const menu = [
             { link: "/solvers/chiffres", title: "Le compte est bon" },
             { link: "/solvers/sudoku", title: "Sudoku" },
         ],
-        title: "Solvers",
     },
+    {
+        title: "Games",
+        submenu:[
+            { link: "/games/queens", title: "8 Queens"},
+        ]
+    }
 ];
 
 const render: React.SFC<{}> = props =>

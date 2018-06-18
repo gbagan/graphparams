@@ -1,5 +1,5 @@
-import { ActionType, getType } from "typesafe-actions";
 import * as R from "ramda";
+import { ActionType, getType } from "typesafe-actions";
 
 import solve from "@/lib/lightsout/solver";
 import {Solution} from "../types";

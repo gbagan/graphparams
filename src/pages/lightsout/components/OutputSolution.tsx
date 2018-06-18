@@ -22,4 +22,4 @@ export default
 withHandlers<Props, HandlerProps>({
     handleMouseOver: ({onSelect, solution}) => () => onSelect(solution),
     handleMouseOut: ({onSelect}) => () => onSelect(null),
-})(render)
+})(render);

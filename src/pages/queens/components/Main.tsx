@@ -1,16 +1,14 @@
-import { compose, connect, createSelector, cx, React, toClass } from "@/commonreact";
+import {connect, createSelector, cxbind, React} from "@/commonreact";
 
-import { DragDropContext } from "react-dnd";
-import HTML5Backend from "react-dnd-html5-backend";
 
-import { Background, Button, Card, Col, Row } from "@/ui";
+import { Background, Button, Card, Col} from "@/ui";
 import {actions, selector} from "../redux";
 
 import ActionDropDown from "../../sudoku/components/ActionDropdown";
 import Grid from "./Grid";
-import InitGrid from "./InitGrid";
 
-const style = require("../css/queens.scss");
+const style = require("../css/style.scss");
+const cx = cxbind(style);
 
 const mapStateToProps = createSelector(selector,
     ({isFinished}) => ({isFinished}),
@@ -35,15 +33,15 @@ const boards = [
 const render: React.SFC<Props> = ({ isFinished, onSelectGrid, onReset }) => (
     <Background>
         <h1>Queens</h1>
-        <Row>
+        <div className={style.container}>
             <Col>
                 <ActionDropDown label="Choose a board" data={boards} action={onSelectGrid} />
                 <Button onClick={onReset}>Reset</Button>
-                <InitGrid />
+                <Grid init />
                 <Grid />
             </Col>
-        </Row>
-        <div className={cx(style.dialogcontainer, {[style.hidden]: !isFinished})}>
+        </div>
+        <div className={cx("dialogcontainer", {hidden: !isFinished})}>
             <div className={style.dialog}>
                 <Card title="Bravo">
                     <Button color="primary" >Continue</Button>
@@ -55,9 +53,4 @@ const render: React.SFC<Props> = ({ isFinished, onSelectGrid, onReset }) => (
 );
 
 export default
-compose<Props, {}>(
-    DragDropContext(HTML5Backend),
-    toClass,
-    connect(mapStateToProps, mapDispatchToProps),
-)
-(render);
+connect(mapStateToProps, mapDispatchToProps)(render);

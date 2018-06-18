@@ -1,0 +1,66 @@
+$cellsize: 60px;
+
+.container {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+}
+
+.grid {
+    margin-left: 10px;
+    margin-top: 30px;
+    overflow: hidden;
+    user-select: none;
+    box-shadow: 0px 0px 5px 5px #bdc3c7;
+    position: relative;
+
+    @for $i from 1 through 12 {
+        $size: $cellsize * $i;
+        &.cols-#{$i} {
+            width: $size;
+        }
+        &.rows-#{$i} {
+            height: $size;
+        }
+    }
+}
+
+.hole {
+    position: absolute;
+    cursor: pointer;
+    background: black;
+    width: $cellsize - 10px;
+    height: $cellsize - 10px;
+
+    @for $i from 0 through 11 {
+        $size: $cellsize * $i;
+        &.col-#{$i} {
+            left: $size + 5px;
+        }
+        &.row-#{$i} {
+            top: $size + 5px;
+        }
+    }
+}
+
+.peg {
+    position: absolute;
+    cursor: pointer;
+    background: red;
+    width: $cellsize - 10px;
+    height: $cellsize - 10px;
+
+    @for $i from 0 through 11 {
+        $size: $cellsize * $i;
+        &.col-#{$i} {
+            left: $size+5px;
+        }
+        &.row-#{$i} {
+            top: $size+5px;
+        }
+    }
+
+}
