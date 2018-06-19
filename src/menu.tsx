@@ -12,7 +12,6 @@ const menu = [
     {
         title: "Solvers",
         submenu: [
-            { link: "/solvers/pegsolitaire", title: "Peg Solitaire" },
             { link: "/solvers/nonogram", title: "Nonogram" },
             { link: "/solvers/lightsout", title: "Light Outs" },
             { link: "/solvers/chiffres", title: "Le compte est bon" },
@@ -23,6 +22,7 @@ const menu = [
         title: "Games",
         submenu:[
             { link: "/games/queens", title: "8 Queens"},
+            { link: "/games/pegsolitaire", title: "Peg solitaire"},
         ]
     }
 ];

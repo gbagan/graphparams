@@ -2,13 +2,15 @@ import {compose, cxbind, React, toClass} from "@/commonreact";
 import {ConnectDragSource , DragSource} from "react-dnd";
 
 const style = require("../css/style.scss");
-console.log("style", style);
 const cx = cxbind(style);
+
+import {Position} from "../types";
 
 type Props = {
     id: number;
     row: number;
     col: number;
+    reachableHoles: Position[];
 };
 
 type DragProps = {
@@ -18,7 +20,7 @@ type DragProps = {
 
 const render: React.SFC<Props & DragProps> =
            ({row, col, isDragging, connectDragSource}) => {
-    const className = cx("hole",  "row-" + row, "col-" + col, {drag: isDragging});
+    const className = cx("peg",  "row-" + row, "col-" + col, {drag: isDragging});
     return connectDragSource!(
         <div className={className} />
     );
@@ -29,7 +31,7 @@ compose<Props, Props>(
     DragSource<Props>(
         "peg",
         {
-            beginDrag: p => ({id: p.id}),
+            beginDrag: ({id, reachableHoles}) => ({id, reachableHoles}),
         },
         (connect, monitor) => ({
             connectDragSource: connect.dragSource(),

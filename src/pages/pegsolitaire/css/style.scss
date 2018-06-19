@@ -1,66 +1,111 @@
 $cellsize: 60px;
 
+$miniscale: 0.25;
+
 .container {
     height: 100%;
     padding: 0;
     margin: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;    
+    align-items: start;
+    justify-content: space-between;
+    // justify-content: center;    
 }
 
 .grid {
-    margin-left: 10px;
-    margin-top: 30px;
     overflow: hidden;
     user-select: none;
     box-shadow: 0px 0px 5px 5px #bdc3c7;
     position: relative;
-
-    @for $i from 1 through 12 {
-        $size: $cellsize * $i;
-        &.cols-#{$i} {
-            width: $size;
-        }
-        &.rows-#{$i} {
-            height: $size;
-        }
-    }
 }
 
 .hole {
     position: absolute;
-    cursor: pointer;
-    background: black;
-    width: $cellsize - 10px;
-    height: $cellsize - 10px;
-
-    @for $i from 0 through 11 {
-        $size: $cellsize * $i;
-        &.col-#{$i} {
-            left: $size + 5px;
-        }
-        &.row-#{$i} {
-            top: $size + 5px;
-        }
-    }
+    background-image: url("../img/hole.svg");
 }
 
 .peg {
     position: absolute;
-    cursor: pointer;
-    background: red;
-    width: $cellsize - 10px;
-    height: $cellsize - 10px;
+    z-index: 10;
+    cursor: pointer;    
+    background-image: url("../img/peg.svg");
+    &.drag {
+        opacity: 0;
+    }
+}
 
-    @for $i from 0 through 11 {
-        $size: $cellsize * $i;
-        &.col-#{$i} {
-            left: $size+5px;
-        }
-        &.row-#{$i} {
-            top: $size+5px;
+@mixin scale($scale) {
+    & .grid {
+        margin-left: 10px;
+        margin-top: 30px;
+
+
+        @for $i from 1 through 12 {
+            &.cols-#{$i} {
+                width: $scale * $cellsize * $i;
+            }
+
+            &.rows-#{$i} {
+                height: $scale * $cellsize * $i;
+            }
         }
     }
 
+    & .hole {
+        $size: $scale * ($cellsize - 14px);
+        width: $size;
+        height: $size;
+        background-size: $size $size;
+
+
+        @for $i from 0 through 11 {
+            &.col-#{$i} {
+                left: $scale * ($cellsize * $i + 7px);
+            }
+            &.row-#{$i} {
+                top: $scale * ($cellsize * $i + 7px);
+            }
+        }
+    }
+
+    & .peg {
+        $size: $scale * ($cellsize - 10px);
+        width: $size;
+        height: $size;
+        background-size: $size $size;
+        @for $i from 0 through 11 {
+            &.col-#{$i} {
+                left: $scale * ($cellsize * $i + 5px);
+            }
+            &.row-#{$i} {
+                top: $scale * ($cellsize * $i+ 5px);
+            }
+        }
+    }
+}
+
+.container {
+    @include scale(1);
+    & .peg:hover {
+        animation-name: rotate; 
+        animation-duration: 2s; 
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+}
+
+.mini {
+    @include scale(0.25);
+
+    & .grid {
+        transition: transform .2s;
+        &:hover {
+            transform: scale(1.5);
+        }
+    }
+}
+
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
 }

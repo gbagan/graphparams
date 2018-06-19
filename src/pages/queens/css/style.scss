@@ -1,5 +1,40 @@
 $cellsize: 60px;
 
+@each $type in queen king knight bishop {
+    .#{$type} {
+        // -webkit-mask-image: url("../img/#{$type}.svg");
+        // mask-image: url("../img/#{$type}.svg");
+        background-image: url("../img/#{$type}.svg");
+    }
+}
+
+.form {
+    width: 300px;
+    height: 400px;
+}
+
+.checkbox {
+    width: 50px;
+    height: 50px;
+    border: thin solid gray;
+    padding: 5px;
+    &.selected {
+        border: medium solid blue;
+    }
+    & .piece {
+        width: 40px;
+        height: 40px;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    & > span {
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+    }
+}
+
 .container {
     height: 100%;
     padding: 0;
@@ -17,16 +52,14 @@ $cellsize: 60px;
     box-shadow: 0px 0px 5px 5px #bdc3c7;
     position: relative;
 
-    @for $i from 5 through 12 {
+    @for $i from 3 through 10 {
         $size: $cellsize * $i;
-        &.size-#{$i} {
-            width: $size;
+        &.rows-#{$i} {
             height: $size;
         }
-    }
-
-    &.init {
-        height: $cellsize;
+        &.rows-#{$i} {
+            width: $size;
+        }
     }
 }
 
@@ -49,6 +82,8 @@ $cellsize: 60px;
     box-shadow: 0px 0px 0px 1px #bdc3c7;
 }
 
+/*
+
 .queen {
     -webkit-mask-image: url("../img/queen.svg");
             mask-image: url("../img/queen.svg");
@@ -68,6 +103,8 @@ $cellsize: 60px;
     }
 }
 
+
+*/
 
 .dialog {
     display: block;

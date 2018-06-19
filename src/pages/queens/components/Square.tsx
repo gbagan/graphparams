@@ -1,18 +1,20 @@
-import {compose, cxbind, React, toClass} from "@/commonreact";
-import { ConnectDropTarget, DropTarget} from "react-dnd";
-import Queen from "./Queen";
+import {cxbind, React} from "@/commonreact";
+// import { ConnectDropTarget, DropTarget} from "react-dnd";
+import {PieceType} from "../types";
 const style = require("../css/style.scss");
 const cx = cxbind(style);
 
 type Props = {
     row: number,
     col: number,
-    inConflict: boolean;
-    selectedWarning: boolean;
-    queen: number;
-    onQueenHover: (id: number) => void;
-    onDropQueen: (p: {id: number; row: number; col: number}) => void;
+    // inConflict: boolean;
+    // selectedWarning: boolean;
+    pieceType: PieceType | null;
+    // onQueenHover: (id: number) => void;
+    // onDropQueen: (p: {id: number; row: number; col: number}) => void;
 };
+
+/*
 
 type DropProps = {
     connectDropTarget?: ConnectDropTarget;
@@ -20,24 +22,27 @@ type DropProps = {
     canDrop?: boolean;
 };
 
-const render: React.SFC<Props & DropProps> = ({row, col, queen, inConflict,
-                                               selectedWarning, onQueenHover, connectDropTarget}) => {
+*/
+
+const render: React.SFC<Props> = ({row, col, pieceType}) => {
     const className = cx({
             square: true,
             black: row !== - 1 && (row + col) % 2 === 0,
-            warning: selectedWarning,
+            // warning: selectedWarning,
     });
 
     return (
-        connectDropTarget!(
-            <div className={className}>
-                {queen !== -1 && <Queen key={queen} inConflict={inConflict} id={queen} onQueenHover={onQueenHover}/>}
-            </div>
-        )
-    );
+        // connectDropTarget!(
+        <div className={className}>
+            {pieceType !== null && <div className={cx("piece", pieceType)} />}
+        </div>
+    )
 };
 
-export default
+export default render;
+
+
+/*
 compose<Props, Props>(
     DropTarget<Props>(
         "queen",
@@ -56,3 +61,4 @@ compose<Props, Props>(
     ),
     toClass,
 )(render);
+*/

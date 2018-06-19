@@ -1,3 +1,4 @@
+import * as R from "ramda";
 import {compose, cxbind, React, toClass} from "@/commonreact";
 import { ConnectDropTarget, DropTarget} from "react-dnd";
 const style = require("../css/style.scss");
@@ -6,7 +7,7 @@ const cx = cxbind(style);
 type Props = {
     row: number,
     col: number,
-    hasPeg: boolean,
+    onDropPeg: (p: {id: number, row: number, col: number}) => void;
 };
 
 type DropProps = {
@@ -31,10 +32,10 @@ compose<Props, Props>(
     DropTarget<Props>(
         "peg",
         {
-            canDrop: ({hasPeg}) => !hasPeg,
-            drop: ({row, col}, monitor) => {
-                // const id = monitor!.getItem()["id"];
-                // onDropQueen({id, row, col});
+            canDrop: ({row, col}, monitor) => !!monitor && R.contains(({row, col}), monitor.getItem()["reachableHoles"]),
+            drop: ({row, col, onDropPeg}, monitor) => {
+                const id = monitor!.getItem()["id"];
+                onDropPeg({id, row, col});
             },
         },
         (connect, monitor) => ({

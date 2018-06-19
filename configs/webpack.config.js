@@ -39,7 +39,7 @@ module.exports = (env = {}) => {
                                                 {loader: "css-loader", options: {modules: true} },
                                                 "sass-loader"
                                                ] },
-                { test: /\.(png|jpg|gif|svg)$/, use: [ { loader: 'url-loader', options: { limit: 8192 } } 
+                { test: /\.(png|jpg|gif|svg)$/, use: [ { loader: 'url-loader', options: { limit: 16000 } } 
                                                  ] },
                 { test: /\.worker\.js$/, use: { loader: "worker-loader" } }
             ]

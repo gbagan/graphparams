@@ -1,5 +1,5 @@
 import { compose, connect, createSelector, cxbind, React } from "@/commonreact";
-import {selector} from "../redux";
+import {actions, selector} from "../redux";
 import Hole from "./Hole";
 import Peg from "./Peg";
 const style = require("../css/style.scss");
@@ -13,6 +13,7 @@ const mapStateToProps = createSelector(selector,
 );
 
 const mapDispatchToProps = {
+    handleDropPeg: actions.movePeg,
 };
 
 /*
@@ -29,7 +30,7 @@ type StateHandlers = {
 type ConnectedProps = Props & ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 // type AllProps = ConnectedProps & State & StateHandlers;
 
-const render: React.SFC<ConnectedProps> = ({ columns, pegs, holes, rows }) => {
+const render: React.SFC<ConnectedProps> = ({ columns, pegs, holes, rows, handleDropPeg }) => {
     if (columns === 0 || rows === 0)
         return <div/>;
 
@@ -39,11 +40,10 @@ const render: React.SFC<ConnectedProps> = ({ columns, pegs, holes, rows }) => {
         <div className={className}>
         {
             holes.map(({row, col}, i) => {
-                const hasPeg = false;
-                return <Hole key={"hole-" + i} row={row} col={col} hasPeg={hasPeg} />
+                return <Hole key={"hole-" + i} row={row} col={col} onDropPeg={handleDropPeg} />
             }).concat(
-                pegs.map(({row, col, id}) => (
-                    <Peg key={"peg-" + id} id={id} row={row} col={col} />
+                pegs.map(({row, col, id, reachableHoles}) => (
+                    <Peg key={"peg-" + id} {...{id, row, col, reachableHoles}} />
                 ))
             )
         }

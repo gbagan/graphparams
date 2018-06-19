@@ -1,5 +1,5 @@
 import * as R from "ramda";
-import {Position} from "./Types";
+import {Position} from "./types";
 
 const square = (rows: number, columns: number) =>
     R.times(i => ({
@@ -15,18 +15,27 @@ const generateBoard = (rows: number, columns: number,
     return {rows, columns, holes, pegs};
 }
 
-export const englishBoard = generateBoard(7, 7,
-                        ({row, col}) => Math.min(row, 6 - col) >= 2 || Math.min(row, 6 - col) >= 2,
+export const english = generateBoard(7, 7,
+                        ({row, col}) => Math.min(row, 6 - row) >= 2 || Math.min(col, 6 - col) >= 2,
                         [{row: 3, col: 3}]
 );
 
-export const frenchBoard = generateBoard(7, 7,
-    ({row, col}) => Math.min(row, 6 - col) +  Math.min(row, 6 - col) >= 2,
+export const french = generateBoard(7, 7,
+    ({row, col}) => Math.min(row, 6 - row) +  Math.min(col, 6 - col) >= 2,
     [{row: 3, col: 3}]
 );
 
-export const diamondBoard = generateBoard(9, 9,
+export const diamond = generateBoard(9, 9,
     ({row, col}) => Math.min(row, 8 - row) + Math.min(col, 8 - col) >= 4,
-    [{row: 3, col: 3}]
+    [{row: 4, col: 4}]
 );
 
+export const wiegleb = generateBoard(9, 9,
+    ({row, col}) => Math.min(row, 8 - row) >= 3 || Math.min(col, 8 - col) >= 3,
+    [{row: 4, col: 4}]
+);
+
+export const asymetric = generateBoard(8, 8,
+    ({row, col}) => Math.min(row, 8 - row) >= 3 || Math.min(col, 8 - col) >= 3,
+    [{row: 4, col: 4}]
+);

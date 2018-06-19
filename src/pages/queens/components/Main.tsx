@@ -1,56 +1,56 @@
-import {connect, createSelector, cxbind, React} from "@/commonreact";
+import {compose, connect, cxbind, createSelector, /* cxbind, */ React, withStateHandlers} from "@/commonreact";
+import { Background, Col} from "@/ui";
+import {selector} from "../redux";
+import {PieceType} from "../types";
 
-
-import { Background, Button, Card, Col} from "@/ui";
-import {actions, selector} from "../redux";
-
-import ActionDropDown from "../../sudoku/components/ActionDropdown";
+import Form from "./Form";
 import Grid from "./Grid";
+import Store from "./Store";
 
 const style = require("../css/style.scss");
-const cx = cxbind(style);
+export const cx = cxbind(style);
 
 const mapStateToProps = createSelector(selector,
-    ({isFinished}) => ({isFinished}),
+    ({availablePieces}) => ({availablePieces})
 );
 
-const mapDispatchToProps = {
-    onReset: actions.reset,
-    onSelectGrid: actions.selectGrid,
-};
+    // ({isFinished}) => ({isFinished}),
+// );
+
+const mapDispatchToProps = {};
 
 type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
-const boards = [
-    { name: "5x5", data: 5 },
-    { name: "6x6", data: 6 },
-    { name: "7x7", data: 7 },
-    { name: "8x8", data: 8 },
-    { name: "9x9", data: 9 },
-    { name: "10x10", data: 10 },
-];
+type State = {
+    selectedPiece: PieceType;
+};
 
-const render: React.SFC<Props> = ({ isFinished, onSelectGrid, onReset }) => (
+type StateHandlers = {
+    selectPiece: (p: PieceType) => Partial<State>,
+}
+
+const render: React.SFC<Props & State & StateHandlers> = ({selectedPiece, availablePieces, selectPiece}) => (
     <Background>
         <h1>Queens</h1>
         <div className={style.container}>
             <Col>
-                <ActionDropDown label="Choose a board" data={boards} action={onSelectGrid} />
-                <Button onClick={onReset}>Reset</Button>
-                <Grid init />
-                <Grid />
+               <Grid selectedPiece={selectedPiece} />
+               <Store availablePieces={availablePieces} selectedPiece={selectedPiece} onSelect={selectPiece} />
             </Col>
+                <Form/>
         </div>
-        <div className={cx("dialogcontainer", {hidden: !isFinished})}>
-            <div className={style.dialog}>
-                <Card title="Bravo">
-                    <Button color="primary" >Continue</Button>
-                    <Button color="primary" onClick={onReset}>Restart</Button>
-               </Card>
-            </div>
-        </div>
+
     </Background>
 );
 
 export default
-connect(mapStateToProps, mapDispatchToProps)(render);
+compose<State & StateHandlers & Props, {}>(
+    connect(mapStateToProps, mapDispatchToProps),
+    withStateHandlers<State, StateHandlers, Props>(
+        ({availablePieces}) => ({
+            selectedPiece: availablePieces[0],
+        }), {
+            selectPiece: () => p => ({ selectedPiece: p })
+        }
+    ),
+)(render);

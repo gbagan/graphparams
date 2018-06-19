@@ -1,8 +1,6 @@
 import {compose, cxbind, React, toClass, withHandlers} from "@/commonreact";
 import {ConnectDragSource , DragSource} from "react-dnd";
-
 const style = require("../css/style.scss");
-console.log("style", style);
 const cx = cxbind(style);
 
 type Props = {

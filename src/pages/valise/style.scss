@@ -1,0 +1,38 @@
+.container {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+}
+
+.valise {
+    background-image: url("./img/valise-01.gif");
+    background-size: 550px 600px;
+    height: 600px;
+    width: 550px;
+
+    &.open {
+        background-image: url("./img/valise-13.gif");
+    }
+}
+
+
+@keyframes valise-open {
+    0% { }
+    9% { background-image: url("./img/valise-02.gif"); }
+    18% { background-image: url("./img/valise-04.gif"); }
+    27% { background-image: url("./img/valise-05.gif"); }
+    36% { background-image: url("./img/valise-06.gif"); }
+    45% { background-image: url("./img/valise-07.gif"); }
+    54% { background-image: url("./img/valise-08.gif"); }
+    63% { background-image: url("./img/valise-09.gif"); }
+    72% { background-image: url("./img/valise-10.gif"); }
+    81% { background-image: url("./img/valise-11.gif"); }
+    90% { background-image: url("./img/valise-12.gif"); }
+}
+
+.enter-active .valise {
+    animation: valise-open 5000ms both linear;
+}

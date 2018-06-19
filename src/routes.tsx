@@ -8,6 +8,7 @@ import { App as LightsoutApp } from "./pages/lightsout";
 import { App as PegSolitaireApp } from "./pages/pegsolitaire";
 import { App as QueensApp } from "./pages/queens";
 import { App as SudokuApp } from "./pages/sudoku";
+import ValiseApp from "./pages/valise";
 
 export default (props: any) => (
     <Switch location={props.location}>
@@ -19,6 +20,7 @@ export default (props: any) => (
         <Route path="/solvers/sudoku" component={SudokuApp}/>
         <Route path="/games/pegsolitaire" component={PegSolitaireApp}/>
         <Route path="/games/queens" component={QueensApp}/>
+        <Route path="/valise" component={ValiseApp}/>
         <Redirect from="/" to="/graph/params" />
     </Switch>
 );
