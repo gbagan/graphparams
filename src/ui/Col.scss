@@ -1,7 +1,7 @@
 .col {
     box-sizing: border-box;
     display: block;
-    float: left;
+    // float: left;
 
     @for $i from 1 through 24 {
         &.span-#{$i} {

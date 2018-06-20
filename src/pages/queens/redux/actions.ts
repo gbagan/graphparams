@@ -1,11 +1,15 @@
 import { createAction, createStandardAction } from "typesafe-actions";
 
-import {Rules} from "../types";
+import {LegalMoves, PieceType} from "../types";
 
 const actions = {
-    moveQueen: createStandardAction("queens/MOVE-QUEEN")<{id: number, row: number, col: number}>(),
+    putPiece: createStandardAction("queens/PUT-PIECE")<{row: number, col: number, type: PieceType}>(),
     reset: createAction("queens/RESET"),
-    newGrid: createStandardAction("queens/NEW-GRID")<{rows: number; columns: number, rules: Rules}>(),
+    newGrid: createStandardAction("queens/NEW-GRID")<{rows: number;
+                                                      columns: number,
+                                                      availablePieces: PieceType[]
+                                                      customLegalMoves: LegalMoves,
+                                                    }>(),
 };
 
 export default actions;

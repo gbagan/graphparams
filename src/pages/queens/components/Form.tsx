@@ -1,10 +1,11 @@
 import * as R from "ramda";
 import { compose, connect, React, withHandlers, cxbind, withStateHandlers } from "@/commonreact";
 import {actions} from "../redux";
-import {PieceType} from "../types";
+import {PieceType, LegalMoves} from "../types";
 import {Button, Card, Col, Row} from "@/ui";
 import Checkbox from "./Checkbox";
-import {Rules} from "../types";
+import {piecesList} from "../util";
+import CustomPieceDialog from "./CustomPieceDialog";
 const style = require("../css/style.scss");
 const cx = cxbind(style);
 
@@ -15,9 +16,11 @@ const mapDispatchToProps = {
     onSubmit: actions.newGrid,
 };
 
+// initPieces = 
+
 
 type Props = {
-    onSubmit: (d: {rows: number; columns: number, rules: Rules}) => void;
+    onSubmit: (d: {rows: number; columns: number, availablePieces: PieceType[], customLegalMoves: LegalMoves}) => void;
 }
 
 type State = {
@@ -26,18 +29,25 @@ type State = {
     king: boolean;
     bishop: boolean;
     knight: boolean;
+    custom: boolean;
+    customPieceDialog: boolean;
+    legalMoves: LegalMoves;
 };
 
 type StateHandlers = {
-    setState: (s: Partial<State>) => Partial<State>
+    setState: (s: Partial<State>) => Partial<State>;
 };
 
 type Handlers = {
-    set: (s: Partial<State>) => () => Partial<State>
+    set: (s: Partial<State>) => () => void;
     handleStart: () => void;
+    showCustomPieceDialog: () => void;
+    hideCustomPieceDialog: (moves: LegalMoves) => void;
 };
 
-const render: React.SFC<State & Handlers> = ({sizeName, queen, king, bishop, knight, set, handleStart}) => (
+const render: React.SFC<State & Handlers> = ({sizeName, queen, king, bishop, knight, custom,
+                                              set, handleStart, legalMoves,
+                                              customPieceDialog, showCustomPieceDialog, hideCustomPieceDialog}) => (
     <Card title="Paramètres">
         <Col className={cx("form")}>
             <Row>
@@ -57,11 +67,22 @@ const render: React.SFC<State & Handlers> = ({sizeName, queen, king, bishop, kni
                 <Checkbox selected={king} onSelect={set({king: !king})} piece="king" />
                 <Checkbox selected={bishop} onSelect={set({bishop: !bishop})} piece="bishop" />
                 <Checkbox selected={knight} onSelect={set({knight: !knight})} piece="knight" />
+                <Checkbox selected={custom} onSelect={set({custom: !custom})} piece="custom" />
             </Row>
-            <Row>
+
+            <Row className={cx("begindiv")}>
+                <Button large onClick={showCustomPieceDialog}>Perso</Button>
+            </Row>
+
+            <Row className={cx("begindiv")}>
                 <Button large color="primary" onClick={handleStart}>Commencer</Button>
             </Row>
         </Col>
+
+        {  customPieceDialog &&
+                <CustomPieceDialog legalMoves={legalMoves} onOk={hideCustomPieceDialog}/>
+        }
+
     </Card>
 );
 
@@ -81,22 +102,27 @@ function sizeNameToObject(name: string) {
 export default
 compose<State & Handlers, {}>(
     connect(mapStateToProps, mapDispatchToProps),
-    withStateHandlers<State, StateHandlers, {}>({
+    withStateHandlers<State, StateHandlers, Props>({
         sizeName: "g88",
         queen: true,
         king: false,
         bishop: false,
         knight: false,
+        custom: false,
+        customPieceDialog: false,
+        legalMoves: ({long: [], local: []}),
     }, {
         setState: () => s => s,
     }),
     withHandlers<Props & State & StateHandlers, Handlers>({
         set: ({setState}) => s => () => setState(s),
-        handleStart: ({sizeName, queen, king, bishop, knight, onSubmit}) => () => {
+        handleStart: ({sizeName, queen, king, bishop, knight, custom, legalMoves, onSubmit}) => () => {
             const rowsColumns =  sizeNameToObject(sizeName);
-            const pieces = R.keys(R.pickBy(val => !!val, {queen, king, bishop, knight})) as PieceType[];
-            const data = {...rowsColumns, rules: {pieces}};
+            const availablePieces = R.keys(R.pickBy(val => !!val, {queen, king, bishop, knight, custom})) as PieceType[];
+            const data = {...rowsColumns, availablePieces, customLegalMoves: legalMoves};
             onSubmit(data);
-        }
+        },
+        showCustomPieceDialog: ({setState}) => () => setState({customPieceDialog: true}),
+        hideCustomPieceDialog: ({setState}) => (moves: LegalMoves) => setState({legalMoves: moves, customPieceDialog: false}),
     })
 )(render);

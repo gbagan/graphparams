@@ -1,23 +1,54 @@
 import * as R from "ramda";
-import {Position} from "./types";
+import {LegalMoves, Piece, PieceType, Position} from "./types";
 
-export const areNeighbors = (q1: Position, q2: Position) =>
-    q1.row !== -1 && q2.row !== -1 &&
-                      (q1.row === q2.row
-                    || q1.col === q2.col
-                    || Math.abs(q1.row - q2.row) === Math.abs(q1.col - q2.col));
+export const piecesList = ["queen", "king", "rook", "knight", "bishop", "custom"];
 
-const path = (q1: Position) => (q2: Position) => {
-    if (!R.equals(q1, q2) && areNeighbors(q1, q2)) {
-        const dRow = q1.row === q2.row ? 0 : q1.row < q2.row ? 1 : -1;
-        const dCol = q1.col === q2.col ? 0 : q1.col < q2.col ? 1 : -1;
-        return R.times(i => ({row: q1.row + dRow * i, col: q1.col + dCol * i}),
-            Math.max(Math.abs(q1.row - q2.row), Math.abs(q1.col - q2.col)) + 1
-        );
-    } else {
-        return [];
-    }
-};
+export function flip<T>(x: T, l: T[]) {
+    const index = R.findIndex(R.equals(x), l);
+    return index === -1 ? R.append(x, l) : R.remove(index, 1, l);
+}
 
-export const squaresBetweenConflicts = (q1: Position, qs: Position[]) =>
-    R.uniq(R.chain(path(q1), qs));
+const rookMoves = [{row: 1, col: 0}, {row: -1, col: 0}, {row: 0, col: 1}, {row: 0, col: -1}];
+const bishopMoves = [{row: 1, col: 1}, {row: 1, col: -1}, {row: -1, col: 1}, {row: -1, col: -1}];
+const knightMoves =  [{row: 1, col: 2}, {row: 1, col: -2}, {row: -1, col: 2}, {row: -1, col: -2},
+                      {row: 2, col: 1}, {row: 2, col: -1}, {row: -2, col: 1}, {row: -2, col: -1}];
+const queenMoves = rookMoves.concat(bishopMoves);
+
+export const legalMovesFor = (p: PieceType, customMoves: LegalMoves) => {
+    if (p === "queen")
+        return {local: [], long: queenMoves};
+    else if (p === "king")
+       return {local: queenMoves, long: []};
+    else if (p === "bishop")
+        return {local: [], long: bishopMoves};
+    else if (p === "knight")
+        return {local: knightMoves, long: []};
+    else
+        return customMoves;
+}
+
+export const square = (rows: number, columns: number) =>
+    R.times(i => ({
+        col: i % columns,
+        row: Math.floor(i / columns),
+    }), rows * columns);
+
+export const canCapture = (p1: Piece, p2: Position, customMoves: LegalMoves) => {
+    const rules = legalMovesFor(p1.type, customMoves);
+    const dRow = p2.row - p1.row;
+    const dCol = p2.col - p1.col;
+    const m = Math.max(Math.abs(dRow), Math.abs(dCol));
+    const vector = {row: dRow, col: dCol};
+    const normVector = { row: dRow / m, col: dCol / m};
+    return R.contains(vector, rules.local) || R.contains(normVector, rules.long);
+}
+
+export const isCapturable = (p: Position, pieces: Piece[], customMoves: LegalMoves) =>
+    R.any(p2 => canCapture(p2, p, customMoves), pieces);
+
+export const noConflict = (pieces: Piece[], customMoves: LegalMoves) =>
+    R.all(({row, col}) => !isCapturable({row, col}, pieces, customMoves), pieces);
+
+export const reachableFrom = (piece: Piece, rows: number, columns: number, customMoves: LegalMoves) => (
+    R.filter(pos => canCapture(piece, pos, customMoves), square(rows, columns))
+);

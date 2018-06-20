@@ -7,11 +7,12 @@ const cx = cxbind(style);
 type Props = {
     row: number,
     col: number,
-    // inConflict: boolean;
-    // selectedWarning: boolean;
     pieceType: PieceType | null;
-    // onQueenHover: (id: number) => void;
-    // onDropQueen: (p: {id: number; row: number; col: number}) => void;
+    capturable: boolean,
+    selected: boolean,
+
+    onClick: (row: number, col: number) => void;
+    onHover: (p: { row: number, col: number} | null) => void;
 };
 
 /*
@@ -24,16 +25,22 @@ type DropProps = {
 
 */
 
-const render: React.SFC<Props> = ({row, col, pieceType}) => {
+const render: React.SFC<Props> = ({row, col, pieceType, capturable, selected, onClick, onHover}) => {
     const className = cx({
             square: true,
-            black: row !== - 1 && (row + col) % 2 === 0,
+            black: row !== -1 && (row + col) % 2 === 0,
+            capturable,
+            nonavailable: capturable || pieceType !== null,
+            selected,
             // warning: selectedWarning,
     });
 
     return (
         // connectDropTarget!(
-        <div className={className}>
+        <div className={className}
+             onMouseOver={() => onHover({row, col})}
+             onMouseOut={() => onHover(null)}
+             onClick={() => onClick(row, col)}>
             {pieceType !== null && <div className={cx("piece", pieceType)} />}
         </div>
     )

@@ -1,16 +1,67 @@
 $cellsize: 60px;
 
-@each $type in queen king knight bishop {
+.container {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;    
+}
+
+
+@each $type in queen king knight bishop rook custom arrow {
     .#{$type} {
         // -webkit-mask-image: url("../img/#{$type}.svg");
         // mask-image: url("../img/#{$type}.svg");
-        background-image: url("../img/#{$type}.svg");
+        -webkit-mask-image: url("../img/#{$type}.svg");
+                mask-image: url("../img/#{$type}.svg");
     }
 }
 
+.piece {
+    background-size: contain;
+    background-repeat: no-repeat;
+    -webkit-mask-size: contain;
+            mask-size: contain;  
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+
+    @for $i from 0 through 8 {
+        &.rotation-#{$i} {
+            transform: rotate(45deg * $i);
+        }
+    }
+}
+
+.cursor.piece {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-color: black;
+    opacity: 0.8;
+    z-index: 100;
+    pointer-events: none;
+}
+
 .form {
-    width: 300px;
-    height: 400px;
+    // width: 32px;
+    // height: 330px;
+    margin-right: 10px;
+
+    & .begindiv {
+        margin-top: 20px;
+        justify-content: right;
+    }
+}
+
+.bestscore {
+    margin-top: 30px;
+    margin-right: 10px;
+
+    .data {
+        justify-content: space-between;
+    }
 }
 
 .checkbox {
@@ -24,8 +75,7 @@ $cellsize: 60px;
     & .piece {
         width: 40px;
         height: 40px;
-        background-size: contain;
-        background-repeat: no-repeat;
+        background-color: black;
     }
 
     & > span {
@@ -35,13 +85,15 @@ $cellsize: 60px;
     }
 }
 
-.container {
+
+.store {
     height: 100%;
     padding: 0;
     margin: 0;
     display: flex;
     align-items: center;
-    justify-content: center;    
+    justify-content: center;
+    margin-bottom: 30px;    
 }
 
 .grid {
@@ -51,6 +103,7 @@ $cellsize: 60px;
     user-select: none;
     box-shadow: 0px 0px 5px 5px #bdc3c7;
     position: relative;
+    background-color: black;
 
     @for $i from 3 through 10 {
         $size: $cellsize * $i;
@@ -64,56 +117,45 @@ $cellsize: 60px;
 }
 
 .square {
-    position: relative;
     cursor: pointer;
     text-align: center;
     float: left;
     background: white;
 
-    &.black {
-        background: #8F8F00;
+    & .piece {
+        width: 46px;
+        height: 46px;
+        background-color: black;
     }
-    &.warning {
-        background: orange;
+
+    // &.black {
+    //    background: #8F8F00;
+    // }
+
+    &.capturable > .piece {
+        background-color: red;
+    }
+
+    &.selected {
+        opacity: 0.8;
     }
 
     width: $cellsize;
     height: $cellsize;
+    padding: 7px;
     box-shadow: 0px 0px 0px 1px #bdc3c7;
 }
 
-/*
-
-.queen {
-    -webkit-mask-image: url("../img/queen.svg");
-            mask-image: url("../img/queen.svg");
-    width: 45px;
-    height: 45px;
-    margin: 7px;
-    background-color: black;
-    background-size: 45px 45px;
-    transition: background-color 0.5s ease;
-
-    &.drag {
-        opacity: 0.5;
-    }
-
-    &.conflict {
-        background-color: red;
-    }
+.help .nonavailable {
+    background: rgb(224, 123, 162);
 }
-
-
-*/
 
 .dialog {
     display: block;
     position: absolute;
-    width: 400px;
     left: 25%;
     top: 25%;
 }
-
 
 .dialogcontainer {
     background-color: rgba(127, 140, 141, 0.7);
@@ -133,3 +175,14 @@ $cellsize: 60px;
     }
 }
 
+.bscoredialog .grid {
+    margin: 20px;
+}
+
+.custom-piece-dialog .directions {
+    width : 140px;
+    margin-left: 10px;
+    .checkbox {
+        margin: 5px;
+    }
+}

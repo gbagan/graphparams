@@ -8,7 +8,7 @@ type Props = {
 };
 
 const Card: React.SFC<Props> = ({className, title, children}) => (
-    <div className={style.card}>
+    <div className={style.card + " " + className}>
         <div className={style.head}>
             <div className={style.flex}>
                 <div className={style.title}>{title}</div>
