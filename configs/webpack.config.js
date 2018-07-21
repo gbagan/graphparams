@@ -1,8 +1,5 @@
 const webpack = require('webpack');
 const path = require('path');
-//const { CheckerPlugin } = require('awesome-typescript-loader')
-//const DashboardPlugin = require('webpack-dashboard/plugin');
-//const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
@@ -34,11 +31,16 @@ module.exports = (env = {}) => {
         devtool: "source-map",
         module: {
             rules: [
-                { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
-                { test: /\.(sa|sc|c)ss$/, use: [MiniCssExtractPlugin.loader,
+                { test: /\.jsx?$/, loader: 'babel-loader', exclude: '/node_modules/' },
+                { test: /\.tsx?$/, loader: 'awesome-typescript-loader', exclude: '/node_modules' },
+                { test: /\.(sa|sc|c)ss$/, exclude: [/antd/], use: [MiniCssExtractPlugin.loader,
                                                 {loader: "css-loader", options: {modules: true} },
                                                 "sass-loader"
                                                ] },
+                { test: /\.(sa|sc|c)ss$/, include: [/antd/],  use: [MiniCssExtractPlugin.loader,
+                                                 {loader: "css-loader", options: {modules: false} },
+                                                "sass-loader"
+                ] },
                 { test: /\.(png|jpg|gif|svg)$/, use: [ { loader: 'url-loader', options: { limit: 16000 } } 
                                                  ] },
                 { test: /\.worker\.js$/, use: { loader: "worker-loader" } }
@@ -46,7 +48,7 @@ module.exports = (env = {}) => {
         },
         entry: {
             app: [
-                PATHS.src + "/index.tsx",
+                PATHS.src + "/index.jsx",
             ],
         },
         output: {

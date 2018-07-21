@@ -1,4 +1,4 @@
-import * as R from "ramda";
+import {update, times} from "ramda";
 import { ActionType, getType } from "typesafe-actions";
 import actions from "./actions";
 
@@ -14,7 +14,7 @@ export type State = {
 };
 
 const initialState: State = {
-    cells: null,
+    cells: createGrid(3),
     solutions: null,
     squaresize: 3,
 };
@@ -23,12 +23,12 @@ export default function reducer(state: State = initialState, action: Action): St
     switch (action.type) {
         case getType(actions.selectGrid): {
             const squaresize = action.payload;
-            const cells = computeGrid(squaresize);
+            const cells = createGrid(squaresize);
             return { ...state, squaresize, cells, solutions: null };
         }
         case getType(actions.selectExample): {
             const { size, fixedCells } = action.payload;
-            const cells = computeGrid(size, fixedCells.map(t => ({ row: t[0], col: t[1], value: t[2] })));
+            const cells = createGrid(size, fixedCells.map(t => ({ row: t[0], col: t[1], value: t[2] })));
             return { ...state, squaresize: size, cells, solutions: null };
         }
         case getType(actions.fillCell): {
@@ -37,7 +37,7 @@ export default function reducer(state: State = initialState, action: Action): St
             const size = squaresize * squaresize;
             if (cells === null)
                 return state;
-            const cells2 = R.update(row * size + col,  { value, fixed: value > 0 }, cells);
+            const cells2 = update(row * size + col,  { value, fixed: value > 0 }, cells);
             return { ...state, cells: cells2 };
         }
         case getType(actions.solve): {
@@ -71,15 +71,14 @@ export default function reducer(state: State = initialState, action: Action): St
     }
 }
 
-function computeGrid(val: number, fixedCells?: PosAndVal[]): ModelCell[] {
+function createGrid(val: number, fixedCells?: PosAndVal[]): ModelCell[] {
     const size = val * val;
-    const cells = R.times(_ => ({ fixed: false, value: 0 }), size * size);
+    const cells = times(_ => ({ fixed: false, value: 0 }), size * size);
     const fcells = fixedCells || [];
 
-    return R.reduce((cs, {row, col, value}) =>
-                        R.update(row * size + col, { value, fixed: true }, cs),
-                        cells,
-                        fcells,
+    return fcells.reduce((cs, {row, col, value}) =>
+                        update(row * size + col, { value, fixed: true }, cs),
+                        cells
                     );
 }
 
@@ -88,9 +87,8 @@ function addSolution(cells: ModelCell[], squaresize: number,
     const size = squaresize * squaresize;
     return solution === null
         ? cells.map(cell => cell.fixed ? cell : { fixed: false, value: 0 })
-        : R.reduce((cs, {row, col, value}) =>
-            R.update(row * size + col, { value, fixed: false }, cs),
+        : solution.reduce((cs, {row, col, value}) =>
+            update(row * size + col, { value, fixed: false }, cs),
             cells,
-            solution
         );
 }

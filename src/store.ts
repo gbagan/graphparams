@@ -1,33 +1,25 @@
-import { applyMiddleware, combineReducers, createStore } from "redux";
-import createSagaMiddleware from "redux-saga";
-import { all } from "redux-saga/effects";
-import { StateType } from "typesafe-actions";
+import {combineReducers, createStore} from "redux";
+//import createSagaMiddleware from "redux-saga";
+//import {all} from "redux-saga/effects";
+import {StateType} from "typesafe-actions";
 
-/* tslint:disable:no-implicit-dependencies */
-import { composeWithDevTools } from "redux-devtools-extension";
-/* tslint:enable:no-implicit-dependencies */
+import {reducer as eds} from './pages/eds';
+//import { reducer as graphparams, saga as graphparamSaga } from "./pages/graphparams";
+//import { reducer as lightsout } from "./pages/lightsout";
+import {reducer as sudoku} from "./pages/sudoku";
 
-import { reducer as eds } from "./pages/eds";
-import { reducer as graphparams, saga as graphparamSaga } from "./pages/graphparams";
-import { reducer as lightsout } from "./pages/lightsout";
-import { reducer as pegsolitaire } from "./pages/pegsolitaire";
-import { reducer as queens } from "./pages/queens";
-import { reducer as sudoku } from "./pages/sudoku";
+//function* rootSaga() {
+//    yield all([graphparamSaga()]);
+//}
 
-function* rootSaga() {
-    yield all([graphparamSaga()]);
-}
+const reducer = combineReducers({eds, sudoku}); //   graphparams, eds, sudoku, lightsout });
 
-const reducer = combineReducers({ graphparams, eds, sudoku, lightsout, pegsolitaire, queens });
-const sagaMiddleware = createSagaMiddleware();
+//const sagaMiddleware = createSagaMiddleware();
+// const composeEnhancers = composeWithDevTools({});
 
-const composeEnhancers = composeWithDevTools({});
-
-export const store = createStore(reducer,
-    composeEnhancers(
-        applyMiddleware(sagaMiddleware),
-    ),
-);
-sagaMiddleware.run(rootSaga);
+export const store = createStore(reducer);
+//        applyMiddleware(sagaMiddleware),
+//    ),
+// sagaMiddleware.run(rootSaga);
 
 export type RootState = StateType<typeof reducer>;
