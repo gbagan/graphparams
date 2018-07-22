@@ -1,6 +1,6 @@
-import * as R from "ramda";
+import {maxBy, sortBy, zipWith} from 'ramda';
 
-import {EDSGraph, Answer, Guards, Shift} from "./types";
+import {EDSGraph, Guards} from "./types";
 
 import Graph from "../graph/graph";
 import {Result} from "../graph/types";
@@ -19,27 +19,24 @@ export function guardsWin(edsgraph: EDSGraph): Result {
     return { result: false, witness: null };
 }
 
-export function guardsAnswer(edsgraph: EDSGraph, guards: Guards, attack: number): Answer | null {
-    const ans = answer(edsgraph, guards.concat(attack));
+export function guardsAnswer(edsgraph: EDSGraph, guards: Guards, attack: number): Guards | null {
+    const ans = answer(edsgraph, sortBy(x => x, guards).concat(attack));
     if (!ans) {
         return null;
     }
 
-    const perms =  [...permutations(guards)];
+    const perms =  [...permutations(ans)];
     const shifts = perms.map(perm =>
-        R.zipWith((from, to) => ({from, to}), perm, ans).filter(({from, to}) => from !== to)
+        zipWith((from, to) => ({from, to}), guards, perm)
     ).filter(shift =>
-        shift.every(({from, to}) => edsgraph.graph.hasEdge(from, to))
-    );
-    
-    if (shifts.length === 0)
-        return null;
+        shift.every(p => p.from === p.to || edsgraph.graph.hasEdge(p.from, p.to))
+    ).map(shift => ({shift, score: shift.map(p => p.from === p.to).length}));
 
-    const bestShift = R.reduce(R.minBy<Shift>(shift => shift.length), shifts[0], shifts ); 
-    return {conf: ans, shift: bestShift};
+    const bestShift = shifts.reduce(maxBy(shift => shift.score), shifts[0]); 
+    return bestShift.shift.map(x => x.to);
 }
 
-export function makeEDS (graph: Graph, k: number, rulesName: "one" | "all"): EDSGraph {
+export function makeEDS (graph: Graph, k: number, rulesName: 'one' | 'all'): EDSGraph {
     const rules = makeRules(rulesName);
     const arena = {
         AConfs: () => sublists(graph.V, k),

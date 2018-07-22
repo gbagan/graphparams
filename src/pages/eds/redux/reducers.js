@@ -1,14 +1,13 @@
-import * as R from "ramda";
-import { ActionType, getType } from "typesafe-actions";
+import {reduceWhile, range} from 'ramda';
+import { ActionType, getType } from 'typesafe-actions';
 
 import * as actions from "./actions";
 
-import {makeEDS, startingConf, guardsAnswer} from "@/lib/arena/edsarena";
-import {EDSGraph} from "@/lib/arena/types";
-import { memoize } from "@/lib/decorators";
-import Graph from "@/lib/graph/graph";
-import parse from "@/lib/graph/parser";
-import { Shift } from "../types";
+import {makeEDS, startingConf, guardsAnswer} from '@/lib/arena/edsarena';
+import {memoize} from '@/lib/decorators';
+import Graph from '@/lib/graph/graph';
+import parse from '@/lib/graph/parser';
+import getLayout from '../layout';
 
 /*
 const GRAPH_EXAMPLE =
@@ -20,33 +19,25 @@ const GRAPH_EXAMPLE =
 .addEdge(3, 8)`;
 */
 
-export type Action = ActionType<typeof actions>;
 
-export type State = {
-    graph: Graph | null;
-    guards: number[] | null;
-    shift: Shift | null;
-    rules: "one" | "all";
-};
-
-const initialState: State = {
+const initialState = {
     graph: null,
     guards: null,
-    rules: "all",
-    shift: null,
+    rules: 'all',
+    layout: null,
 };
 
-const getEDS: (graph: Graph, rules: "one" | "all") => EDSGraph =
-    memoize((graph: Graph, rules: "one" | "all") =>
-    R.reduceWhile<number, EDSGraph>(
-        (eds, i) => !startingConf(eds),
+
+const getEDS = memoize((graph, rules) =>
+    reduceWhile(
+        eds => !startingConf(eds),
         (eds, i) =>  makeEDS(graph, i + 1, rules),
         makeEDS(graph, 1, rules),
-        R.range(1, graph.V + 1)
+        range(1, graph.V + 1)
     )
 );
 
-export default function reducer(state: State = initialState, action: Action): State {
+const reducer = (state = initialState, action) => {
     switch (action.type) {
         case getType(actions.selectVertex): {
             const { graph, guards, rules } = state;
@@ -55,21 +46,21 @@ export default function reducer(state: State = initialState, action: Action): St
                 return state;
             }
             const eds = getEDS(graph, rules);
-            const res = guardsAnswer(eds, guards, v);
-            if (!res)
+            const guards2 = guardsAnswer(eds, guards, v);
+            if (!guards2)
                 return state;
-            return { ...state, guards: res.conf, shift: res.shift };
+            return { ...state, guards: guards2 };
         }
         case getType(actions.submitInput): {
             const { type, input, rules } = action.payload;
             let graph;
-            if (type === "load") {
-                const textdata = localStorage.getItem("graph-" + input);
+            if (type === 'load') {
+                const textdata = localStorage.getItem('graph-' + input);
                 if (!textdata) {
                     return state;
                 }
-                const data: any = JSON.parse(textdata);
-                const code = data.code as string;
+                const data = JSON.parse(textdata);
+                const code = data.code;
                 const result = parse(code);
                 if (result instanceof Graph) {
                     graph = result;
@@ -84,12 +75,16 @@ export default function reducer(state: State = initialState, action: Action): St
                     return state;
                 }
             }
+            const layout = getLayout(graph);
             const eds = getEDS(graph, rules);
             const guards = startingConf(eds);
-            const gstate = guards ? { guards } : {};
-            return { ...state, graph, rules, guards, ...gstate };
+            const gstate = guards ? {guards} : {};
+            console.log(layout, graph);
+            return { ...state, layout, graph, rules, guards, ...gstate };
         }
         default:
             return state;
     }
 }
+
+export default reducer;

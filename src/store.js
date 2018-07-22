@@ -22,4 +22,3 @@ export const store = createStore(reducer);
 //    ),
 // sagaMiddleware.run(rootSaga);
 
-export type RootState = StateType<typeof reducer>;
