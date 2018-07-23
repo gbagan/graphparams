@@ -1,9 +1,9 @@
-import {range} from 'ramda';
+import {range} from '@fp';
 import React from 'react';
 import ConsoleNum from './ConsoleNum';
 import style from '../css/Console.scss';
 
-const render = ({ cols, onClick }) => (
+const Console = ({cols, onClick}) => (
     <div className={style.container}>
         <div className={style.console}>
         {
@@ -15,4 +15,4 @@ const render = ({ cols, onClick }) => (
     </div>
 );
 
-export default render;
+export default Console;

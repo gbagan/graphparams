@@ -4,10 +4,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const PATHS = {
-    root: path.resolve(__dirname, '..'),
-    nodeModules: path.resolve(__dirname, '../node_modules'),
-    src: path.resolve(__dirname, '../src'),
-    dist: path.resolve(__dirname, '../dist'),
+    root: path.resolve(__dirname, '.'),
+    nodeModules: path.resolve(__dirname, './node_modules'),
+    src: path.resolve(__dirname, './src'),
+    dist: path.resolve(__dirname, './dist'),
 };
 
 module.exports = (env = {}) => {
@@ -26,6 +26,7 @@ module.exports = (env = {}) => {
             descriptionFiles: ["package.json"],
             alias: {
                 '@': PATHS.src,
+                '@fp': PATHS.src + '/lib/fp'
             }
         },
         devtool: "source-map",

@@ -2,7 +2,7 @@ import {cxbind, React, withHandlers} from '@/commonreact';
 import style from '../css/ConsoleNum.scss';
 const cx = cxbind(style);
 
-const render = ({cols, value, handleClick}) => (
+const ConsoleNum = ({cols, value, handleClick}) => (
     <div
         className={ cx('num', 'cols-' + cols, {delete: value === 0})}
         onClick={handleClick}
@@ -15,4 +15,4 @@ export default
 withHandlers({
     handleClick: props => () => props.onClick(props.value)
 })
-(render);
+(ConsoleNum);

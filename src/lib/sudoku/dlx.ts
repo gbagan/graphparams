@@ -1,4 +1,4 @@
-﻿import * as R from "ramda"; 
+﻿import {times} from 'ramda'; 
 
 type DancingCell = {
     left: DancingCell;
@@ -87,7 +87,7 @@ type DancingMatrix = {
 function makeDancingMatrix(nbRows: number, nbColumns: number, matrixPairs: [number, number][]) {
     const root = dancingCell();
 
-    const rowsDict = R.times(i => {
+    const rowsDict = times(i => {
         const cell = dancingCell();
         cell.id = i;
         cell.col = root;
@@ -96,7 +96,7 @@ function makeDancingMatrix(nbRows: number, nbColumns: number, matrixPairs: [numb
         return cell;
     }, nbRows);
 
-    const colsDict = R.times(i => {
+    const colsDict = times(i => {
         const cell = dancingCell();
         cell.id = i;
         cell.row = root;

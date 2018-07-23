@@ -1,17 +1,26 @@
 import React from 'react';
 
-import Dropdown, {DropdownItem} from '@/ui/Dropdown';
+import Button from 'antd/lib/button';
+import Dropdown from 'antd/lib/dropdown';
+import Menu from 'antd/lib/menu';
 
-//  public handleAction = (e: any) => this.props.action(this.props.data[e.key].data);
-
-const render = ({label, data, action}) => (
-    <Dropdown label={label}>
-    {
-        data.map(({name, data}) => (
-            <DropdownItem key={name} onClick={() => action(data)}>{name}</DropdownItem>
-        ))
-    }
+const render = ({ label, data, action }) => {
+    const menu = (
+        <Menu>{
+            data.map(({ name, data }) => (
+                <Menu.Item
+                    key={name}
+                    onClick={() => action(data)}
+                >
+                    {name}
+                </Menu.Item>
+            ))
+        }</Menu>
+    );
+    return
+    <Dropdown overlay={menu} label={label}>
+        <Button>{label}</Button>
     </Dropdown>
-);
+};
 
 export default render;

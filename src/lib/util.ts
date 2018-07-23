@@ -1,4 +1,4 @@
-﻿import * as R from "ramda";
+﻿import {range} from 'ramda';
 
 export function Map_dec<T>(m: Map<string, number>, key: T) {
     let v = m.get(key.toString()) as number;
@@ -64,7 +64,7 @@ export function* subsets(n: number, k: number): Iterable<number[]> {
     if (k === 0) {
         yield [];
     } else if (n === k) {
-        yield R.range(0, n);
+        yield range(0, n);
     } else {
         yield* subsets(n - 1, k);
         for (const set of subsets(n - 1, k - 1)) {

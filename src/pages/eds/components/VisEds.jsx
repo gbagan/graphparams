@@ -1,7 +1,6 @@
-import { range } from 'ramda';
-import { connect, createSelector, cxbind, React } from '@/commonreact';
-import * as actions from '../redux/actions';
-import selector from '../redux/selector';
+import {range} from '@fp';
+import {connect, createSelector, cxbind, pick, React} from '@/commonreact';
+import {actions, selector} from '../redux';
 
 import POLICEMAN from '../img/policeman.svg';
 import HOUSE from '../img/house.svg';
@@ -47,12 +46,9 @@ const VisEds = ({ graph, guards, layout, className, onSelectVertex }) => {
     );
 }
 
-const mapStateToProps = createSelector(selector, ({ graph, guards, shift, layout }) => (
-    { graph, guards, shift, layout }
-));
-
-const mapDispatchToProps = {
-    onSelectVertex: actions.selectVertex,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(VisEds);
+export default
+connect(
+    createSelector(selector, pick('graph,guards,shift,layout')), {
+        onSelectVertex: actions.selectVertex
+    }
+)(VisEds);

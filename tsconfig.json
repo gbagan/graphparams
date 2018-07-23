@@ -5,9 +5,8 @@
         "module": "esnext",
         "target": "esnext",
         "paths": {
-            "@/*": [
-              "src/*"
-            ]
+            "@/*": ["src/*"],
+            "@fp": ["src/lib/fp"]
         },
         "sourceMap": true,
         "allowJs": true,

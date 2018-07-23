@@ -1,4 +1,4 @@
-import {range} from "ramda";
+import {range} from "@fp";
 
 export const removeFromLocalStorage = name => {
     localStorage.removeItem('graph-' + name);

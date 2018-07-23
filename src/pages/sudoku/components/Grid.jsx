@@ -1,4 +1,4 @@
-import {compose, connect, createSelector, cxbind, React, withHandlers, withStateHandlers} from '@/commonreact';
+import {connect, createSelector, cxbind, React} from '@/commonreact';
 
 import {actions, selector} from '../redux';
 import Cell from './Cell';
@@ -6,13 +6,9 @@ import Console from './Console';
 import style from '../css/Grid.scss';
 const cx = cxbind(style);
 
-const render = ({squaresize, cells, isConsoleShowed, selectedCell, handleCellClick, handleConsoleClick }) => {
+const render = ({squaresize, cells, selectedCell, handleCellClick, handleConsoleClick }) => {
     const size = squaresize * squaresize;
     const className = cx('grid', 'squaresize-' + squaresize);
-
-    if (!cells) {
-        return <div />;
-    }
 
     const ccells = cells.map((cell, key) => {
         const row = Math.floor(key / size);
@@ -25,41 +21,19 @@ const render = ({squaresize, cells, isConsoleShowed, selectedCell, handleCellCli
     return (
         <div className={className}>
             {ccells}
-            {isConsoleShowed && <Console cols={squaresize} onClick={handleConsoleClick} />}
+            {selectedCell && <Console cols={squaresize} onClick={handleConsoleClick} />}
         </div>
     );
 };
 
 const mapStateToProps = createSelector(selector,
-    ({cells, squaresize}) => ({cells, squaresize})
+    ({cells, squaresize, selectedCell}) => ({cells, squaresize, selectedCell})
 );
 
 const mapDispatchToProps = {
-    onCellFilled: actions.fillCell,
+    handleCellClick: actions.selectCell,
+    handleConsoleClick: actions.fillCell,
 };
 
 export default
-compose(
-    connect(mapStateToProps, mapDispatchToProps),
-    withStateHandlers(
-        {
-            isConsoleShowed: false,
-            selectedCell: null,
-        },
-        {
-            hideConsole: state => () =>  ({ selectedCell: null, isConsoleShowed: false }),
-            showConsole: state => (row, col) => ({ selectedCell: {row, col}, isConsoleShowed: true }),
-        }
-    ),
-    withHandlers({
-        handleCellClick: ({ showConsole }) =>
-            (row, col) => showConsole(row, col),
-        handleConsoleClick: ({selectedCell, hideConsole, onCellFilled}) => value => {
-            if (!selectedCell)
-                return;
-            const {row, col} = selectedCell;
-            onCellFilled({ row, col, value });
-            hideConsole();
-        }
-    }),
-)(render);
+connect(mapStateToProps, mapDispatchToProps)(render);

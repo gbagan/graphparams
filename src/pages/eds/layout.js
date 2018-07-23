@@ -1,4 +1,4 @@
-import {range} from 'ramda';
+import {range} from '@fp';
 import * as d3 from 'd3-force';
 
 const getLayout = graph => {

@@ -6,7 +6,6 @@
     "antd": "^3.7.0",
     "classnames": "^2.2.6",
     "d3-force": "^1.1.0",
-    "formik": "^1.0.1",
     "promise-worker": "^1.1.1",
     "ramda": "^0.25.0",
     "react": "^16.4.1",
@@ -23,15 +22,8 @@
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
-    "@types/classnames": "^2.2.4",
     "@types/jest": "^23.1.0",
     "@types/ramda": "^0.25.33",
-    "@types/react": "^16.3.18",
-    "@types/react-dom": "^16.0.5",
-    "@types/react-redux": "^6.0.2",
-    "@types/react-router-dom": "^4.2.7",
-    "@types/react-transition-group": "^2.0.11",
-    "@types/recompose": "^0.26.1",
     "awesome-typescript-loader": "^5.0.0",
     "babel-loader": "^7.1.5",
     "babel-plugin-module-resolver": "^3.1.1",
@@ -54,14 +46,11 @@
     "typescript": "^2.9.2",
     "url-loader": "^1.0.1",
     "webpack": "^4.12.0",
-    "webpack-cli": "^3.0.8",
-    "webpack-dashboard": "^2.0.0",
-    "webpack-dev-server": "^3.1.4",
-    "webpack-serve": "^2.0.2"
+    "webpack-cli": "^3.0.8"
   },
   "scripts": {
-    "build": "webpack --config configs/webpack.config.js --env.build",
-    "build:dev": "webpack --config configs/webpack.config.js --env.dev --env.sourceMap",
+    "build": "webpack --config webpack.config.js --env.build",
+    "build:dev": "webpack --config webpack.config.js --env.dev --env.sourceMap",
     "lint": "tslint --project tsconfig.json",
     "tsc": "tsc -p . --noEmit",
     "test": "jest --verbose --config jest.json",

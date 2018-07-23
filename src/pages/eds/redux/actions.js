@@ -1,4 +1,8 @@
-import {createStandardAction} from 'typesafe-actions';
+import {createAction} from '@/commonreact';
 
-export const selectVertex = createStandardAction('eds/SELECT-VERTEX')();
-export const submitInput = createStandardAction('eds/SUBMIT-INPUT')();
+export const actions = {
+    selectVertex: createAction('eds/SELECT-VERTEX'),
+    submitInput: createAction('eds/SUBMIT-INPUT')
+}
+
+export default actions;

@@ -1,5 +1,5 @@
-import * as R from "ramda";
-import {CellType, Nonogram} from "./types";
+import {times} from 'ramda';
+import {CellType, Nonogram} from './types';
 
 export function solve(nonogram: Nonogram) {
     let current = nonogram;
@@ -74,7 +74,7 @@ function possibleMatches(line: CellType[], pattern: ReadonlyArray<number>) {
         nonWhiteBlockSize[i] = size = (line[i] === CellType.White ? 0 : ++size);
     }
 
-    const match = R.times(() => R.times(() => false, (line.length)), pattern.length);
+    const match = times(() => times(() => false, (line.length)), pattern.length);
     
     for (let i = 0; i < line.length; i++) {
         match[0][i] = nonWhiteBlockSize[i] >= pattern[0];
@@ -96,7 +96,7 @@ function possibleMatches(line: CellType[], pattern: ReadonlyArray<number>) {
             }
         }
     }
-    const match2 = R.times(() => R.times(() => false, (line.length)), pattern.length);
+    const match2 = times(() => times(() => false, (line.length)), pattern.length);
 
     const lastIndex = pattern.length - 1;
     const lastLen1 = pattern[lastIndex] - 1;
@@ -128,8 +128,8 @@ function fillLine(oldLine: ReadonlyArray<CellType>, pattern: ReadonlyArray<numbe
     const line = oldLine.slice();
     const match = possibleMatches(line, pattern);
 
-    const possibleBlack = R.times(_ => false, line.length);
-    const possibleWhite = R.times(_ => false, line.length);
+    const possibleBlack = times(_ => false, line.length);
+    const possibleWhite = times(_ => false, line.length);
 
     const lastIndex = pattern.length - 1;
     const lastSeg = pattern[lastIndex];

@@ -1,5 +1,5 @@
-﻿import * as R from "ramda";
-import Graph from "./graph";
+﻿import {range, times} from 'ramda';
+import Graph from './graph';
 
 type LBFSPartition = {
     set: Set<number>;
@@ -19,11 +19,11 @@ function makePartitions(n: number): LPartitions {
         new_: false,
         next: null,
         previous: null,
-        set: new Set(R.range(0, n)),
+        set: new Set(range(0, n)),
     };
     return {
         firstPartition: partition,
-        partitions: R.times(_ => partition, n),
+        partitions: times(_ => partition, n),
     }
 }
 

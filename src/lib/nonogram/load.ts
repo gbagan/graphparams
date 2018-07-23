@@ -1,4 +1,4 @@
-import * as R from "ramda";
+import {times} from 'ramda';
 import {CellType, Nonogram} from "./types";
 
 export const maxRules = (nonogram: Nonogram) =>
@@ -14,11 +14,11 @@ export function load(data: string): Nonogram | null {
     while (i < lines.length) {
         const line = lines[i];
         const words = line.split(" ").filter((word) => word !== "");
-        if (words[0] === "width" && words.length >= 2) {
+        if (words[0] === 'width' && words.length >= 2) {
             width = parseInt(words[1], 10);
-        } else if (words[0] === "height" && words.length >= 2) {
+        } else if (words[0] === 'height' && words.length >= 2) {
             height = parseInt(words[1], 10);
-        } else if (line === "rows") {
+        } else if (line === 'rows') {
             if (height === 0) {
                 return null;
             }
@@ -28,7 +28,7 @@ export function load(data: string): Nonogram | null {
                 rows.push(line2.split(/\s|,/).map((x) => parseInt(x, 10)));
             }
             i--;
-        } else if (line === "columns") {
+        } else if (line === 'columns') {
             if (width === 0) {
                 return null;
             }
@@ -41,6 +41,6 @@ export function load(data: string): Nonogram | null {
         }
         i++;
     }
-    const cells = R.times(_ => CellType.Unknown, width * height);
+    const cells = times(_ => CellType.Unknown, width * height);
     return { width, height, rows, columns, cells };
 }

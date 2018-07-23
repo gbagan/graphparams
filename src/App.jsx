@@ -8,7 +8,7 @@ import Layout from 'antd/lib/layout';
 // import { TransitionGroup } from "react-transition-group";
 
 import AppMenu from "./menu";
-import {store} from "./store";
+import store from "./store";
 import Switch from "./routes";
 
 export const AppWithTransition = props => (

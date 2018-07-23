@@ -1,4 +1,4 @@
-import * as R from "ramda";
+import {range} from '@fp';
 
 export type Calc = {
     readonly val: number,
@@ -22,7 +22,7 @@ type CalcTable = Map<number, Calc>;
 
 function computeTable(list: Calc[], target: number) {
     const tables: CalcTable[] = new Array(1 << list.length);
-    const indexList = R.range(0, list.length);
+    const indexList = range(0, list.length);
     const slistsTab: number[][][] = [];
     for (let i = 0; i <= list.length; i++) {
         slistsTab.push([]);
