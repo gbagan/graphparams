@@ -13,7 +13,7 @@ import style from '../css/Main.scss';
 
 import {boards, examples} from '../data';
 
-const render = ({ onSelectGrid, onSelectExample, onSolve }) => (
+const Main = ({onSelectGrid, onSelectExample, onSolve}) => (
     <React.Fragment>
         <Row>
             <ActionDropDown label="Choose a board" data={boards} action={onSelectGrid} />
@@ -41,4 +41,4 @@ const mapDispatchToProps = {
     onSolve: actions.solve,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(render);
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

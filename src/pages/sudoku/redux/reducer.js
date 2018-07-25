@@ -1,4 +1,4 @@
-import {reduce, update, times} from '@fp';
+import {map, reduce, update, times} from '@fp';
 import {handleActions} from '@/commonreact';
 import actions from './actions';
 import solve from '@/lib/sudoku/solver';

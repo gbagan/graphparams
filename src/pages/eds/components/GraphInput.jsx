@@ -2,10 +2,11 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {compose, withStateHandlers, withHandlers} from 'recompose';
 
-import {Radio, TextArea} from "@/ui";
 import Button from 'antd/lib/button';
 import Input from 'antd/lib/input';
+import Radio from 'antd/lib/radio';
 import Row from 'antd/lib/row';
+
 import Select, { SelectValue } from "antd/lib/select";
 
 import {fillLocalStorage, removeFromLocalStorage} from "../localstorage";
@@ -17,10 +18,11 @@ const render = ({loadList, code, saveName, loadName, rules,
                 handleSaveNameChange, handleCodeChange, handleSelectChange, handleRulesChange,
                 handleCodeSubmit, handleLoadSubmit, handleRemove}) => (
     <div>
-        <Radio
-            onChange={handleRulesChange} value={rules}
-            options={[{value: "one", text: "One guard"},
-                      {value: "all", text: "All guards"}]}
+        <Radio.Group
+            onChange={handleRulesChange}
+            value={rules}
+            options={[{value: 'label', text: 'One guard'},
+                      {value: 'label', text: 'All guards'}]}
         />
         <Row>
             <Input onChange={handleSaveNameChange} value={saveName} />
@@ -33,7 +35,7 @@ const render = ({loadList, code, saveName, loadName, rules,
             <Button type="primary" onClick={handleLoadSubmit}>Load</Button>
             <Button type="danger" onClick={handleRemove}>Remove</Button>
         </Row>
-        <TextArea
+        <Input.TextArea
             className={style.graph}
             onChange={handleCodeChange}
             value={code}

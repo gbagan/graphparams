@@ -1,4 +1,4 @@
-import {connect, createSelector, cxbind, React} from '@/commonreact';
+import {connect, createSelector, cxbind, pick, React} from '@/commonreact';
 
 import {actions, selector} from '../redux';
 import Cell from './Cell';
@@ -26,9 +26,7 @@ const render = ({squaresize, cells, selectedCell, handleCellClick, handleConsole
     );
 };
 
-const mapStateToProps = createSelector(selector,
-    ({cells, squaresize, selectedCell}) => ({cells, squaresize, selectedCell})
-);
+const mapStateToProps = createSelector(selector, pick('cells,squaresize,selectedCell'));
 
 const mapDispatchToProps = {
     handleCellClick: actions.selectCell,

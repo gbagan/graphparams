@@ -1,4 +1,4 @@
-import { compose, connect, createSelector, React, withHandlers } from "@/commonreact";
+import {compose, connect, createSelector, pick, React, withHandlers} from "@/commonreact";
 import Button from 'antd/lib/button';
 import Card from 'antd/lib/card';
 import Col from 'antd/lib/col';
@@ -20,30 +20,18 @@ const htmlizedHelp = (
     </React.Fragment>
 );
 
-const mapStateToProps = createSelector(selector,
-    ({ code, computing }) => ({ code, computing })
-);
-
-const mapDispatchToProps = {
-    onCodeChange: actions.changeCode,
-    onCompute: actions.asyncCompute,
-    onSelectAll: actions.selectAll,
-    onSkip: actions.skip,
-    onUnselectAll: actions.unselectAll,
-};
-
-const render = ({ computing, code, handleCodeChange, onSelectAll, onUnselectAll, onCompute, onSkip }) => (
+const render = ({computing, code, handleCodeChange, onSelectAll, onUnselectAll, onCompute, onSkip}) => (
     <Row type="flex" justify="space-between" align="top">
-        <Col span="18">
+        <Col span={17}>
             <Row>
-                <Button color="primary" disabled={computing} onClick={onSelectAll}>
+                <Button type="primary" disabled={computing} onClick={onSelectAll}>
                     Select all
                 </Button>
                 <Button type="primary" disabled={computing} onClick={onUnselectAll}>
                     Unselect all
                 </Button>
-                <Button color="primary" disabled={computing} onClick={onCompute}>Compute</Button>
-                <Button color="primary" disabled={!computing} onClick={onSkip}>Skip</Button>
+                <Button type="primary" disabled={computing} onClick={onCompute}>Compute</Button>
+                <Button type="primary" disabled={!computing} onClick={onSkip}>Skip</Button>
             </Row>
             <Row>
                 <ParamInput />
@@ -71,6 +59,16 @@ const render = ({ computing, code, handleCodeChange, onSelectAll, onUnselectAll,
         </Col>
     </Row>
 );
+
+const mapStateToProps = createSelector(selector, pick('code,computing'));
+ 
+const mapDispatchToProps = {
+    onCodeChange: actions.changeCode,
+    onCompute: actions.asyncCompute,
+    onSelectAll: actions.selectAll,
+    onSkip: actions.skip,
+    onUnselectAll: actions.unselectAll,
+};
 
 export default
     compose(

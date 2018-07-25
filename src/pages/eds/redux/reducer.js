@@ -8,7 +8,7 @@ import {makeEDS, startingConf, guardsAnswer} from '@/lib/arena/edsarena';
 import {memoize} from '@/lib/decorators';
 import Graph from '@/lib/graph/graph';
 import parse from '@/lib/graph/parser';
-import getLayout from '../layout';
+import getLayout from '@/lib/layout';
 
 /*
 const GRAPH_EXAMPLE =

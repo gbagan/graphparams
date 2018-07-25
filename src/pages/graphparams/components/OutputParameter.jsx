@@ -1,11 +1,10 @@
 import {React, withHandlers} from "@/commonreact";
-import {Text} from "@/ui";
 
 const render = ({parameter: {result, fullname}, handleShowWitness, handleHideWitness}) => {
     if (!result) return <span />;
     let resultJsx;
     if (result === 'computing') {
-        resultJsx = <span>{fullname} : <Text color="warning">Computing</Text></span>;
+        resultJsx = <span>{fullname} : Computing</span>;
     } else if (result.witness === null) {
         resultJsx = <span>{fullname} : {result.result.toString()}</span>
     } else {

@@ -13,7 +13,7 @@ const nodeColor = (witness, i) => {
 };
 
 const updateArray = (t, fn) => {
-    const t1 = t; // shallow copy;
+    const t1 = t.slice();
     fn((i, val) => t1[i] = val, val => t1.push(val));
     return t1;
 }

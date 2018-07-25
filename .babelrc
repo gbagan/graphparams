@@ -1,19 +1,14 @@
 {
-    "presets": ["react" ],
+    "presets": ["@babel/react", "@babel/preset-stage-1"],
 
     "env": {
-        "targets": {
-            "browsers": ["last 2 Chrome versions", "last 1 Firefox versions"]
-        },
-
         "test": {
             "plugins": ["transform-es2015-modules-commonjs"]
         }
     },
 
     "plugins": [
-        "transform-object-rest-spread",
-        "transform-class-properties",
+        "@babel/proposal-object-rest-spread",
         ["module-resolver", {
             "root": ["./src"],
             "alias": { "@": "./src" }

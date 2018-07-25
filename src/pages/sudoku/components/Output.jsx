@@ -1,10 +1,9 @@
-import {connect, createSelector, React} from '@/commonreact';
+import {connect, createSelector, pick, React} from '@/commonreact';
 import {actions, selector} from '../redux';
 import OutputSolution from './OutputSolution';
 
 const render = ({ solutions, onSelectSolution, className }) => (
-    <div className={className}>
-    {
+    <div className={className}>{
         !solutions 
             ? 'Sudoku'
         : solutions.length === 0
@@ -22,13 +21,10 @@ const render = ({ solutions, onSelectSolution, className }) => (
                     )
                 }
             </React.Fragment>
-    }
-    </div>
+    }</div>
 );
 
-const mapStateToProps = createSelector(selector, ({solutions}) => ({
-    solutions,
-}));
+const mapStateToProps = createSelector(selector, pick('solutions'));
 
 const mapDispatchToProps = {
     onSelectSolution: actions.showSolution,

@@ -17,10 +17,11 @@ const render = ({ label, data, action }) => {
             ))
         }</Menu>
     );
-    return
-    <Dropdown overlay={menu} label={label}>
-        <Button>{label}</Button>
-    </Dropdown>
+    return (
+        <Dropdown overlay={menu} label={label}>
+            <Button>{label}</Button>
+        </Dropdown>
+    )
 };
 
 export default render;

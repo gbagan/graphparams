@@ -4,7 +4,7 @@ const cx = cxbind(style);
 
 const ConsoleNum = ({cols, value, handleClick}) => (
     <div
-        className={ cx('num', 'cols-' + cols, {delete: value === 0})}
+        className={cx('num', 'cols-' + cols, {delete: value === 0})}
         onClick={handleClick}
     >
         <span>{value === 0 ? 'X' : value}</span>
@@ -14,5 +14,4 @@ const ConsoleNum = ({cols, value, handleClick}) => (
 export default
 withHandlers({
     handleClick: props => () => props.onClick(props.value)
-})
-(ConsoleNum);
+})(ConsoleNum);

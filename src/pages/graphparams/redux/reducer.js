@@ -2,7 +2,7 @@ import {map} from '@fp';
 import {handleActions} from '@/commonreact';
 
 import actions from './actions';
-import getLayout from '../layout';
+import getLayout from '@/lib/layout';
 
 import {CODE_EXAMPLE} from '../data';
 

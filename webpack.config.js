@@ -22,7 +22,7 @@ module.exports = (env = {}) => {
 
         resolve: {
             modules: [PATHS.nodeModules],
-            extensions: [".ts", ".tsx", ".js", ".jsx"],
+            extensions: [".js", ".jsx"],
             descriptionFiles: ["package.json"],
             alias: {
                 '@': PATHS.src,
@@ -33,7 +33,6 @@ module.exports = (env = {}) => {
         module: {
             rules: [
                 { test: /\.jsx?$/, loader: 'babel-loader', exclude: '/node_modules/' },
-                { test: /\.tsx?$/, loader: 'awesome-typescript-loader', exclude: '/node_modules' },
                 { test: /\.(sa|sc|c)ss$/, exclude: [/antd/], use: [MiniCssExtractPlugin.loader,
                                                 {loader: "css-loader", options: {modules: true} },
                                                 "sass-loader"
