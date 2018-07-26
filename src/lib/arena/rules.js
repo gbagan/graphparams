@@ -1,6 +1,6 @@
 import {update} from '@fp';
 import {hasEdge} from '../graph/graph';
-import {allDifferent} from '../util';
+import {allDifferent} from '@/lib/sorted';
 
 function * multiMoves(graph, conf, i) {
     if (i === conf.length) {

@@ -11,12 +11,12 @@ export const adjust = (fn, index, list) => {
     return list2;
 };
 
-export const all = (fn, l) => {
-    if (l === undefined)
+export const all = (fn, list) => {
+    if (list === undefined)
         return l2 => all(fn, l2);
-    const n = l.length;
+    const n = list.length;
     for (let i = 0; i < n; i++) {
-        if (!fn(l[i], i))
+        if (!fn(list[i], i))
             return false;
     }
     return true;
@@ -191,6 +191,8 @@ export const map = (fn, l) => {
 export const max = list => Math.max(...list);
 
 export const maxBy = (fn, list) => {
+    if (list === undefined)
+        return l2 => minBy(fn, l2);
     let max = undefined;
     let bestScore = -Infinity;
     let n = list.length;
@@ -213,6 +215,8 @@ export const merge = (obj1, obj2) =>
 export const min = list => Math.min(...list);
 
 export const minBy = (fn, list) => {
+    if (list === undefined)
+        return l2 => minBy(fn, l2);
     let min = undefined;
     let bestScore = Infinity;
     let n = list.length;

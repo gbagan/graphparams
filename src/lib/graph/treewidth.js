@@ -1,5 +1,5 @@
 ﻿import {F, range, times} from '@fp';
-import { binaryDecode, binaryEncode } from '../util';
+import {decode, encode} from '@/lib/binary';
 
 const Q = (g, set, v) => {
     const visited = times(F, g.length);
@@ -34,7 +34,7 @@ const treewidth = g => {
     tw[0].set(0, -Infinity);
     for (let i = 1; i <= n; i++) {
         for (const [setid, r] of tw[i - 1].entries()) {
-            const set = binaryDecode(setid);
+            const set = decode(setid);
             const inset = times(F, n);
             for (const u of set) {
                 inset[u] = true;
@@ -56,7 +56,7 @@ const treewidth = g => {
             }
         }
     }
-    const vcId = binaryEncode(range(0, n));
+    const vcId = encode(range(0, n));
     return tw[n].get(vcId) || up;
 }
 

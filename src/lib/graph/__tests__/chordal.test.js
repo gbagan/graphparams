@@ -14,3 +14,10 @@ it('sun(4)', () => {
     expect(res.result).toBe(true);
     expect(res.witness.length).toBe(8);
 });
+
+it('hajos(4)', () => {
+    const g = sun(4);
+    const res = isChordal(g);
+    expect(res.result).toBe(true);
+    expect(res.witness.length).toBe(8);
+});

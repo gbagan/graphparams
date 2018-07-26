@@ -1,6 +1,6 @@
 import {range, map} from '@fp';
 import {hasEdge} from './graph';
-import {binaryDecode, binaryEncode} from '../util';
+import {decode, encode} from '@/lib/binary';
 
 export const dominatingSet = graph => dominationAux(graph, [], range(0, graph.length));
 
@@ -25,7 +25,7 @@ const dominationAux = (graph, preset, undom) => {
 }
 
 export const independentDominatingSet = graph => {
-    const nbors = map(binaryEncode, graph);
+    const nbors = map(encode, graph);
 
     let isets = [[0, 0]];
     let i = 0;
@@ -39,7 +39,7 @@ export const independentDominatingSet = graph => {
                     const iset2 = iset | (1 << ii);
                     const dom2 = dom | (1 << ii) | nbors[ii];
                     if (dom2 + 1 === (1 << graph.length)) {
-                        return { result: i + 1, witness: binaryDecode(iset2) };
+                        return { result: i + 1, witness: decode(iset2) };
                     }
                     isets2.push([iset2, dom2]);
                 }
@@ -48,7 +48,7 @@ export const independentDominatingSet = graph => {
         isets = isets2;
         i++;
     }
-}
+};
 
 export const totalDominatingSet = graph => totalDominationAux(graph, [], range(0, graph.length));
 
@@ -71,7 +71,7 @@ const totalDominationAux = (graph, preset, undom) => {
         }
     }
     return bestRes;
-}
+};
 
 export const connectedDominatingSet = graph => connectedDominationAux(graph, [], range(0, graph.length), new Set());
 
@@ -99,4 +99,4 @@ const connectedDominationAux = (graph, preset, undom, adj) => {
         }
     }
     return bestRes;
-}
+};

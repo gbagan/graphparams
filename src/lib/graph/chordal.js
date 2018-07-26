@@ -34,7 +34,7 @@ const isChordal = graph => {
         return { result: true, witness: lbfs };
     }
     const i = lbfs.indexOf(witness[0]);
-    const g2 = inducedGraph(graph, lbfs.slice(0, i));
+    const g2 = inducedGraph(lbfs.slice(0, i), graph);
     const path = alternativePath(g2, lbfs.indexOf(witness[1]), lbfs.indexOf(witness[2])).witness;
     return {
         result: false,

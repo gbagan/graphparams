@@ -1,5 +1,5 @@
 ﻿
-import dlx from "./dlx";
+import dlx from './dlx';
 
 const square = squaresize => (i, j) => 
     i - i % squaresize + Math.floor(j / squaresize);
@@ -8,7 +8,7 @@ const cellToNumber = squaresize => ({row, col, value}) => {
     const size = squaresize * squaresize;
     const size2 = size * size;
     return row * size2 + col * size + value - 1;
-}
+};
 
 const numberToCell = squaresize => n => {
     const size = squaresize * squaresize;
@@ -18,7 +18,7 @@ const numberToCell = squaresize => n => {
         row: Math.floor(n / size2),
         value: n % size + 1,
     };
-}
+};
 
 const generateMatrix = squaresize => {
     const size = squaresize * squaresize;
@@ -37,7 +37,7 @@ const generateMatrix = squaresize => {
         }
     }
     return matrix;
-}
+};
 
 export default function * solve(squaresize, fixedCells, limit) {
     const size = squaresize * squaresize;

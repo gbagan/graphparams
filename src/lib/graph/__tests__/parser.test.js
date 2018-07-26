@@ -13,6 +13,10 @@ it('parse: invalid syntax 1', invalidSyntax(''));
 it('parse: invalid syntax 2', invalidSyntax('xxxxx()'));
 it('parse: invalid syntax 3', invalidSyntax('graph(6'));
 it('parse: invalid syntax 4', invalidSyntax('32'));
+it('parse: invalid syntax 5', invalidSyntax('!$d'));
+it('parse: invalid syntax 6', invalidSyntax('graph(3).foo()'));
+it('parse: invalid syntax 7', invalidSyntax('graph(3).addEdge(1, 2, 3)'));
+it('parse: invalid syntax 7', invalidSyntax('graph(3).addEdge(1, graph(5))'));
 
 it('parse: empty graph', isGraph('graph(6)', 6, 0));
 it('parse: petersen', isGraph('petersen', 10, 15));

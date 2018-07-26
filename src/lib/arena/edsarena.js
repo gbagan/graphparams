@@ -14,7 +14,7 @@ export const guardsWin = edsgraph => {
         }
     }
     return { result: false, witness: null };
-}
+};
 
 export const guardsAnswer = (edsgraph, guards, attack) => {
     const ans = answer(edsgraph, sortBy(x => x, guards).concat(attack));
@@ -31,7 +31,7 @@ export const guardsAnswer = (edsgraph, guards, attack) => {
 
     const bestShift = maxBy(shift => shift.score, shifts); 
     return bestShift.shift.map(x => x.to);
-}
+};
 
 export const makeEDS = (graph, k, rulesName) => {
     const rules = makeRules(rulesName);

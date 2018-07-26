@@ -18,11 +18,6 @@ export const petersen = () =>
         }
     });
 
-export const hajos = n =>
-    graph(2 * n)
-        |> addClique(range(0, n))
-        |> addCycle(chain(i => [i, i+n], range(0, n)));
-
 export const sun = n =>
     graph(2 * n)
         |> addClique(range(0, n))

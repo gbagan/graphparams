@@ -171,15 +171,10 @@ const parse = str => {
                     break;
                 }
                 const parameter = stack.pop();
-                if (!parameter) {
-                    throw Error('unexpected error');
-                }
                 parameters.unshift(parameter);
             }
             const fntoken = stack.pop();
-            if (!fntoken) {
-                throw Error('unexpected error');
-            } else if (fntoken.type === ParserToken.Function) {
+            if (fntoken.type === ParserToken.Function) {
                 const fn = functions.get(fntoken.data);
                 if (parameters.length !== fn.arity) {
                     return 'invalid number of arguments: ' + fntoken.data;
@@ -191,9 +186,6 @@ const parse = str => {
                 }
             } else if (fntoken.type === ParserToken.Method) {
                 const graphToken = stack.pop();
-                if (!graphToken || graphToken.type !== ParserToken.Graph) {
-                    throw Error('unexcepted error');
-                }
                 const method = methods.get(fntoken.data);
                 if (parameters.length !== method.arity && method.arity !== -1) {
                     return 'invalid number of arguments for ' + fntoken.data + ' : ' +

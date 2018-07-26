@@ -1,5 +1,6 @@
 import {times} from '@fp';
-import {allDifferent, binaryDecode, binaryEncode, bsubsets} from '../util';
+import {allDifferent} from '@/lib/sorted';
+import {decode, encode, subsets} from '../binary';
 
 const isIdentifyingCode = (g, binNbors, bset) => {
     const nborInSet = [];
@@ -11,23 +12,23 @@ const isIdentifyingCode = (g, binNbors, bset) => {
         nborInSet.push(s);
     }
     return allDifferent(nborInSet.sort());
-}
+};
 
 export const identifyingCode = g => {
-    const binNbors = times(j => binaryEncode(g[j].concat(j)), g.length);
+    const binNbors = times(j => encode(g[j].concat(j)), g.length);
     if (!allDifferent(binNbors.sort())) {
         return { result: Infinity, witness: null };
     }
     let i = 1;
     while (true) {
-        for (const bset of bsubsets(g.length, i)) {
+        for (const bset of subsets(g.length, i)) {
             if (isIdentifyingCode(g, binNbors, bset)) {
-                return { result: i, witness: binaryDecode(bset) };
+                return { result: i, witness: decode(bset) };
             }
         }
         i++;
     }
-}
+};
 
 const isLocatingDominatingSet = (g, binNbors, bset) => {
     const nborInSet = [];
@@ -41,21 +42,21 @@ const isLocatingDominatingSet = (g, binNbors, bset) => {
         }
     }
     return allDifferent(nborInSet.sort());
-}
+};
 
 export const locatingDominatingSet = g => {
     const binNbors = [];
     for (const nbor of g) {
-        binNbors.push(binaryEncode(nbor));
+        binNbors.push(encode(nbor));
     }
 
     let i = 1;
     while (true) {
-        for (const bset of bsubsets(g.length, i)) {
+        for (const bset of subsets(g.length, i)) {
             if (isLocatingDominatingSet(g, binNbors, bset)) {
-                return { result: i, witness: binaryDecode(bset) };
+                return { result: i, witness: decode(bset) };
             }
         }
         i++;
     }
-}
+};

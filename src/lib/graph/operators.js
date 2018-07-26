@@ -77,16 +77,16 @@ export const union = (g1, g2) =>
 
 export const join = (g1, g2) => complement(union(complement(g1), complement(g2)));
 
-export const lineGraph = graph => {
-    const es = edges(graph);
+export const lineGraph = g => {
+    const es = edges(g);
     const m = new Map();
     const g2 = graph(es.length);
     for (let i = 0; i < es.length; i++) {
-        const [u, v] = edges[i];
-        m.set(graph.edgeId(u, v), i);
+        const [u, v] = es[i];
+        m.set(edgeId(g, u, v), i);
     }
-    for (let i = 0; i < graph.length; i++) {
-        const clique = map(j => m.get(edgeId(graph, i, j)), graph[i]);
+    for (let i = 0; i < g.length; i++) {
+        const clique = g[i] |> map(j => m.get(edgeId(g, i, j)));
         _addClique(g2, clique);
     }
     return g2;

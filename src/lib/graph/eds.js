@@ -1,4 +1,4 @@
-import {makeEDS, guardsWin} from "../arena/edsarena";
+import {makeEDS, guardsWin} from '../arena/edsarena';
 
 const ednAux = (graph, rules) => {
     let i = 1;

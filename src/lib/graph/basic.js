@@ -1,5 +1,5 @@
 import {F, map, max, maxBy, min, sum, range, times} from '@fp';
-import {binaryDecode, binaryEncode} from '../util';
+import {decode, encode} from '@/lib/binary';
 import {edges, hasEdge} from './graph';
 import {complement} from './operators';
 
@@ -74,8 +74,8 @@ export const degeneracy = graph => {
 };
 
 export const eccentricity = (graph, vertex) => {
-    const distance = times(_ => -1, graph.length);
-    const parent = times(_ => -1, graph.length);
+    const distance = times(() => -1, graph.length);
+    const parent = times(() => -1, graph.length);
     const queue = [];
     let nbVisited = 1;
     distance[vertex] = 0;
@@ -165,7 +165,7 @@ export const diameter = graph => {
 export const mis = graph => {
     let isets = [0];
     let i = 0;
-    const nbors = graph.map(adj => binaryEncode(adj));
+    const nbors = graph.map(adj => encode(adj));
 
     while (true) {
         const isets2 = [];
@@ -179,7 +179,7 @@ export const mis = graph => {
             }
         }
         if (isets2.length === 0) {
-            return { result: i, witness: binaryDecode(isets[0]) };
+            return { result: i, witness: decode(isets[0]) };
         }
         isets = isets2;
         i++;

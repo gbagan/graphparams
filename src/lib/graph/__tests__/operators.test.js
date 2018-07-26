@@ -1,6 +1,6 @@
 import {copy, edges, graph} from '../graph';
-import {join, complement, inducedGraph, product} from '../operators';
-import {path, petersen} from '../generate';
+import {join, complement, inducedGraph, product, lineGraph} from '../operators';
+import {clique, path, petersen} from '../generate';
 
 it('product P3 x P4', () => {
     const g1 = path(3);
@@ -34,4 +34,21 @@ it('inducedGraph', () => {
     const g2 = inducedGraph([0, 2, 4], g);
     expect(g2.length).toBe(3);
     expect(edges(g2).length).toBe(0);
+});
+
+describe('lineGraph', () => {
+    it('P5', () => {
+        const g = path(5);
+        const g2 = lineGraph(g);
+        expect(g2.length).toBe(4);
+        expect(edges(g2).length).toBe(3);
+    });
+
+    it('K4', () => {
+        const g = clique(4);
+        const g2 = lineGraph(g);
+        expect(g2.length).toBe(6);
+        expect(edges(g2).length).toBe(12);
+    });
+
 });

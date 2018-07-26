@@ -1,12 +1,7 @@
-class FiniteFieldEquations {
-    private k: number;
-    private n: number;
-    private mat: number[][];
-    private b: number[];
-    private pivots: number[];
-    private divTable: number[][];
+import {times} from '@fp';
 
-    constructor(mat: number[][], b: number[], k: number) {
+class FiniteFieldEquations {
+    constructor(mat, b, k) {
         this.k = k;
         this.mat = mat.map(l => l.slice());
         this.b = b.slice();
@@ -26,7 +21,7 @@ class FiniteFieldEquations {
         }
     }
 
-    public solvePivotedMatrix() {
+    solvePivotedMatrix() {
         let row = this.n - 1;
         while (this.isEmptyRow(row)) {
             if (this.b[row] !== 0) {
@@ -35,12 +30,11 @@ class FiniteFieldEquations {
             row--;
         }
 
-        const sol: number[] = new Array(this.n); // TODO
-        sol.fill(0);
+        const sol = times(() => 0, this.n);
         return this.solvePivotedMatrixAux(sol, row, this.n - 1);
     }
 
-    public eliminate() {
+    eliminate() {
         let row = 0;
 
         for (let col = 0; col < this.n; col++) {
@@ -57,12 +51,12 @@ class FiniteFieldEquations {
         }
     }
 
-    private div(x: number, y: number) { // return the division of y by x modulo k if possible else -1
+    div(x, y) { // return the division of y by x modulo k if possible else -1
         // TODO there can be multiple solutions
         return this.divTable[x][y];
     }
 
-    private findPivotForColumn(col: number, row: number) {
+    findPivotForColumn(col, row) {
         for (let i = row; i < this.n; i++) {
             if (this.mat[i][col] !== 0) {
                 return i;
@@ -71,7 +65,7 @@ class FiniteFieldEquations {
         return -1;
     }
 
-    private pivot(row: number, col: number) {
+    pivot(row, col) {
         const k = this.k;
         const v = this.mat[row][col];
         for (let i = row + 1; i < this.n; i++) {
@@ -86,7 +80,7 @@ class FiniteFieldEquations {
         }
     }
 
-    private swapRows(i: number, j: number) {
+    swapRows(i, j) {
         const n = this.b.length;
 
         for (let k = 0; k < n; k++) {
@@ -100,7 +94,7 @@ class FiniteFieldEquations {
         this.b[j] = tmp2;
     }
 
-    private isEmptyRow(row: number) {
+    isEmptyRow(row) {
         for (let i = 0; i < this.n; i++) {
             if (this.mat[row][i] !== 0) {
                 return false;
@@ -109,7 +103,7 @@ class FiniteFieldEquations {
         return true;
     }
 
-    private * solvePivotedMatrixAux(sol: number[], row: number, col: number): Iterable<number[]> {
+    * solvePivotedMatrixAux(sol, row, col) {
         const k = this.k;
         const n = this.n;
         if (row < 0 || col < 0) {
@@ -137,7 +131,7 @@ class FiniteFieldEquations {
     }
 }
 
-const solve = (mat: number[][], b: number[], k: number) => {
+const solve = (mat, b, k) => {
     const equas = new FiniteFieldEquations(mat, b, k);
     equas.eliminate();
     return equas.solvePivotedMatrix();
