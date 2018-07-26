@@ -1,14 +1,14 @@
 import {contains, range} from '@fp';
 import {connect, createSelector, pick, React} from '@/commonreact';
-import {selector} from "../redux";
+import {selector} from '../redux';
 
 const colors = ['blue', 'red', 'green', 'cyan', 'magenta', 'orange', 'gray', 'black', 'yellow' ];
 
 const GraphOutput = ({graph, edges, className, layout, nodeColors, selectedEdges}) => {
-    const layout2 = layout && layout.map(({ x, y }) => ({ x: 900 * x + 50, y: 900 * y + 50 }));
+    const layout2 = layout && layout.map(({x, y}) => ({ x: 900 * x + 50, y: 900 * y + 50 }));
     return (
         <svg viewBox="0 0 1000 1000" className={className}>
-            {edges && edges.map(({from, to}) =>
+            {edges && edges.map(([from, to]) =>
                 <line
                     key={'edge' + from + '-' + to}
                     x1={layout2[from].x}
@@ -19,7 +19,7 @@ const GraphOutput = ({graph, edges, className, layout, nodeColors, selectedEdges
                     strokeWidth="6"
                 />
             )}
-            {graph && range(0, graph.V).map(i =>
+            {graph && range(0, graph.length).map(i =>
                 <circle
                     key={'node' + i}
                     cx={layout2[i].x}
@@ -34,12 +34,6 @@ const GraphOutput = ({graph, edges, className, layout, nodeColors, selectedEdges
     );
 
 };
-
-const mapStateToProps = createSelector(selector,
-    ({ graph, witness }) => ({ graph, witness })
-);
-
-const mapDispatchToProps = {};
 
 export default
 connect(

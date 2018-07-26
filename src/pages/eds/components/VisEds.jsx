@@ -1,5 +1,6 @@
 import {range} from '@fp';
-import {connect, createSelector, cxbind, pick, React} from '@/commonreact';
+import {edges} from '@/lib/graph/graph';
+import {connect, createSelector, pick, React} from '@/commonreact';
 import {actions, selector} from '../redux';
 
 import POLICEMAN from '../img/policeman.svg';
@@ -10,7 +11,7 @@ const VisEds = ({ graph, guards, layout, className, onSelectVertex }) => {
     const layout2 = layout && layout.map(({x, y}) => ({ x: 900 * x + 50, y: 900 * y + 50 }));
     return (
         <svg viewBox="0 0 1000 1000" className={className}>
-            {graph && [...graph.edges()].map(([v1, v2]) =>
+            {graph && edges(graph).map(([v1, v2]) =>
                 <line
                     key={'edge' + v1 + '-' + v2}
                     x1={layout2[v1].x}

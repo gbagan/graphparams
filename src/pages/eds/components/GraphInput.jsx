@@ -6,13 +6,10 @@ import Button from 'antd/lib/button';
 import Input from 'antd/lib/input';
 import Radio from 'antd/lib/radio';
 import Row from 'antd/lib/row';
-
-import Select, { SelectValue } from "antd/lib/select";
+import Select from "antd/lib/select";
 
 import {fillLocalStorage, removeFromLocalStorage} from "../localstorage";
-
 import {actions} from '../redux';
-const style = require("./GraphInput.scss");
 
 const render = ({loadList, code, saveName, loadName, rules,
                 handleSaveNameChange, handleCodeChange, handleSelectChange, handleRulesChange,
@@ -21,9 +18,10 @@ const render = ({loadList, code, saveName, loadName, rules,
         <Radio.Group
             onChange={handleRulesChange}
             value={rules}
-            options={[{value: 'label', text: 'One guard'},
-                      {value: 'label', text: 'All guards'}]}
-        />
+        >
+            <Radio value="one">One guard</Radio>
+            <Radio value="all">All guards</Radio>
+        </Radio.Group>
         <Row>
             <Input onChange={handleSaveNameChange} value={saveName} />
             <Button type="primary">Save</Button>
@@ -36,7 +34,8 @@ const render = ({loadList, code, saveName, loadName, rules,
             <Button type="danger" onClick={handleRemove}>Remove</Button>
         </Row>
         <Input.TextArea
-            className={style.graph}
+            rows="15"
+            cols="40"
             onChange={handleCodeChange}
             value={code}
         />
@@ -74,4 +73,3 @@ compose(
         handleLoadSubmit: props => () => props.onSubmit({ type: "load", input: props.loadName, rules: props.rules }),
     })
 )(render);
-

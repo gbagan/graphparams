@@ -8,7 +8,7 @@ import Col from 'antd/lib/col';
 import Row from 'antd/lib/row';
 
 import Form from "./Form";
-import { Calc, solve } from "@/lib/chiffres/solver";
+import solve from "@/lib/chiffres/solver";
 
 import style from './App.scss';
 

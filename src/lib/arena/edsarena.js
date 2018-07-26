@@ -1,8 +1,9 @@
 import {maxBy, sortBy, zipWith} from '@fp';
+import {hasEdge} from '../graph/graph';
 
 import {permutations, sublists} from '../util';
 import {answer, makeArenaGraph} from './arena';
-import makeRules from "./rules";
+import makeRules from './rules';
 
 export {startingConf} from './arena';
 
@@ -25,7 +26,7 @@ export const guardsAnswer = (edsgraph, guards, attack) => {
     const shifts = perms.map(perm =>
         zipWith((from, to) => ({from, to}), guards, perm)
     ).filter(shift =>
-        shift.every(p => p.from === p.to || edsgraph.graph.hasEdge(p.from, p.to))
+        shift.every(p => p.from === p.to || hasEdge(edsgraph.graph, p.from, p.to))
     ).map(shift => ({shift, score: shift.map(p => p.from === p.to).length}));
 
     const bestShift = maxBy(shift => shift.score, shifts); 
@@ -35,10 +36,10 @@ export const guardsAnswer = (edsgraph, guards, attack) => {
 export const makeEDS = (graph, k, rulesName) => {
     const rules = makeRules(rulesName);
     const arena = {
-        AConfs: () => sublists(graph.V, k),
+        AConfs: () => sublists(graph.length, k),
         BConfs: function * () {
-            for (const conf of sublists(graph.V, k)) {
-                for (let i = 0; i < graph.V; i++) {
+            for (const conf of sublists(graph.length, k)) {
+                for (let i = 0; i < graph.length; i++) {
                     if (!conf.includes(i)) {
                         yield conf.concat(i);
                     }

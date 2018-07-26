@@ -1,25 +1,25 @@
-import maximumMatching from "../matching";
+import maximumMatching from '../matching';
+import {graph} from '../graph';
+import {grid, petersen} from '../generate';
+import {addEdges} from '../operators';
 
-import {graph, grid, petersen} from "../generate";
-import {addEdges} from "../operators";
-
-it("petersen", () => {
+it('matching petersen', () => {
     const g = petersen();
     const res = maximumMatching(g);
     expect(res.result).toBe(5);
-    expect(res.witness.length).toBe(10);
+    expect(res.witness.length).toBe(5);
 });
 
-it("grid(3, 4)", () => {
+it('matching grid(3, 4)', () => {
     const g = grid(3, 4);
     const res = maximumMatching(g);
     expect(res.result).toBe(6);
-    expect(res.witness.length).toBe(12);
+    expect(res.witness.length).toBe(6);
 });
 
-it("P4", () => {
-    const g = addEdges(graph(4), [0, 1], [0, 2], [1, 3]);
+it('matching P4', () => {
+    const g = graph(4) |> addEdges([[0, 1], [0, 2], [1, 3]]);
     const res = maximumMatching(g);
     expect(res.result).toBe(2);
-    expect(res.witness.length).toBe(4);
+    expect(res.witness.length).toBe(2);
 });

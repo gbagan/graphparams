@@ -1,6 +1,5 @@
 import register from 'promise-worker/register';
 
-import {fromPlainObject} from '@/lib/graph/graph';
 import parse from '@/lib/graph/parser';
 
 import * as basic from '@/lib/graph/basic';
@@ -48,11 +47,12 @@ const functions = new Map([
 register(action => {
     if (action.type === 'graph') {
         const result = parse(action.code);
+        console.log('worker', result);
         return typeof result === 'string' ?
                                   { type: 'error', error: result }
-                                : { type: 'graph', graph: result.toPlainObject() };
+                                : { type: 'graph', graph: result };
     } else if (action.type === 'param') {
-        const graph = fromPlainObject(action.graph);
+        const graph = action.graph;
         const fn = functions.get(action.param.name);
         const result = fn(graph);
         const result2 = (typeof result === 'boolean' || typeof result === 'number')

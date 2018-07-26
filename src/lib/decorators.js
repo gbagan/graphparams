@@ -1,17 +1,18 @@
 import {isEqual} from './iter';
 
-
-// memoize only the result of the last call of a function, the cache can be cleared
+// memoize only the result of the last call of a function
 export const memoize = fn => {
-    const fn2 = (...args) => {
-        if (fn2.__cache && isEqual(fn2.__cache.args, args)) {
-            return fn2.__cache.result;
+    let previousArgs = undefined;
+    let previousRes = undefined;
+    
+    return (...args) => {
+        if (previousArgs && isEqual(args, previousArgs))
+            return previousRes;
+        else {
+            const res = fn(...args);
+            previousArgs = args;
+            previousRes = res;
+            return res;
         }
-        const result = fn(...args);
-        fn2.__cache = { args, result };
-        return result;
-    };
-    fn2.__cache = null;
-    fn2.clearCache = () => fn.__cache = null;
-    return fn2;
+    }
 }

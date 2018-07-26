@@ -38,28 +38,6 @@ const GRAPH_PARAMETERS = [
     { cat: 4, hardness: 2, name: 'medn', fullname: 'm-eternal dominating set' },
 ];
 
-/*
-function stringifyWitness(witness: any, name: string) {
-    if (name == 'matching') {
-        let text = '';
-        for (const [x, y] of witness as number[][]) {
-            text += x + '-' + y + ','
-        }
-        return text.slice(0, text.length - 1);
-    } else {
-        return witness.toString();
-    }
-}*/
-/*
-let worker: GraphWorker|null = null;
-
-function startWorker() {
-    const worker = new GraphWorker();
-    worker!.onmessage = (e) => null;
-    return worker;
-}
-*/
-
 const initialState = {
     code: CODE_EXAMPLE,
     computing: false,

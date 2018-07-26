@@ -68,7 +68,7 @@ export const countBy = (fn, list) => {
             count++;
     }
     return count;
-}
+};
 
 
 export const curry2 = fn => (x, y) => y === undefined ? y2 => fn(x, y2) : fn(x, y);
@@ -165,6 +165,15 @@ export const findIndex = (fn, l) => {
     return -1;
 };
 
+export const forEach = (fn, l) => {
+    if (l === undefined) {
+        return a => forEach(fn, a);
+    }
+    const n = l.length;
+    for (let i = 0; i < n; i++)
+        fn(l[i], i);
+};
+
 export const identity = x => x;
 
 export const map = (fn, l) => {
@@ -179,25 +188,7 @@ export const map = (fn, l) => {
     return l2;
 };
 
-export const mathMod = (n, m) => n >= 0 ? n % m : (n - n * m) % m;
-
-export const merge = (obj1, obj2) =>
-    obj2 === undefined ? obj3 => merge(obj1, obj3) : Object.assign({}, obj1, obj2);
-
-export const minBy = (fn, list) => {
-    let min = undefined;
-    let bestScore = Infinity;
-    let n = list.length;
-    for (let i = 0; i < n; i++) {
-        const x = list[i];
-        const score = fn(x);
-        if (score < bestScore) {
-            bestScore = score;
-            min = x;
-        } 
-    }
-    return min;
-}
+export const max = list => Math.max(...list);
 
 export const maxBy = (fn, list) => {
     let max = undefined;
@@ -212,13 +203,34 @@ export const maxBy = (fn, list) => {
         } 
     }
     return max;
-}
+};
 
+export const mathMod = (n, m) => n >= 0 ? n % m : (n - n * m) % m;
+
+export const merge = (obj1, obj2) =>
+    obj2 === undefined ? obj3 => merge(obj1, obj3) : Object.assign({}, obj1, obj2);
+
+export const min = list => Math.min(...list);
+
+export const minBy = (fn, list) => {
+    let min = undefined;
+    let bestScore = Infinity;
+    let n = list.length;
+    for (let i = 0; i < n; i++) {
+        const x = list[i];
+        const score = fn(x);
+        if (score < bestScore) {
+            bestScore = score;
+            min = x;
+        } 
+    }
+    return min;
+};
 
 export const none = (fn, list) => {
     if (list === undefined)
         return l2 => none(fn, l2);
-    const n = l.length;
+    const n = list.length;
     for (let i = 0; i < n; i++) {
         if (fn(list[i], i))
             return false;
@@ -299,7 +311,7 @@ export const sum = l => {
         x += l[i];
     }
     return x;
-}
+};
 
 export const takeLast = (m, list) => {
     if (list === undefined) {
@@ -318,11 +330,17 @@ export const range = (n, m) => {
 
 export const update = (i, v, l) => {
     if (v === undefined)
-        return (v2, l2) => update(i, v2, l2);
-    else if (l === undefined)
-        return l2 => update(i, v, l2);
+        return v === undefined ? (v2, l2) => update(i, v2, l2) : l2 => update(i, v, l2);
     const l2 = l.slice();
     l2[i] = v;
+    return l2;
+};
+
+export const updateArray = (fn, list) => {
+    if (list === undefined)
+        return l2 => updateArray(fn, l2);
+    const l2 = list.slice();
+    fn((i, val) => l2[i] = val);
     return l2;
 };
 
@@ -351,11 +369,11 @@ export const zipWith = (fn, list1, list2) => {
     if (list2 === undefined)
         return list1 === undefined
             ? (l1, l2) => zipWith(fn, l1, l2)
-            : l1 => zipWith(fn, list1, l2);
+            : l2 => zipWith(fn, list1, l2);
     const n = Math.min(list1.length, list2.length);
     const olist = Array(n);
     for (let i = 0; i < n; i++) {
         olist[i] = fn(list1[i], list2[i]);
     }
     return olist;
-}
+};

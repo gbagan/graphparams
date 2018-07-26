@@ -1,18 +1,19 @@
 import {filter} from '@fp';
-import {alternativePath} from "./basic";
-import lexbfs from "./lexbfs";
-import {inducedGraph} from "./operators";
+import {hasEdge} from './graph';
+import {alternativePath} from './basic';
+import lexbfs from './lexbfs';
+import {inducedGraph} from './operators';
 
 const hasClique = (graph, set) => {
     for (let i = 0; i < set.length - 1; i++) {
         for (let j = i + 1; j < set.length; j++) {
-            if (!graph.hasEdge(set[i], set[j])) {
+            if (!hasEdge(graph, set[i], set[j])) {
                 return { result: false, witness: [set[i], set[j]] };
             }
         }
     }
     return { result: true, witness: null };
-}
+};
 
 const isChordal = graph => {
     const lbfs = [...lexbfs(graph, 0)];
@@ -20,7 +21,7 @@ const isChordal = graph => {
     let chordal = true;
     let witness = [];
     for (const v of lbfs) {
-        const nbor = filter(u => visited.has(u), graph.adj[v]);
+        const nbor = filter(u => visited.has(u), graph[v]);
         const res = hasClique(graph, nbor);
         if (!res.result) {
             chordal = false;
@@ -39,6 +40,6 @@ const isChordal = graph => {
         result: false,
         witness: path.map(j => lbfs[j]).concat(witness[0]),
     };
-}
+};
 
 export default isChordal;

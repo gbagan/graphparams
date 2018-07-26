@@ -1,5 +1,6 @@
-import { map, filter, range, times } from '@fp';
-import { createSelector } from '@/commonreact';
+import {edges} from '@/lib/graph/graph';
+import {times} from '@fp';
+import {createSelector} from '@/commonreact';
 
 const nodeColor = (witness, i) => {
     if (!witness)
@@ -11,23 +12,6 @@ const nodeColor = (witness, i) => {
     else
         return 0;
 };
-
-const updateArray = (t, fn) => {
-    const t1 = t.slice();
-    fn((i, val) => t1[i] = val, val => t1.push(val));
-    return t1;
-}
-
-const forEach = (t, fn) => t.forEach(fn);
-
-const edges = graph =>
-    updateArray([], (set, push) =>
-        forEach(graph.adj, (adj, i) =>
-            forEach(adj, j =>
-                i < j && push({ from: i, to: j }),
-            ),
-        ),
-    );
 
 const edge = (x, y) => x < y ? { from: x, to: y } : { from: y, to: x };
 
@@ -57,7 +41,7 @@ const getGraphInfos = createSelector(
     state => state.graph,
     state => state.witness,
     (graph, witness) => ({
-        nodeColors: graph && times(i => nodeColor(witness, i), graph.V),
+        nodeColors: graph && times(i => nodeColor(witness, i), graph.length),
         edges: graph && edges(graph),
         selectedEdges: selectedEdges(witness)
     })

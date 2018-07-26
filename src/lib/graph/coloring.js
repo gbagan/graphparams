@@ -1,33 +1,31 @@
-import {F, minBy, count, range, times} from '@fp';
-import * as iter from "../iter";
+import { all, any, F, minBy, countBy, filter, max, range, update, times } from '@fp';
+import {hasEdge} from './graph';
 
 export const chromaticNumber = graph => chromaticNumberAux(graph, () => true);
 
 const chromaticNumberAux = (graph, predicate) => {
     let i = 2;
-    const precol = new Array(graph.V);
-    precol.fill(-1);
-    const uncol = new Set(range(0, g.V));
+    const precol = times(() => -1, graph.length);
+    const uncoloredList = range(0, graph.length);
     while (true) {
         const usedColor = times(F, i);
-        const res = chromaticAux(graph, precol, uncol, i, usedColor, predicate);
+        const res = chromaticAux(graph, precol, uncoloredList, i, usedColor, predicate);
         if (res.result) {
             return { result: i, witness: res.witness };
         }
         i++;
     }
-}
+};
 
 const chromaticAux = (graph, precol, uncol, maxcol, usedColor, predicate) => {
-    if (uncol.size === 0) {
+    if (uncol.length === 0) {
         return predicate(precol) ? { result: true, witness: precol } : { result: false, witness: null };
     }
-    const v = minBy(w => countBy(u => precol[u] !== -1, graph.adj[w]), uncol);  //// uncol is not an array
-    const uncol2 = new Set(uncol);
-    uncol2.delete(v);
+    const v = minBy(w => countBy(u => precol[u] !== -1, graph[w]), uncol);
+    const uncol2 = filter(u => u !== v, uncol);
     let newColor = true;
     for (let i = 0; i < maxcol; i++) {
-        if (graph.adj[v].some(u => precol[u] === i) || (!usedColor[i] && !newColor)) {
+        if (graph[v].some(u => precol[u] === i) || (!usedColor[i] && !newColor)) {
             continue;
         }
         let usedColor2;
@@ -39,8 +37,7 @@ const chromaticAux = (graph, precol, uncol, maxcol, usedColor, predicate) => {
             usedColor2 = usedColor;
         }
 
-        const precol2 = [...precol];
-        precol2[v] = i;
+        const precol2 = update(v, i, precol);
 
         const res = chromaticAux(graph, precol2, uncol2, maxcol, usedColor2, predicate);
         if (res.result) {
@@ -48,84 +45,67 @@ const chromaticAux = (graph, precol, uncol, maxcol, usedColor, predicate) => {
         }
     }
     return { result: false, witness: null };
+};
+
+const coloringClasses = coloring => {
+    const n = max(coloring) + 1;
+    const classes = times(() => [], n);
+
+    for (let i = 0; i < coloring.length; i++) {
+        classes[coloring[i]].push(i);
+    }
+    return classes;
+};
+
+const isDominatorColoring = (graph, coloring) => {
+    const classes = coloringClasses(coloring);
+
+    return (
+        all(clas => clas.length > 0, classes)
+        && all(
+            v => classes[coloring[v]].length >= 2 && any(
+                clas => all(x => hasEdge(graph, v, x), clas),
+                classes
+            ),
+            range(0, graph.length)
+        )
+    );
+};
+
+const isTotalDominatorColoring = (graph, coloring) => {
+    const classes = coloringClasses(coloring);
+
+    return (
+        all(clas => clas.length > 0, classes)
+        && all(
+            v => any(
+                clas => all(x => hasEdge(graph, v, x), clas),
+                classes
+            ),
+            range(0, graph.length)
+        )
+    );
+};
+
+function isDominatedColoring(graph, coloring) {
+    const classes = coloringClasses(coloring);
+    const vertices = range(0, graph.length);
+
+    return (
+        all(
+            clas => any(
+                v => all(u => hasEdge(graph, u, v), clas),
+                vertices
+            ),
+            classes
+        )
+    );
 }
 
-const isDominatorColoring = (graph, col) => {
-    const n = Math.max(...col) + 1;
-    const classes = new Array(n);
-    for (let i = 0; i < n; i++) {
-        classes[i] = [];
-    }
-
-    for (let i = 0; i < graph.V; i++) {
-        classes[col[i]].push(i);
-    }
-
-    for (const clas of classes) {
-        if (clas.length === 0) {
-            return false;
-        }
-    }
-
-    for (let i = 0; i < g.V; i++) {
-        if (classes[col[i]].length >= 2 && !classes.some(clas =>
-            clas.every((x) => graph.hasEdge(i, x)))) {
-            return false;
-        }
-    }
-    return true;
-}
-
-const isTotalDominatorColoring = (graph, col) => {
-    const n = Math.max(...col) + 1;
-    const classes = new Array(n);
-    for (let i = 0; i < n; i++) {
-        classes[i] = [];
-    }
-
-    for (let i = 0; i < graph.V; i++) {
-        classes[col[i]].push(i);
-    }
-
-    for (const clas of classes) {
-        if (clas.length === 0) {
-            return false;
-        }
-    }
-
-    for (let i = 0; i < graph.V; i++) {
-        if (!classes.some((clas) =>
-            clas.every((x) => graph.hasEdge(i, x)))) {
-            return false;
-        }
-    }
-    return true;
-}
-
-function isDominatedColoring(graph, col) {
-    const n = Math.max(...col) + 1;
-    const classes = new Array(n);
-    for (let i = 0; i < n; i++) {
-        classes[i] = [];
-    }
-
-    for (let i = 0; i < graph.V; i++) {
-        classes[col[i]].push(i);
-    }
-
-    for (const clas of classes) {
-        if (!iter.some(iter.range(graph.V), v =>
-            clas.every(u => graph.hasEdge(u, v)))) {
-            return false;
-        }
-    }
-    return true;
-}
-
-export const dominatorColoring = graph => chromaticNumberAux(graph, x => isDominatorColoring(g, x));
+export const dominatorColoring = graph => chromaticNumberAux(graph, x => isDominatorColoring(graph, x));
 
 export const totalDominatorColoring = graph =>
-    graph.adj.some(nbor => nbor.length === 0) ?
+    any(nbor => nbor.length === 0, graph) ?
         { result: Infinity, witness: null } : chromaticNumberAux(graph, x => isTotalDominatorColoring(graph, x));
 
 export const dominatedColoring = graph => chromaticNumberAux(graph, x => isDominatedColoring(graph, x));

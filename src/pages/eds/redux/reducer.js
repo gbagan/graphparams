@@ -6,7 +6,6 @@ import actions from './actions';
 
 import {makeEDS, startingConf, guardsAnswer} from '@/lib/arena/edsarena';
 import {memoize} from '@/lib/decorators';
-import Graph from '@/lib/graph/graph';
 import parse from '@/lib/graph/parser';
 import getLayout from '@/lib/layout';
 
@@ -59,14 +58,14 @@ const reducer = handleActions({
             const data = JSON.parse(textdata);
             const code = data.code;
             const result = parse(code);
-            if (result instanceof Graph) {
+            if (typeof result !== 'string') {
                 graph = result;
             } else {
                 return state;
             }
         } else { // type === "generate":
             const result = parse(input);
-            if (result instanceof Graph) {
+            if (typeof result !== 'string') {
                 graph = result;
             } else {
                 return state;
@@ -75,8 +74,7 @@ const reducer = handleActions({
         const layout = getLayout(graph);
         const eds = getEDS(graph, rules);
         const guards = startingConf(eds);
-        const gstate = guards ? {guards} : {};
-        return { ...state, layout, graph, rules, guards, ...gstate };
+        return { ...state, layout, graph, rules, guards };
     }
 }, initialState);
 

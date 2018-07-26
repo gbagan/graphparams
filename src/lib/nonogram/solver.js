@@ -58,7 +58,7 @@ const solveIteration = nonogram => {
 }
 
 const possibleMatches = (line, pattern) => {
-    const nonWhiteBlockSize = new Array(line.length);
+    const nonWhiteBlockSize = Array(line.length);
     let size = 0;
     for (let i = line.length - 1; i >= 0; i--) {
         nonWhiteBlockSize[i] = size = (line[i] === CellType.White ? 0 : ++size);
@@ -86,7 +86,7 @@ const possibleMatches = (line, pattern) => {
             }
         }
     }
-    const match2 = times(() => times(() => false, (line.length)), pattern.length);
+    const match2 = times(_ => times(F, line.length), pattern.length);
 
     const lastIndex = pattern.length - 1;
     const lastLen1 = pattern[lastIndex] - 1;

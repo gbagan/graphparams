@@ -9,9 +9,9 @@ const makePartitions = nbVertices => {
     };
     return {
         firstPartition: partition,
-        partitions: times(_ => partition, nbVertices),
-    }
-}
+        partitions: times(() => partition, nbVertices),
+    };
+};
 
 const firstElement = partitions => partitions.firstPartition.set.values().next().value;
 
@@ -19,7 +19,7 @@ function * execute(partitions, graph, vertex) {
     let v = vertex;
     while (true) {
         yield v;
-        refine(partitions, graph, vertex);
+        refine(partitions, graph, v);
         if (partitions.firstPartition === null) {
             return;
         }
@@ -52,7 +52,7 @@ const addToPartitionBefore = (partitions, partition, vertex) => {
     }
     partition.previous.set.add(vertex);
     partitions.partitions[vertex] = partition.previous;
-}
+};
 
 const removePartition = (partitions, partition) => {
     if (partition.previous) {
@@ -64,7 +64,7 @@ const removePartition = (partitions, partition) => {
     if (partition === partitions.firstPartition) {
         partitions.firstPartition = partition.next;
     }
-}
+};
 
 const refine = (partitions, graph, vertex) => {
     const partition = partitions.partitions[vertex];
@@ -74,7 +74,7 @@ const refine = (partitions, graph, vertex) => {
     }
     partitions.partitions[vertex] = null;
 
-    for (const u of graph.adj[vertex]) {
+    for (const u of graph[vertex]) {
         const partition2 = partitions.partitions[u];
         if (!partition2) {
             continue;
@@ -90,7 +90,7 @@ const refine = (partitions, graph, vertex) => {
         }
         partition2 = partition2.next;
     }
-}
+};
 
-const lexbfs = (graph, vertex) => execute(makePartitions(graph.V), graph, vertex);
+const lexbfs = (graph, vertex) => execute(makePartitions(graph.length), graph, vertex);
 export default lexbfs;

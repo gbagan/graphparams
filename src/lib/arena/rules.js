@@ -1,4 +1,5 @@
 import {update} from '@fp';
+import {hasEdge} from '../graph/graph';
 import {allDifferent} from '../util';
 
 function * multiMoves(graph, conf, i) {
@@ -7,10 +8,8 @@ function * multiMoves(graph, conf, i) {
     } else {
         for (const conf2 of multiMoves(graph, conf, i + 1)) {
             yield conf2;
-            for (const nbor of graph.adj[conf2[i]]) {
-                const conf3 = Array.from(conf2);
-                conf3[i] = nbor;
-                yield conf3;
+            for (const nbor of graph[conf2[i]]) {
+                yield update(i, nbor, conf2);
             }
         }
     }
@@ -29,7 +28,7 @@ function * oneGuardPossibilities (graph, conf) {
     const guards = conf.slice(0, conf.length - 1);
 
     for (let i = 0; i < guards.length; i++) {
-        if (graph.hasEdge(guards[i], attack)) {
+        if (hasEdge(graph, guards[i], attack)) {
             const guards2 = update(i, attack, guards);
             guards2.sort((a, b) => a - b);
             yield guards2;
