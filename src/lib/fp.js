@@ -61,15 +61,16 @@ export const contains = (v, l) => {
 };
 
 export const countBy = (fn, list) => {
+    if (list === undefined)
+        return l2 => countBy(fn, l2);
     let count = 0;
     let n = list.length;
     for (let i = 0; i < n; i++) {
-        if (fn(list[i]))
+        if (fn(list[i], i))
             count++;
     }
     return count;
 };
-
 
 export const curry2 = fn => (x, y) => y === undefined ? y2 => fn(x, y2) : fn(x, y);
 export const curry3 = fn => (x, y, z) => {

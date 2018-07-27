@@ -1,3 +1,4 @@
+import {countBy, zipWith} from '@fp';
 import {makeEDS, startingConf, guardsAnswer} from '../edsarena';
 import {cycle, path, star, sun} from '../../graph/generate';
 
@@ -38,12 +39,15 @@ it('C7, all guards rules, k=2', () => {
     expect(conf).toBeNull();
 });
 
-it('sun(3), one guard rules, only one guard moves', () => {
+it('sun(3), one guard rules, only one must guard moves', () => {
     const g = sun(3);
     const eds = makeEDS(g, 3, 'one');
     expect(eds).not.toBeNull();
-    const answer = guardsAnswer(eds, [0, 1, 2], 3);
+    const guards = [0, 1, 2];
+    const attack = 3;
+    const answer = guardsAnswer(eds, guards, attack);
     expect(answer).not.toBeNull();
-    expect(answer.length).toBe(3);
-//    expect(answer!.shift.length).toBe(1);
+    expect(answer.length).toBe(guards.length);
+    expect(answer.includes(attack));
+    expect(countBy(x => x, zipWith((a, b) => a !== b, answer, guards))).toBe(1); 
 });

@@ -1,4 +1,5 @@
 ﻿import {Map_dec} from '../util';
+import {find} from '@fp';
 
 export const makeArenaGraph = arena => {
     const adj = new Map();
@@ -58,11 +59,6 @@ export const startingConf = arenaGraph => {
     return null;
 };
 
-export const answer = (arenaGraph, conf) => {
-    for (const conf2 of arenaGraph.adj.get(conf.toString())) {
-        if (!arenaGraph.attractor.has(conf2.toString())) {
-            return conf2;
-        }
-    }
-    return null;
-};
+export const answer = (arenaGraph, conf) =>
+    find(conf2 => !arenaGraph.attractor.has(conf2.toString()), arenaGraph.adj.get(conf.toString())) || null;
+

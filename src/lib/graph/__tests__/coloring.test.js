@@ -5,7 +5,7 @@ import { petersen, path } from '../generate';
 import { addCycle, union } from '../operators';
 
 const isChromatic = (graph, coloring) =>
-    coloring && coloring.length === graph.V && edges(graph) |> all(([u, v]) => coloring[u] !== coloring[v]);
+    coloring && coloring.length === graph.length && (edges(graph) |> all(([u, v]) => coloring[u] !== coloring[v]));
 
 describe('chromaticNumber', () => {
     it('C5', () => {
@@ -15,7 +15,7 @@ describe('chromaticNumber', () => {
         expect(col.result).toBe(3);
     });
 
-    it('C6', () => {
+    it('C6', () => {    
         const g = graph(6) |> addCycle([0, 4, 5, 2, 1, 3]);
         const col = chromaticNumber(g);
         expect(isChromatic(g, col.witness)).toBe(true);

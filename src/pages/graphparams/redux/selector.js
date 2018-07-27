@@ -19,10 +19,7 @@ const selectedEdges = witness => {
     if (!witness)
         return [];
     else if (witness.name === 'matching')
-        return times(
-            i => edge(witness.witness[2 * i], witness.witness[2 * i + 1]),
-            witness.witness.length / 2
-        );
+        return witness.witness.map(x => ({from: x[0], to: x[1]}));
     else if (witness.name === 'diameter')
         return times(
             i => edge(witness.witness[i], witness.witness[i + 1]),
@@ -32,7 +29,7 @@ const selectedEdges = witness => {
         return times(
             i => edge(witness.witness[i], witness.witness[i === witness.witness.length - 1 ? 0 : i + 1]),
             witness.witness.length
-        )
+        );
     else
         return [];
 }

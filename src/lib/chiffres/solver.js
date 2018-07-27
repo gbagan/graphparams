@@ -1,12 +1,12 @@
-import {range, reduce, times} from '@fp';
+import {append, map, range, reduce, times} from '@fp';
 
 const sublists = list => {
     let res = [[]];
     for (const x of list) {
-        res = res.concat(res.map((slist) => slist.concat(x)));
+        res = res.concat(map(append(x), res));
     }
     return res;
-}
+};
 
 const encodeList = list =>
     reduce((t, x) => t += 1 << x, 0, list);

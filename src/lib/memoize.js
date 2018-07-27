@@ -1,12 +1,12 @@
-import {isEqual} from './iter';
+import {all} from '@fp';
 
 // memoize only the result of the last call of a function
-export const memoize = fn => {
+const memoize = fn => {
     let previousArgs = undefined;
     let previousRes = undefined;
     
     return (...args) => {
-        if (previousArgs && isEqual(args, previousArgs))
+        if (previousArgs && args.length == previousArgs.length && all((v, i) => v === previousArgs[i], args))
             return previousRes;
         else {
             const res = fn(...args);
@@ -14,5 +14,7 @@ export const memoize = fn => {
             previousRes = res;
             return res;
         }
-    }
-}
+    };
+};
+
+export default memoize;

@@ -8,7 +8,7 @@ const hasClique = (graph, set) => {
     for (let i = 0; i < set.length - 1; i++) {
         for (let j = i + 1; j < set.length; j++) {
             if (!hasEdge(graph, set[i], set[j])) {
-                return { result: false, witness: [set[i], set[j]] };
+                return {result: false, witness: [set[i], set[j]]};
             }
         }
     }

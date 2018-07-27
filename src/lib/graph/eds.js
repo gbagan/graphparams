@@ -10,7 +10,7 @@ const ednAux = (graph, rules) => {
         }
         i++;
     }
-}
+};
 
 export const eds = graph => ednAux(graph, 'one');
 export const meds = graph => ednAux(graph, 'all');

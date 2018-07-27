@@ -1,4 +1,4 @@
-import {maxBy, sortBy, zipWith} from '@fp';
+import {all, countBy, filter, minBy, sortBy} from '@fp';
 import {hasEdge} from '../graph/graph';
 
 import {permutations, sublists} from '../util';
@@ -14,14 +14,9 @@ export const guardsAnswer = (edsgraph, guards, attack) => {
     }
 
     const perms =  [...permutations(ans)];
-    const shifts = perms.map(perm =>
-        zipWith((from, to) => ({from, to}), guards, perm)
-    ).filter(shift =>
-        shift.every(p => p.from === p.to || hasEdge(edsgraph.graph, p.from, p.to))
-    ).map(shift => ({shift, score: shift.map(p => p.from === p.to).length}));
-
-    const bestShift = maxBy(shift => shift.score, shifts); 
-    return bestShift.shift.map(x => x.to);
+    return perms
+        |> filter(all((guard, i) => guard === guards[i] || hasEdge(edsgraph.graph, guard, guards[i])))
+        |> minBy(countBy((guard, i) => guard !== guards[i]))
 };
 
 export const makeEDS = (graph, k, rulesName) => {
@@ -39,8 +34,8 @@ export const makeEDS = (graph, k, rulesName) => {
         },
         isAConf: conf => conf.length === k,
         neighbors: conf => conf.length === k
-                                     ? rules.attackerPossibilities(graph, conf)
-                                     : rules.guardsPossibilities(graph, conf)
+            ? rules.attackerPossibilities(graph, conf)
+            : rules.guardsPossibilities(graph, conf)
     };
 
     const arenaGraph = makeArenaGraph(arena);

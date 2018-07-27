@@ -1,7 +1,7 @@
 ﻿import {curry2, map, times} from '@fp';
 import {insert} from '@/lib/sorted';
 
-export const graph = nbVertices => times(_ => [], nbVertices);
+export const graph = nbVertices => times(() => [], nbVertices);
 
 export const edges = graph => {
     const es = [];

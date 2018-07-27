@@ -19,10 +19,10 @@ const VisEds = ({ graph, guards, layout, className, onSelectVertex }) => {
                     x2={layout2[v2].x}
                     y2={layout2[v2].y}
                     stroke="blue"
-                    stroke-width="6"
+                    strokeWidth="6"
                 />
             )}
-            {graph && range(0, graph.V).map(i =>
+            {graph && range(0, graph.length).map(i =>
                 <image
                     key={'node' + i}
                     onClick={() => onSelectVertex(i)}
@@ -45,7 +45,7 @@ const VisEds = ({ graph, guards, layout, className, onSelectVertex }) => {
             )}
         </svg>
     );
-}
+};
 
 export default
 connect(

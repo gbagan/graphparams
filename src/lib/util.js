@@ -38,7 +38,7 @@ export function* permutations(list) {
     } else {
         for (let i = 0; i < list.length; i++) {
             for (const perm of permutations(list.slice(0, i).concat(list.slice(i + 1, list.length)))) {
-                  yield [list[i]].concat(perm);
+                yield [list[i]].concat(perm);
             }
         }
     }
