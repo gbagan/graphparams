@@ -1,16 +1,9 @@
 {
     "verbose": true,
-    "cache": true,
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "testPathIgnorePatterns": [ "/dist/", "/build/", "/node_modules/",  "\\.d\\.ts$"],
-    "coveragePathIgnorePatterns": ["\\.d\\.ts$"],
-    "moduleFileExtensions": [ "ts", "tsx","js"],
-    "transform": { "^.+\\.(ts|tsx)$": "ts-jest" },
-    "globals": {
-        "ts-jest": {
-            "tsConfigFile": "./tsconfig.jest.json"
-        }
-    },
+    "cache": false,
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?)$",
+    "testPathIgnorePatterns": [ "/dist/", "/build/", "/node_modules/"],
+    "moduleFileExtensions": [ "js", "jsx"],
     "setupFiles": [],
     "collectCoverage": true
 }
