@@ -1,4 +1,4 @@
-﻿import { Map_dec } from "../util";
+﻿import {Map_dec} from '../util';
 
 export const makeArenaGraph = arena => {
     const adj = new Map();
@@ -19,12 +19,12 @@ export const makeArenaGraph = arena => {
     }
     const attractor = computeAttractor(arena, adj, reverseAdj);
     return { adj, reverseAdj, attractor, ...arena };
-}
+};
 
 const computeAttractor = (arena, adj, reverseAdj) => {
     const attractor = new Set();
     const deg = new Map();
-    const stack = new Array();
+    const stack = [];
 
     for (const conf of arena.BConfs()) {
         const nbor = adj.get(conf.toString());
@@ -47,9 +47,7 @@ const computeAttractor = (arena, adj, reverseAdj) => {
         }
     }
     return attractor;
-}
-
-
+};
 
 export const startingConf = arenaGraph => {
     for (const conf of arenaGraph.AConfs()) {
@@ -58,7 +56,7 @@ export const startingConf = arenaGraph => {
         }
     }
     return null;
-}
+};
 
 export const answer = (arenaGraph, conf) => {
     for (const conf2 of arenaGraph.adj.get(conf.toString())) {
@@ -67,4 +65,4 @@ export const answer = (arenaGraph, conf) => {
         }
     }
     return null;
-}
+};

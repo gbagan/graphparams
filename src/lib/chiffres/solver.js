@@ -14,7 +14,7 @@ const encodeList = list =>
 function computeTable(list, target) {
     const tables = new Array(1 << list.length);
     const indexList = range(0, list.length);
-    const slistsTab = times(_ => [], list.length+1);
+    const slistsTab = times(() => [], list.length+1);
     for (const list2 of sublists(indexList)) {
         slistsTab[list2.length].push(list2);
     }
@@ -55,17 +55,17 @@ function computeTable2(list, tables) {
         const table2 = tables[encodeList(list2)];
         for (const [i, e1] of table1.entries()) {
             for (const [j, e2] of table2.entries()) {
-                table.set(i + j, { val: i + j, left: e1, operator: "+", right: e2 });
-                table.set(i * j, { val: i * j, left: e1, operator: "*", right: e2 });
+                table.set(i + j, { val: i + j, left: e1, operator: '+', right: e2 });
+                table.set(i * j, { val: i * j, left: e1, operator: '*', right: e2 });
                 if (i > j) {
-                    table.set(i - j, { val: i - j, left: e1, operator: "-", right: e2 });
+                    table.set(i - j, { val: i - j, left: e1, operator: '-', right: e2 });
                     if (i % j === 0) {
-                        table.set(i / j, { val: i / j, left: e1, operator: "/", right: e2 });
+                        table.set(i / j, { val: i / j, left: e1, operator: '/', right: e2 });
                     }
                 } else {
-                    table.set(j - i, { val: j - i, left: e2, operator: "-", right: e1 });
+                    table.set(j - i, { val: j - i, left: e2, operator: '-', right: e1 });
                     if (j % i === 0) {
-                        table.set(j / i, { val: j / i, left: e2, operator: "/", right: e1 });
+                        table.set(j / i, { val: j / i, left: e2, operator: '/', right: e1 });
                     }
                 }
                 table.set(j, e2);
@@ -88,6 +88,6 @@ const solve = (values, target) => {
         }
     }
     return bestCalc;
-}
+};
 
 export default solve;

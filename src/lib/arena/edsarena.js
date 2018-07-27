@@ -7,15 +7,6 @@ import makeRules from './rules';
 
 export {startingConf} from './arena';
 
-export const guardsWin = edsgraph => {
-    for (const conf of edsgraph.AConfs()) {
-        if (!edsgraph.attractor.has(conf.toString())) {
-            return { result: true, witness: conf };
-        }
-    }
-    return { result: false, witness: null };
-};
-
 export const guardsAnswer = (edsgraph, guards, attack) => {
     const ans = answer(edsgraph, sortBy(x => x, guards).concat(attack));
     if (!ans) {
@@ -54,4 +45,4 @@ export const makeEDS = (graph, k, rulesName) => {
 
     const arenaGraph = makeArenaGraph(arena);
     return { graph, ...arenaGraph };
-}
+};

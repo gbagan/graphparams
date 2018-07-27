@@ -16,7 +16,7 @@ function * multiMoves(graph, conf, i) {
 }
 
 function * attackerPossibilities(graph, guards) {
-    for (let attack = 0; attack < graph.V; attack++) {
+    for (let attack = 0; attack < graph.length; attack++) {
         if (!guards.includes(attack)) {
             yield guards.concat(attack);
         }
@@ -51,13 +51,12 @@ function * allGuardsPossibilities (graph, conf) {
 const oneRules = {
     attackerPossibilities,
     guardsPossibilities: oneGuardPossibilities
-}
+};
 
 const allRules = {
     attackerPossibilities,
     guardsPossibilities: allGuardsPossibilities
-}
-
+};
 
 export default name => name === 'one' ? oneRules : allRules;
 

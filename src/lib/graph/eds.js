@@ -1,12 +1,12 @@
-import {makeEDS, guardsWin} from '../arena/edsarena';
+import {makeEDS, startingConf} from '../arena/edsarena';
 
 const ednAux = (graph, rules) => {
     let i = 1;
     while (true) {
         const eds = makeEDS(graph, i, rules);
-        const res = guardsWin(eds);
-        if (res.result) {
-            return { result: i, witness: res.witness };
+        const conf = startingConf(eds);
+        if (conf) {
+            return { result: i, witness: conf };
         }
         i++;
     }
