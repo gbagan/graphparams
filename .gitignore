@@ -4,3 +4,4 @@ build
 coverage
 yarn.lock
 yarn-error.log
+tree.html
