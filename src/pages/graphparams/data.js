@@ -1,1 +1,0 @@
-export {CODE_EXAMPLE, HELP_TEXT} from '../eds/data';

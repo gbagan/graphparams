@@ -1,5 +1,5 @@
 import {connect, createSelector, React} from "@/commonreact";
-import {actions, selector} from "../redux";
+import {actions, selector} from "../reducers";
 import OutputParameter from "./OutputParameter";
 import { pick } from "@/lib/fp";
 

@@ -44,4 +44,4 @@ const getGraphInfos = createSelector(
     })
 );
 
-export default createSelector(state => state.graphparams, state => ({ ...state, ...getGraphInfos(state) }));
+export default state => ({ ...state, ...getGraphInfos(state) });

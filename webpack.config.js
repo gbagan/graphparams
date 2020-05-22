@@ -22,49 +22,49 @@ module.exports = (env = {}) => {
 
         resolve: {
             modules: [PATHS.nodeModules],
-            extensions: [".js", ".jsx"],
-            descriptionFiles: ["package.json"],
+            extensions: ['.js', '.jsx'],
+            descriptionFiles: ['package.json'],
             alias: {
                 '@': PATHS.src,
                 '@fp': PATHS.src + '/lib/fp'
             }
         },
-        devtool: "source-map",
+        devtool: 'source-map',
         module: {
             rules: [
                 { test: /\.jsx?$/, loader: 'babel-loader', exclude: '/node_modules/' },
                 { test: /\.(sa|sc|c)ss$/, exclude: [/antd/], use: [MiniCssExtractPlugin.loader,
-                                                {loader: "css-loader", options: {modules: true} },
-                                                "sass-loader"
+                                                {loader: 'css-loader', options: {modules: true} },
+                                                'sass-loader'
                                                ] },
                 { test: /\.(sa|sc|c)ss$/, include: [/antd/],  use: [MiniCssExtractPlugin.loader,
-                                                 {loader: "css-loader", options: {modules: false} },
-                                                "sass-loader"
+                                                 {loader: 'css-loader', options: {modules: false} },
+                                                'sass-loader'
                 ] },
                 { test: /\.(png|jpg|gif|svg)$/, use: [ { loader: 'url-loader', options: { limit: 16000 } } 
                                                  ] },
-                { test: /\.worker\.js$/, use: { loader: "worker-loader" } }
+                { test: /\.worker\.js$/, use: { loader: 'worker-loader' } }
             ]
         },
         entry: {
             app: [
-                PATHS.src + "/index.jsx",
+                PATHS.src + '/index.jsx',
             ],
         },
         output: {
-            path: PATHS.dist + "/static/",
-            publicPath: "static/",
+            path: PATHS.dist + '/static/',
+            publicPath: 'static/',
         },
         plugins: [
             new MiniCssExtractPlugin({
-                filename: "[name].css",
-                chunkFilename: "[id].css",
+                filename: '[name].css',
+                chunkFilename: '[id].css',
                 modules: true
             }),
             new CircularDependencyPlugin({
-              exclude: /a\.js|node_modules/,
-              failOnError: true,
-              cwd: process.cwd(),
+                exclude: /node_modules/,
+                failOnError: true,
+                cwd: process.cwd(),
             })
         ]
     }

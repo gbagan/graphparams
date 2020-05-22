@@ -1,15 +1,15 @@
-import {connect, createSelector, pick, React} from "@/commonreact";
-import Col from 'antd/lib/col';
+import {connect, createSelector, pick, React} from "@/commonreact"
+import Col from 'antd/lib/col'
+import Row from 'antd/lib/row'
+import {actions, selector} from '../reducers'
+import ParamCheckbox from './ParamCheckbox'
 
-import {actions, selector} from '../redux';
-import ParamCheckbox from './ParamCheckbox';
-
-const divStyle = { width: "100%", height: "100%" };
+const divStyle = { width: "100%", height: "100%" }
 
 const ParamInput = ({parameters, onToggleParameter}) => (
-    <div style={divStyle}>{
+    <Row style={divStyle}>{
         [1, 2, 3, 4].map(i =>
-            <Col key={i} span={6}>
+            <Col span={6}>
             {
                 parameters.filter(p => p.cat === i).map(param =>
                     <ParamCheckbox key={param.name} data={param} onToggle={onToggleParameter} />
@@ -17,7 +17,7 @@ const ParamInput = ({parameters, onToggleParameter}) => (
             }
             </Col>
         )
-    }</div>
+    }</Row>
 );
 
 export default
@@ -25,4 +25,4 @@ connect(
     createSelector(selector, pick('parameters')), {
         onToggleParameter: actions.toggleParameter,
     }
-)(ParamInput);
+)(ParamInput)

@@ -1,6 +1,6 @@
 import {contains, range} from '@fp';
 import {connect, createSelector, pick, React} from '@/commonreact';
-import {selector} from '../redux';
+import {selector} from '../reducers';
 
 const colors = ['blue', 'red', 'green', 'cyan', 'magenta', 'orange', 'gray', 'black', 'yellow' ];
 

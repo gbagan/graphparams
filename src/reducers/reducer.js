@@ -38,7 +38,7 @@ const GRAPH_PARAMETERS = [
     { cat: 4, hardness: 2, name: 'medn', fullname: 'm-eternal dominating set' },
 ];
 
-const initialState = {
+export const initialState = {
     code: CODE_EXAMPLE,
     computing: false,
     error: null,
@@ -96,6 +96,6 @@ const reducer = handleActions({
         else
             return { ...state, witness: {name: parameter.name, witness: parameter.result.witness }};
     }
-}, initialState);
+});
 
 export default reducer;

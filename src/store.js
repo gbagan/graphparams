@@ -1,25 +1,17 @@
-import {applyMiddleware, combineReducers, createStore, compose} from 'redux';
+import {applyMiddleware, createStore} from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import {all} from 'redux-saga/effects';
 
-import {reducer as eds} from './pages/eds';
-import {reducer as graphparams, saga as graphparamsSaga } from "./pages/graphparams";
-//import { reducer as lightsout } from "./pages/lightsout";
-import {reducer as sudoku} from './pages/sudoku';
+import {reducer, initialState, saga } from "./reducers";
 
 function* rootSaga() {
-    yield all([graphparamsSaga()]);
+    yield all([saga()]);
 }
 
-const reducer = combineReducers({eds, sudoku, graphparams});
 const sagaMiddleware = createSagaMiddleware();
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-const store = createStore(reducer, composeEnhancers(
-    applyMiddleware(sagaMiddleware),
-));
+const store = createStore(reducer, initialState, applyMiddleware(sagaMiddleware));
 
 sagaMiddleware.run(rootSaga);
-
+console.log('init', initialState);
 export default store;
