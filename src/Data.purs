@@ -1,15 +1,14 @@
 module GraphParams.Data where
 
 codeExample :: String
-codeExample = "grid(4,4)"
-
-/*export const CODE_EXAMPLE = `graph(9)
+codeExample = """
+graph(9)
 .addClique(0, 1, 2)
 .addPath(2, 3, 4)
 .addCycle(4, 5, 6, 7)
 .addEdges(1-5, 4-8)
 .addEdge(3, 8)`;
-*/
+""""
 
 helpText :: String
 helpText = """

@@ -1,14 +1,18 @@
 { name = "graphparams"
 , dependencies =
-  [ "arrays"
+  [ "aff"
+  , "arrays"
   , "effect"
+  , "foldable-traversable"
   , "integers"
-  , "lazy"
-  , "lists"
   , "maybe"
   , "pha"
   , "prelude"
   , "tuples"
+  , "web-dom"
+  , "web-events"
+  , "web-pointerevents"
+  , "web-uievents"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]

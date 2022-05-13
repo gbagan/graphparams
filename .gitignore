@@ -1,3 +1,4 @@
+.spago
 package-lock.json
 node_modules
 dist/bundle*

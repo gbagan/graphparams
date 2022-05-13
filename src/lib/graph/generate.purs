@@ -1,5 +1,5 @@
 module GraphParams.Generate where
-
+{-
 path :: Int -> Graph
 path n = graph n # addPath (0..(n-1))
 
@@ -30,10 +30,10 @@ petersen =  fromEdges 10 $ 0..4 >>= \i -> []
             addEdge(i, i + 5);
         }
     });
--}
 
 sun :: Int -> Graph
 sun n =
     graph (2 * n)
         # addClique (0..(n-1))
-        # addCycle (chain(i => [i, i+n], range(0, n)));
+        # addCycle (0..(n-1) >>= \i -> [i, i+n])
+-}

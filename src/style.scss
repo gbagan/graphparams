@@ -1,0 +1,23 @@
+.graphparams-graphview-board {
+    width: 500px;
+    height: 500px;
+}
+
+.graphparams-graphview-svg {
+    display: block;
+}
+
+.graphparams-graphview-vertex {
+    fill: blue;
+    &.deletemode:hover {
+        fill: gray;
+    }
+}
+
+.graphparams-graphview-edge {
+    stroke: red;
+    stroke-width: 1.5;
+    &.deletemode:hover {
+        stroke: gray;
+    }
+}
