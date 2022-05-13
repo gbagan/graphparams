@@ -1,3 +1,38 @@
+.graphparams-layout {
+    width: 100vw;
+    height: 100vh;
+}
+
+.graphparams-mainrow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-flow: row wrap;
+    //align-items: top;
+}
+
+.graphparams-code {
+    height: 20em;
+    width: 15em;
+}
+
+.graphparams-help {
+    height: 44em;
+    width: 26em;
+    overflow: auto;
+}
+
+.graphparams-output {
+    height: 30em;
+    width: 16em;
+    overflow: auto;
+}
+
+.graphoutput {
+    height: 50vmin;
+    width: 50vmin;
+}
+
 .graphparams-graphview-board {
     width: 500px;
     height: 500px;

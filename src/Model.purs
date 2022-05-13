@@ -10,7 +10,7 @@ import Web.PointerEvent.PointerEvent as PE
 import Web.Event.Event (stopPropagation)
 import GraphParams.Graph (Graph, Edge(..))
 import GraphParams.Graph as Graph
-import Pha.Update (Update, modify_)
+import Pha.Update (Update, get, modify_)
 import Util (pointerDecoder)
 
 
@@ -24,7 +24,7 @@ type Model =
     ,   isComputing :: Boolean
     ,   code :: String
     ,   error :: Maybe String
-    ,   parameters :: Array Parameter
+    ,   results :: Array (Maybe Result)
     ,   graph ∷ Graph
     ,   editmode ∷ EditMode
     ,   selectedVertex ∷ Maybe Int
@@ -37,7 +37,7 @@ init =
     ,   isComputing: false
     ,   code: "blah blah"
     ,   error: Nothing
-    ,   parameters: []
+    ,   results: const Nothing <$> parameters
     ,   graph: {layout: [], edges: []}
     ,   editmode: VertexMode
     ,   selectedVertex: Nothing
@@ -45,7 +45,9 @@ init =
     }
 
 type Parameter =
-    {   result :: Maybe Result
+    {   cat :: Int
+    ,   name :: String
+    ,   hardness :: Int
     ,   fullname :: String
     }
 
@@ -71,6 +73,35 @@ data Msg =
     | DropOrLeave
     | SetEditMode EditMode
     | ClearGraph
+
+parameters :: Array Parameter
+parameters = 
+    [   { cat: 1, hardness: 0, name: "order", fullname: "order" }
+    ,   { cat: 1, hardness: 0, name: "nbedges", fullname: "number of edges" }
+    ,   { cat: 1, hardness: 0, name: "mindegree", fullname: "minimun degree" }
+    ,   { cat: 1, hardness: 0, name: "maxdegree", fullname: "maximum degree" }
+    ,   { cat: 1, hardness: 0, name: "degen", fullname: "degeneracy" }
+    ,   { cat: 1, hardness: 0, name: "diameter", fullname: "diameter" }
+    ,   { cat: 1, hardness: 0, name: "girth", fullname: "girth" }
+    ,   { cat: 1, hardness: 0, name: "matching", fullname: "maximum matching" }
+    ,   { cat: 1, hardness: 2, name: "tw", fullname: "treewidth" }
+
+    ,   { cat: 2, hardness: 0, name: "regular", fullname: "regular" }
+    ,   { cat: 2, hardness: 0, name: "connected", fullname: "connected" }
+    ,   { cat: 2, hardness: 1, name: "hamilton", fullname: "hamiltonian" }
+    ,   { cat: 2, hardness: 0, name: "chordal", fullname: "chordal" }
+
+    ,   { cat: 3, hardness: 1, name: "mis", fullname: "independent set" }
+    ,   { cat: 3, hardness: 1, name: "clique", fullname: "clique" }
+    ,   { cat: 3, hardness: 1, name: "chromatic", fullname: "chromatic number" }
+    ,   { cat: 4, hardness: 1, name: "dom", fullname: "dominating set" }
+    ,   { cat: 4, hardness: 1, name: "totaldom", fullname: "total dominating set" }
+    ,   { cat: 4, hardness: 1, name: "inddom", fullname: "independent dominating set" }
+    ,   { cat: 4, hardness: 2, name: "cdom", fullname: "connected dominating set" }
+    ,   { cat: 4, hardness: 1, name: "idcode", fullname: "identifying code" }
+    ,   { cat: 4, hardness: 1, name: "locdom", fullname: "locating dominating set" }
+    ]
+
 
 update :: Msg -> Update Model Aff Unit
 update (AddVertex ev) = do
@@ -109,19 +140,27 @@ update DropOrLeave =
 
 update (PointerUp i) = do
     modify_ \model →
-            case model.editmode, model.selectedVertex of
-                VertexMode, _ →
-                    model{selectedVertex = Nothing, currentPosition = Nothing}
-                AddEMode, Just j →
-                    model{graph = Graph.addEdge i j model.graph, selectedVertex = Nothing}
-                _, _ → model
+        case model.editmode, model.selectedVertex of
+            VertexMode, _ → model{selectedVertex = Nothing, currentPosition = Nothing}
+            AddEMode, Just j → model{graph = Graph.addEdge i j model.graph, selectedVertex = Nothing}
+            _, _ → model
+
+update (DeleteVertex i ev) = do
+    st ← get
+    when (st.editmode == VertexMode)
+        (liftEffect $ stopPropagation $ PE.toEvent ev)
+    modify_ \model →
+        if model.editmode == DeleteMode then
+            model{graph = Graph.removeVertex i model.graph}
+        else
+            model
 
 update (DeleteEdge (Edge u v)) =
-        modify_ \model →
-            if model.editmode == DeleteMode then
-                model{graph = Graph.removeEdge u v model.graph}
-            else
-                model
+    modify_ \model →
+        if model.editmode == DeleteMode then
+            model{graph = Graph.removeEdge u v model.graph}
+        else
+            model
 
 update (SetEditMode mode) = modify_ _{editmode = mode}
 update _ = pure unit

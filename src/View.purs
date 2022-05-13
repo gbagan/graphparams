@@ -1,14 +1,19 @@
-module GraphParams.View where
+module GraphParams.View
+  ( htmlizedHelp
+  , outputParameter
+  , view
+  )
+  where
 -- import style from '../css/style.scss';
 
 import Prelude
-import Data.Array (filter)
+import Data.Array ((..), filter, zipWith)
 import Data.Maybe (Maybe(..))
 import Pha.Html (Html)
 import Pha.Html as H
 import Pha.Html.Attributes as P
 import Pha.Html.Events as E
-import GraphParams.Model (Model, Witness(..), Msg(..))
+import GraphParams.Model (Model, Parameter, Result, Witness(..), Msg(..), parameters)
 import GraphParams.GraphView (graphView)
 
 htmlizedHelp :: forall a. Array (Html a) 
@@ -16,9 +21,9 @@ htmlizedHelp = []
      --   {HELP_TEXT.split("\n") >>= \line [H.text line, H.br]
 
 view :: Model -> Html Msg
-view model@{error, isComputing, code, parameters} =
+view model@{error, isComputing, code, results} =
     H.div [H.class_ "graphparams-layout"]
-    [   H.div [] -- row type="flex" justify="space-between" align="top">
+    [   H.div [H.class_ "graphparams-mainrow"]
         [   H.div [] -- col span={17}>
             [   H.div []
                 [   H.button [P.disabled isComputing, E.onClick \_ -> SelectAllParams] [H.text "Select All"]
@@ -26,8 +31,8 @@ view model@{error, isComputing, code, parameters} =
                 ,   H.button [P.disabled isComputing, E.onClick \_ -> Compute] [H.text "Compute"]
                 -- ,   H.bButton [P.disabled $ not computing, E.onClick UnselectAll] [H.text "Compute"]
                 ]
-            ,   H.div [] [] -- [paramInput]
-            ,   H.div [] --Row type="flex" justify="space-around" align="top">
+            ,   paramInput
+            ,   H.div [H.class_ "graphparams-mainrow"]
                 [   H.div [] -- col
                     []   --Input.TextArea className={style.code} rows="15" cols="40" onChange={handleCodeChange} value={code} />
                 ,   H.div [] -- Col
@@ -47,15 +52,26 @@ view model@{error, isComputing, code, parameters} =
     ]
     where
     output =
-        H.div [H.class_ "graphparams-out"] $
+        H.div [H.class_ "graphparams-output"] $
             case error of
                 Just err ->
                     [H.span [] [H.text err]] 
                 Nothing ->
-                    parameters {- filter (\p -> p.result /= null) -} # map \param ->
-                        outputParameter param
+                    zipWith outputParameter parameters results
+                    --    {- filter (\p -> p.result /= null) -} # map \(param /\ result) ->
+                    --    outputParameter param result
 
-outputParameter parameter@{result, fullname} =
+    paramInput =
+        H.div [] $ -- row divStyle 
+            1..4 <#> \i ->
+                H.div [H.class_ "graphparams-row"] $
+                    parameters # filter (\p -> p.cat == i) # map \{fullname} ->
+                        H.div [] [H.input [P.type_ "checkbox"], H.text fullname]
+                        -- <ParamCheckbox key={param.name} data={param} onToggle={onToggleParameter} />
+
+
+outputParameter :: Parameter → Maybe Result → Html Msg
+outputParameter parameter@{fullname} result =
     case result of 
         Nothing -> H.span [] []
         Just {value, witness} ->
@@ -71,14 +87,4 @@ outputParameter parameter@{result, fullname} =
             ]
 
     -- const divStyle = { width: "100%", height: "100%" }
-{-
-paramInput {parameters} =
-    H.div [] -- row divStyle 
-        1..4 <#> \i ->
-            <Col span={6}>
-            {
-                parameters.filter(p => p.cat === i).map(param =>
-                    <ParamCheckbox key={param.name} data={param} onToggle={onToggleParameter} />
-                )
-            }
--}
+
