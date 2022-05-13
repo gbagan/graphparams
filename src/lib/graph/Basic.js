@@ -1,16 +1,11 @@
-import {F, map, max, maxBy, min, sum, range, times} from '@fp';
+import {map, max, maxBy, min, sum, range} from '../fp';
 import {decode, encode} from '@/lib/binary';
 import {edges, hasEdge} from './graph';
 import {complement} from './operators';
 
-export const nbVertices = graph => graph.length;
-export const nbEdges = graph => sum(map(nbor => nbor.length, graph)) / 2;
-export const minDegree = graph => min(map(nbor => nbor.length, graph));
-export const maxDegree = graph => max(map(nbor => nbor.length, graph));
-export const isRegular = graph  => minDegree(graph) === maxDegree(graph);
-
 export const isConnected = graph => {
-    const visited = times(F, graph.length);
+    const visited = new Array(graph.lenth);
+    visited.fill(false)
     const stack = [];
     let nbVisited = 1;
     visited[0] = true;
@@ -28,22 +23,25 @@ export const isConnected = graph => {
     return nbVisited === graph.length;
 };
 
-export const isHamiltonian = graph => graph.length === 1 && { result: true, witness: [0] }
-                                        || graph.length === 2  && { result: false, witness: null }
-                                        || hamiltonAux(graph, [0]);
+export const isHamiltonian = left => right => graph => {
+    if (graph.length === 1) 
+        return right([0])
+    if (graph.length === 2)
+        return left()
+    const res = hamiltonAux(graph, [0]);
+    return res ? right(res) : left();
+}
 
 const hamiltonAux = (graph, path) => {
     const last = path[path.length - 1];
     if (path.length === graph.length) {
-        return graph.length === 1 || hasEdge(graph, path[0], last) ?
-            { result: true, witness: path } : { result: false, witness: null };
+        return hasEdge(graph, path[0], last) ? path : null
     } else {
         for (const v of graph[last]) {
-            if (path.includes(v)) {
+            if (path.includes(v))
                 continue;
-            }
             const res = hamiltonAux(graph, path.concat(v));
-            if (res.result) {
+            if (res) {
                 return res;
             }
         }
@@ -74,20 +72,22 @@ export const degeneracy = graph => {
 };
 
 export const eccentricity = (graph, vertex) => {
-    const distance = times(() => -1, graph.length);
-    const parent = times(() => -1, graph.length);
-    const queue = [];
-    let nbVisited = 1;
-    distance[vertex] = 0;
-    queue.push(vertex);
+    const distance = new Array(graph.length)
+    distance.fill(-1)
+    const parent = new Array(graph.length)
+    parent.fill(-1)
+    const queue = []
+    let nbVisited = 1
+    distance[vertex] = 0
+    queue.push(vertex)
     while (queue.length > 0) {
-        const u = queue.shift();
+        const u = queue.shift()
         for (const w of graph[u]) {
             if (distance[w] === -1) {
-                queue.push(w);
-                distance[w] = distance[u] + 1;
-                parent[w] = u;
-                nbVisited++;
+                queue.push(w)
+                distance[w] = distance[u] + 1
+                parent[w] = u
+                nbVisited++
             }
         }
     }

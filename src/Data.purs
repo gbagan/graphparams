@@ -1,4 +1,7 @@
-export const CODE_EXAMPLE = "grid(4,4)"
+module GraphParams.Data where
+
+codeExample :: String
+codeExample = "grid(4,4)"
 
 /*export const CODE_EXAMPLE = `graph(9)
 .addClique(0, 1, 2)
@@ -8,8 +11,9 @@ export const CODE_EXAMPLE = "grid(4,4)"
 .addEdge(3, 8)`;
 */
 
-export const HELP_TEXT =
-`petersen     // petersen graph
+helpText :: String
+helpText = """
+petersen     // petersen graph
 graph(n)       // create an empty graph with n vertices
 path(n)        // create a path graph with n vertices
 cycle(n)       // create a cycle graph with n vertices
@@ -36,4 +40,5 @@ digraph(5)     // create an empty digraph with 5 vertices
 digraph('name')  // name P5 | C5
 .addPath(0, 2, 3)
 .addCycle(1, 2, 3)
-.addEdges([0-2], [2-3])`;
+.addEdges([0-2], [2-3])
+"""

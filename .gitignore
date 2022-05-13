@@ -1,7 +1,4 @@
+package-lock.json
 node_modules
-dist
-build
-coverage
-yarn.lock
-yarn-error.log
-tree.html
+dist/bundle*
+output

@@ -20,6 +20,6 @@ const getLayout = graph => {
     const dx = max(lx) - minx;
     const dy = max(ly) - miny;
     return map(v => ({x: (v.x - minx) / dx, y: (v.y - miny) / dy}), nodes); 
-};
+}
 
 export default getLayout;

@@ -1,6 +1,3 @@
-export const F = () => false;
-export const T = () => true;
-
 export const adjust = (fn, index, list) => {
     if (list === undefined)
         return list2 => adjust(fn, index, list2);

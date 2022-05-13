@@ -92,5 +92,4 @@ const refine = (partitions, graph, vertex) => {
     }
 };
 
-const lexbfs = (graph, vertex) => execute(makePartitions(graph.length), graph, vertex);
-export default lexbfs;
+export const lexbfs = vertex => graph => [...execute(makePartitions(graph.length), graph, vertex)];
