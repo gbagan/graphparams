@@ -1,7 +1,22 @@
-import {map, max, maxBy, min, sum, range} from '../fp';
-import {decode, encode} from '@/lib/binary';
+import {maxBy, sum, range} from '../fp';
+import {decode, encode} from '../binary';
 import {edges, hasEdge} from './graph';
 import {complement} from './operators';
+
+export const minDegree = graph => min(graph.map(nbor => nbor.length));
+export const maxDegree = graph => max(graph.map(nbor => nbor.length));
+
+export const isRegular = g  => {
+    const n = g.length;
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j  < n; j++) {
+            if (g[i].lenght != g[j].length) {
+                return { result: false, wtype: "set", witness: [i, j] };
+            }
+        }
+    }
+    return { result: false, wtype: "nowitness", witness: [i, j] };
+}
 
 export const isConnected = graph => {
     const visited = new Array(graph.lenth);
@@ -23,7 +38,7 @@ export const isConnected = graph => {
     return nbVisited === graph.length;
 };
 
-export const isHamiltonian = left => right => graph => {
+export const isHamiltonian = graph => {
     if (graph.length === 1) 
         return right([0])
     if (graph.length === 2)
@@ -45,7 +60,7 @@ const hamiltonAux = (graph, path) => {
                 return res;
             }
         }
-        return { result: false, witness: null };
+        return { result: false, witness: [] };
     }
 };
 
@@ -57,7 +72,7 @@ export const degeneracy = graph => {
         let minDeg = Infinity;
         let bestVertex = null;
         for (const v of set) {
-            const degree = sum(map(u => set.has(u) ? 1: 0, graph[v]));
+            const degree = sum(graph[v].map(u => set.has(u) ? 1: 0));
             if (degree < minDeg) {
                 bestVertex = v;
                 minDeg = degree;
@@ -68,7 +83,7 @@ export const degeneracy = graph => {
         maxdegree = Math.max(maxdegree, minDeg);
     }
 
-    return { result: maxdegree, witness: order };
+    return { result: maxdegree, wtype: "order", witness: order };
 };
 
 export const eccentricity = (graph, vertex) => {
@@ -93,7 +108,7 @@ export const eccentricity = (graph, vertex) => {
     }
 
     if (nbVisited !== graph.length) {
-        return { result: Infinity, witness: null };
+        return { result: -1, wtype: "nowitness", witness: [] };
     } else {
         let u = maxBy(w => distance[w], range(0, graph.length));
         const path = [u];
@@ -102,14 +117,16 @@ export const eccentricity = (graph, vertex) => {
             path.push(u);
         }
 
-        return { result: path.length - 1, witness: path.reverse() };
+        return { result: path.length - 1, wtype: "path", witness: path.reverse() };
     }
 };
 
 export const alternativePath = (graph, v1, v2) => {
-    const distance = times(() => -1, graph.length);
-    const parent = times(() => -1, graph.length);
+    const distance = new Array(graph.length);
+    const parent = new Array(graph.length);
     const queue = [];
+    parent.fill(-1);
+    distance.fill(-1);
     distance[v1] = 0;
     queue.push(v1);
     while (queue.length > 0) {
@@ -136,7 +153,7 @@ export const alternativePath = (graph, v1, v2) => {
             path.push(u);
         }
 
-        return { result: path.length - 1, witness: path };
+        return { result: path.length - 1, wtype: "path", witness: path };
     }
 };
 

@@ -1,18 +1,16 @@
 module GraphParams.Data where
 
 codeExample :: String
-codeExample = """
-graph(9)
+codeExample = """graph(9)
 .addClique(0, 1, 2)
 .addPath(2, 3, 4)
 .addCycle(4, 5, 6, 7)
 .addEdges(1-5, 4-8)
-.addEdge(3, 8)`;
-""""
+.addEdge(3, 8)
+"""
 
 helpText :: String
-helpText = """
-petersen     // petersen graph
+helpText = """petersen     // petersen graph
 graph(n)       // create an empty graph with n vertices
 path(n)        // create a path graph with n vertices
 cycle(n)       // create a cycle graph with n vertices

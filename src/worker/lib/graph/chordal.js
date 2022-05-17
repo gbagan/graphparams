@@ -1,4 +1,3 @@
-import {filter} from '@fp';
 import {hasEdge} from './graph';
 import {alternativePath} from './basic';
 import lexbfs from './lexbfs';
@@ -21,7 +20,7 @@ const isChordal = graph => {
     let chordal = true;
     let witness = [];
     for (const v of lbfs) {
-        const nbor = filter(u => visited.has(u), graph[v]);
+        const nbor = graph[v].filter(u => visited.has(u));
         const res = hasClique(graph, nbor);
         if (!res.result) {
             chordal = false;

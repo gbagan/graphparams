@@ -1,6 +1,6 @@
-import {range, map} from '@fp';
-import {hasEdge} from './graph';
-import {decode, encode} from '@/lib/binary';
+import { range } from '../fp';
+import { hasEdge } from './graph';
+import { encode, decode } from '../binary';
 
 export const dominatingSet = graph => dominationAux(graph, [], range(0, graph.length));
 
@@ -25,7 +25,8 @@ const dominationAux = (graph, preset, undom) => {
 }
 
 export const independentDominatingSet = graph => {
-    const nbors = map(encode, graph);
+    // todo
+    const nbors = encode(graph, map);
 
     let isets = [[0, 0]];
     let i = 0;
@@ -77,7 +78,7 @@ export const connectedDominatingSet = graph => connectedDominationAux(graph, [],
 
 const connectedDominationAux = (graph, preset, undom, adj) => {
     if (undom.length === 0) {
-        return { result: preset.length, witness: preset };
+        return { result: preset.length, wtype: "set", witness: preset };
     }
 
     const v = 0;

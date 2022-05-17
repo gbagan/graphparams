@@ -1,16 +1,19 @@
-import {all, any, F, T, minBy, countBy, filter, map, max, range, update, times} from '@fp';
-import {encode} from '@/lib/binary';
+import {minBy, countBy, max, range, update, times} from '../fp';
+import {encode} from '../binary';
 
 const chromaticNumberAux = predicate => graph => {
     let i = 1;
-    const precol = times(() => -1, graph.length);
+    const precol = new Array(graph.length);
+    precol.fill(-1);
+    times(() => -1, graph.length);
     const uncoloredList = range(0, graph.length);
-    const binNbors = map(encode, graph);
+    const binNbors = graph.map(encode);
     while (true) {
-        const usedColor = times(F, i);
+        const usedColor = new Array(i)
+        usedColor.fill(false);
         const res = chromaticAux(graph, binNbors, precol, uncoloredList, i, usedColor, predicate);
         if (res.result) {
-            return { result: i, witness: res.witness };
+            return { result: i, wtype: "coloring", witness: res.witness };
         }
         i++;
     }
@@ -19,11 +22,12 @@ const chromaticNumberAux = predicate => graph => {
 const chromaticAux = (graph, binNbors, precoloring, uncolored, maxcolor, usedColor, predicate) => {
     if (uncolored.length === 0)
         return predicate(graph, binNbors, precoloring) ? { result: true, witness: precoloring } : { result: false, witness: null };
-    const v = uncolored |> minBy(w => countBy(u => precoloring[u] !== -1, graph[w]));
-    const uncol2 = filter(u => u !== v, uncolored);
+    // todo
+    const v = minBy(graph[w], w => countBy(graph[w], uncolored, u => precoloring[u] !== -1, graph[w]));
+    const uncol2 = uncolored.filter(u => u !== v);
     let newColor = true;
     for (let i = 0; i < maxcolor; i++) {
-        if (graph[v] |> any(u => precoloring[u] === i) || !usedColor[i] && !newColor) {
+        if (graph[v].any(u => precoloring[u] === i) || !usedColor[i] && !newColor) {
             continue;
         }
         let usedColor2;
@@ -57,10 +61,10 @@ const coloringClasses = coloring => {
 const isDominatorColoring = (graph, binNbors, coloring) => {
     const classes = coloringClasses(coloring);
     return (
-        all(clas => clas !== 0, classes)
-        && (coloring |> all((color, v) =>
+        classes.all(clas => clas !== 0)
+        && (coloring.all((color, v) =>
             classes[color] === 1 << v
-            || any(clas => (binNbors[v] & clas) === clas, classes)
+            || classes.any(clas => (binNbors[v] & clas) === clas)
         ))
     );
 };
@@ -69,9 +73,9 @@ const isTotalDominatorColoring = (graph, binNbors, coloring) => {
     const classes = coloringClasses(coloring);
 
     return (
-        all(clas => clas !== 0, classes)
-        && (binNbors |> all(nbor =>
-            any(clas => (nbor & clas) === clas, classes)
+        classes.all(clas => clas !== 0)
+        && (binNbors.all(nbor =>
+            classes.any(clas => (nbor & clas) === clas)
         ))
     );
 };
@@ -80,18 +84,18 @@ function isDominatedColoring(graph, binNbors, coloring) {
     const classes = coloringClasses(coloring);
 
     return (
-        classes |> all(
-            clas => any(nbor => (nbor & clas) === clas, binNbors)
+        classes.all(
+            clas => binNbors.any(nbor => (nbor & clas) === clas, binNbors)
         )
     );
 }
 
-export const chromaticNumber = chromaticNumberAux(T);
+export const chromaticNumber = chromaticNumberAux(() => true);
 export const dominatorColoring = chromaticNumberAux(isDominatorColoring);
 export const dominatedColoring = chromaticNumberAux(isDominatedColoring);
 
 export const totalDominatorColoring = graph =>
-    any(nbor => nbor.length === 0, graph) ?
-        { result: Infinity, witness: null } : chromaticNumberAux(isTotalDominatorColoring)(graph);
+    graph.any(nbor => nbor.length === 0, graph) ?
+        { result: Infinity, witness: null } : chromaticNumberAux(isTotalDominatorColoring);
 
 

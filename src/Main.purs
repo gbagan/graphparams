@@ -8,12 +8,13 @@ import GraphParams.Model (init, update)
 import GraphParams.View (view)
 
 main :: Effect Unit
-main =
-    app
-    {   init: {state: init, action: Nothing}
-    ,   update
-    ,   view
-    ,   eval: identity
-    ,   subscriptions: []
-    ,   selector: "#root"
+main = do
+  -- worker <- new "worker.js" default
+  app
+    { init: { state: init, action: Nothing }
+    , update
+    , view
+    , eval: identity
+    , subscriptions: []
+    , selector: "#root"
     }

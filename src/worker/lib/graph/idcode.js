@@ -1,5 +1,5 @@
-import {times} from '@fp';
-import {allDifferent} from '@/lib/sorted';
+import {times} from '../fp';
+import {allDifferent} from '../sorted';
 import {decode, encode, subsets} from '../binary';
 
 const isIdentifyingCode = (g, binNbors, bset) => {

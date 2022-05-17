@@ -1,5 +1,5 @@
-﻿import {curry2, map, times} from '@fp';
-import {insert} from '@/lib/sorted';
+﻿import {times} from '../fp';
+import {insert} from '../sorted';
 
 export const graph = nbVertices => times(() => [], nbVertices);
 
@@ -23,20 +23,7 @@ export const addEdge = (graph, v, w) => {
     graph[w] = insert(v, graph[w]);
 };
 
-export const removeEdge = (graph, v, w) => {
-    const index = graph[v].indexOf(w);
-    this[v].splice(index, 1);
-    const index2 = graph[w].indexOf(v);
-    this[w].splice(index2, 1);
-};
-
-export const copy = map(adj => adj.slice());
+export const copy = g => g.map(adj => adj.slice());
 
 export const clean = x => x;
 //map(adj => uniq(sortBy(x => x, adj)));
-
-export const updateGraph = curry2((fn, g) => {
-    const g2 = copy(g);
-    fn((u, v) => addEdge(g2, u, v));
-    return g2;
-});

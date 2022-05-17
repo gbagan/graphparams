@@ -1,9 +1,10 @@
-﻿import {F, range, times} from '@fp';
+﻿import {range} from '../fp';
 import {copy, edgeId} from './graph';
 
 const greedyMatching = graph => {
     const matching = [];
-    const matched = times(F, graph.length);
+    const matched = new Array(graph.length);
+    matched.fill(false)
 
     for (let u = 0; u < graph.length - 1; u++) {
         if (matched[u]) {
@@ -44,10 +45,14 @@ const contract = (graph, set) => {
 }
 
 const findAugmentingPath = (graph, matching) => {
-    const parent = times(_ => -1, graph.length);
-    const distanceToRoot = times(_ => -1, graph.length);
-    const matched = times(_ => -1, graph.length);
-    const root = times(_ => -1, graph.length);
+    const parent = new Array(graph.length);
+    const distanceToRoot = new Array(graph.length);
+    const matched = new Array(graph.length);
+    const root = new Array(graph.length);
+    parent.fill(-1);
+    distanceToRoot.fill(-1);
+    matched.fill(-1);
+    root.fill(-1);
     for (const [x, y] of matching) {
         matched[x] = y;
         matched[y] = x;

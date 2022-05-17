@@ -1,7 +1,5 @@
-import {findIndex} from '@fp';
-
-export const insert = (x, list) => {
-    const index = findIndex(y => y >= x, list);
+export const insert = (list, x) => {
+    const index = list.findIndex(y => y >= x);
     if (index === -1)
         return list.concat(x);
     else if (list[index] === x)

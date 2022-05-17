@@ -1,4 +1,4 @@
-﻿import {range, times} from '@fp';
+﻿import {range, times} from '../fp';
 
 const makePartitions = nbVertices => {
     const partition = {
@@ -92,4 +92,4 @@ const refine = (partitions, graph, vertex) => {
     }
 };
 
-export const lexbfs = vertex => graph => [...execute(makePartitions(graph.length), graph, vertex)];
+export default vertex => graph => [...execute(makePartitions(graph.length), graph, vertex)];
