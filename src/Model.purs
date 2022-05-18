@@ -1,15 +1,15 @@
 module GraphParams.Model where
 
 import Prelude
-import Data.Array (elem)
+import Data.Array (elem, length)
 import Data.Maybe (Maybe(..))
-import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Web.PointerEvent (PointerEvent)
 import Web.PointerEvent.PointerEvent as PE
 import Web.Event.Event (stopPropagation)
 import GraphParams.Graph (Graph, Edge(..))
 import GraphParams.Graph as Graph
+import GraphParams.Layout (computeLayout)
 import GraphParams.Monad (MonadGP)
 import Pha.Update (Update, get, modify_)
 import Util (pointerDecoder)
@@ -82,6 +82,7 @@ data Msg
   | DropOrLeave
   | SetEditMode EditMode
   | ClearGraph
+  | AdjustGraph
 
 parameters :: Array Parameter
 parameters = 
@@ -184,4 +185,6 @@ update (DeleteEdge (Edge u v)) =
 update ClearGraph = modify_ _ {graph = { layout: [], edges: [] }}
 
 update (SetEditMode mode) = modify_ _{editmode = mode}
+
+update AdjustGraph = modify_ \model@{graph} -> model { graph = graph { layout = computeLayout (length $ graph.layout) graph.edges  }}
 update _ = pure unit

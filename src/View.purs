@@ -56,7 +56,7 @@ view model@{ error, isComputing, code, parameters, results, graph } =
             ]
         ]
     , H.div [ H.class_ "graphparams-help-container" ]
-        [ H.elem "sl-card" [] -- Card title="Help">
+        [ H.elem "sl-card" []
             [ H.div [ H.attr "slot" "header" ] [ H.text "Help" ]
             , H.div [ H.class_ "graphparams-help" ] htmlizedHelp
             ]

@@ -33,13 +33,13 @@ graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, 
         replicate (length layout) 0
           # updateAtIndices ((_ /\ 1) <$> set)
       ColorWitness col -> col
-      EdgeWitness edges ->
+      EdgeWitness wedges ->
         0 .. (length layout - 1)
           <#> \v ->
-              if any (Graph.incident v) edges then 1 else 0
+              if any (Graph.incident v) wedges then 1 else 0
       _ -> replicate (length layout) 0
   in
-    H.div [ H.class_ "graphparams-graphview" ]
+    H.div []
       [ H.div [ H.class_ "graphparams-graphview-board" ]
           [ H.svg
               [ H.class_ "display-block"
@@ -82,12 +82,11 @@ graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, 
                     _ → Nothing
               ]
           ]
-      , H.div [ H.class_ "flex graphparams-graphview-buttons" ]
-          [ H.elem "sl-button-group" []
-              [ H.elem "sl-button" [ P.selected $ editmode == VertexMode, E.onClick \_ -> SetEditMode VertexMode ] [ H.text "Vertex" ]
+      , H.elem "sl-button-group" []
+          [ H.elem "sl-button" [ P.selected $ editmode == VertexMode, E.onClick \_ -> SetEditMode VertexMode ] [ H.text "Vertex" ]
               , H.elem "sl-button" [ P.selected $ editmode == AddEMode, E.onClick \_ -> SetEditMode AddEMode ] [ H.text "Add edge" ]
               , H.elem "sl-button" [ P.selected $ editmode == DeleteMode, E.onClick \_ -> SetEditMode DeleteMode ] [ H.text "Remove" ]
               , H.elem "sl-button" [ E.onClick \_ → ClearGraph ] [ H.text "Clear" ]
-              ]
+              , H.elem "sl-button" [ E.onClick \_ → AdjustGraph ] [ H.text "Adjust" ]
           ]
       ]
