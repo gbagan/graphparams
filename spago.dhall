@@ -2,8 +2,10 @@
 , dependencies =
   [ "aff"
   , "arrays"
+  , "bifunctors"
   , "control"
   , "effect"
+  , "either"
   , "foldable-traversable"
   , "integers"
   , "lists"

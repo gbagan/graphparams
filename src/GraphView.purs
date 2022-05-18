@@ -5,7 +5,8 @@ import Data.Array ((..), any, length, replicate, updateAtIndices)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
 import GraphParams.Graph as Graph
-import GraphParams.Model (Model, Position, EditMode(..), Msg(..), Witness(..))
+import GraphParams.Model (Model, Position, EditMode(..), Witness(..))
+import GraphParams.Msg (Msg(..))
 import Pha.Html (Html)
 import Pha.Html as H
 import Pha.Html.Attributes as P

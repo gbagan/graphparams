@@ -4,13 +4,21 @@ import Prelude
 import Data.Array ((..), filter, null, zipWith)
 import Data.Maybe (Maybe(..))
 import Data.String (split, Pattern(..))
+import Effect (Effect)
 import Pha.Html (Html)
 import Pha.Html as H
 import Pha.Html.Attributes as P
 import Pha.Html.Events as E
+import Web.Event.Event (Event)
+
 import GraphParams.Data (helpText)
-import GraphParams.Model (Model, Parameter, Result, Witness(..), Msg(..))
+import GraphParams.Model (Model, Parameter, Result, Witness(..))
+import GraphParams.Msg (Msg(..))
 import GraphParams.GraphView (graphView)
+
+foreign import slStringValue ∷ Event → Effect String
+
+foreign import slChecked ∷ Event → Effect Boolean
 
 htmlizedHelp :: forall a. Array (Html a)
 htmlizedHelp = helpText # split (Pattern "\n") >>= \line -> [ H.text line, H.br ]
@@ -42,8 +50,14 @@ view model@{ error, isComputing, code, parameters, results, graph } =
         , paramInput
         , H.div [ H.class_ "row row-top space-around" ]
             [ H.div [ H.class_ "col" ] -- col
-                [ H.elem "sl-textarea" [ P.rows 15, P.cols 40, P.value code ] []
-                -- onChange={handleCodeChange} value={code} />
+                [ H.elem "sl-textarea"
+                    [ P.rows 15
+                    , P.cols 40
+                    , P.value code
+                    , E.on "sl-change" \ev → Just <$> SetCode <$> slStringValue ev
+                    ]
+                    []
+                , H.elem "sl-button" [ E.onClick \_ -> GenerateGraph ] [ H.text "Generate" ]
                 ]
             , H.elem "sl-card" []
                 [ H.div [ H.attr "slot" "header" ] [ H.text "Ouput" ]
@@ -95,5 +109,3 @@ outputParameter { fullname } result = case result of
             [ H.span [] [ H.text $ fullname <> " : " <> value ] ]
       , H.br
       ]
-
--- const divStyle = { width: "100%", height: "100%" }

@@ -1,10 +1,10 @@
 module GraphParams.Monad where
 
-import Prelude
-import Effect.Class (class MonadEffect)
+-- import Prelude
+-- import Effect.Class (class MonadEffect)
 import Effect.Aff (Aff)
-import Effect.Aff.Class (class MonadAff)
-import Control.Monad.Reader.Trans (ReaderT, class MonadAsk, class MonadReader)
+-- import Effect.Aff.Class (class MonadAff)
+import Control.Monad.Reader.Trans (ReaderT) --, class MonadAsk, class MonadReader)
 import Control.Monad.Rec.Class (class MonadRec)
 -- import Effect.Random (randomInt, random)
 

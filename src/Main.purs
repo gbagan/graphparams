@@ -5,7 +5,8 @@ import Control.Monad.Reader (runReaderT)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Pha.App (app)
-import GraphParams.Model (init, update)
+import GraphParams.Model (init)
+import GraphParams.Update (update)
 import GraphParams.View (view)
 
 main :: Effect Unit
