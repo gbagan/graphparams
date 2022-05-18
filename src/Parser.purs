@@ -1,15 +1,26 @@
 module GraphParams.Parser where
 
 import Control.Lazy (fix)
+import Data.Int as Int
 import Data.List (List)
+import Data.Maybe (Maybe(..))
 import Prelude
-import Parsing (Parser)
-import Parsing.Combinators (many1, sepBy)
-import Parsing.String (string)
-import Parsing.String.Basic (letter, intDecimal)
+import Control.Alt ((<|>))
+import StringParser (Parser, fail, string, many1, sepBy, regex)
 
-function :: Parser String (List Int)
+decimal :: forall m. Parser Int
+decimal = do
+  section <- decimalRegex <|> fail "Expected Int"
+  case Int.fromString section of
+    Nothing -> fail $ "Int.fromString failed"
+    Just x -> pure x
+
+decimalRegex :: Parser String
+decimalRegex = regex "[0-9]+"
+
+function :: Parser (List Int)
 function = name *> string "(" *> (arguments <* string "$")
     where
-    name = many1 letter
-    arguments = intDecimal `sepBy` string ","
+    name = regex "[a-zA-Z]+"
+    arguments = decimal `sepBy` string ","
+    

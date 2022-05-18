@@ -1,7 +1,7 @@
 module GraphParams.View (view) where
 
 import Prelude
-import Data.Array ((..), filter, zipWith)
+import Data.Array ((..), filter, null, zipWith)
 import Data.Maybe (Maybe(..))
 import Data.String (split, Pattern(..))
 import Pha.Html (Html)
@@ -16,14 +16,28 @@ htmlizedHelp :: forall a. Array (Html a)
 htmlizedHelp = helpText # split (Pattern "\n") >>= \line -> [ H.text line, H.br ]
 
 view :: Model -> Html Msg
-view model@{ error, isComputing, code, parameters, results } =
+view model@{ error, isComputing, code, parameters, results, graph } =
   H.div [ H.class_ "row row-top space-between" ]
     [ H.div [ H.class_ "col col-17" ]
         [ H.div [ H.class_ "row" ]
-            [ H.elem "sl-button" [ P.disabled isComputing, E.onClick \_ -> SelectAllParams ] [ H.text "Select All" ]
-            , H.elem "sl-button" [ P.disabled isComputing, E.onClick \_ -> UnselectAllParams ] [ H.text "Unselect All" ]
-            , H.elem "sl-button" [ P.disabled isComputing, E.onClick \_ -> Compute ] [ H.text "Compute" ]
-            -- ,   H.bButton [P.disabled $ not computing, E.onClick UnselectAll] [H.text "Compute"]
+            [ H.elem "sl-button-group" []
+                [ H.elem "sl-button"
+                    [ P.disabled isComputing
+                    , E.onClick \_ -> SelectAllParams
+                    ]
+                    [ H.text "Select All" ]
+                , H.elem "sl-button"
+                    [ P.disabled isComputing
+                    , E.onClick \_ -> UnselectAllParams
+                    ]
+                    [ H.text "Unselect All" ]
+                , H.elem "sl-button"
+                    [ P.disabled $ isComputing || null (graph.layout)
+                    , E.onClick \_ -> Compute
+                    ]
+                    [ H.text "Compute" ]
+                -- ,   H.bButton [P.disabled $ not computing, E.onClick UnselectAll] [H.text "Compute"]
+                ]
             ]
         , paramInput
         , H.div [ H.class_ "row row-top space-around" ]
@@ -59,16 +73,14 @@ view model@{ error, isComputing, code, parameters, results } =
   --    outputParameter param result
   paramInput =
     H.div [ H.class_ "row row-top space-between" ]
-      $
-       -- row divStyle  1
-      1 .. 4
+      $ (1 .. 4)
       <#> \i ->
           H.div [ H.class_ "col col-6" ]
             $ parameters
             # filter (\p -> p.cat == i)
             # map \{ fullname, selected } ->
                 H.div []
-                  [ H.elem "sl-checkbox" [P.checked selected] [ H.text fullname ]
+                  [ H.elem "sl-checkbox" [ P.checked selected ] [ H.text fullname ]
                   ]
 
 outputParameter :: Parameter → Maybe Result → Html Msg
@@ -76,8 +88,7 @@ outputParameter { fullname } result = case result of
   Nothing -> H.span [] []
   Just { value, witness } ->
     H.div []
-      [ --if result == "computing" then --    H.span [] [H.text $ fullname <> " : Computing"]
-        if witness == NoWitness then
+      [ if witness == NoWitness then
           H.span [] [ H.text $ fullname <> " : " <> value ]
         else
           H.a [ P.href "#", E.onPointerOver \_ -> ShowWitness witness, E.onPointerOut \_ -> ShowWitness NoWitness ]

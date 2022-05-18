@@ -1,6 +1,7 @@
 module Main where
 
 import Prelude
+import Control.Monad.Reader (runReaderT)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Pha.App (app)
@@ -14,7 +15,7 @@ main = do
     { init: { state: init, action: Nothing }
     , update
     , view
-    , eval: identity
+    , eval: \m -> runReaderT m 10
     , subscriptions: []
     , selector: "#root"
     }

@@ -8,8 +8,9 @@ import Control.Monad.Reader.Trans (ReaderT, class MonadAsk, class MonadReader)
 import Control.Monad.Rec.Class (class MonadRec)
 -- import Effect.Random (randomInt, random)
 
-newtype MonadGP a = MonadGP (ReaderT Int Aff a)
+type MonadGP = ReaderT Int Aff
 
+{-
 derive newtype instance Functor MonadGP
 derive newtype instance Apply MonadGP
 derive newtype instance Applicative MonadGP
@@ -20,12 +21,13 @@ derive newtype instance MonadEffect MonadGP
 derive newtype instance MonadAff MonadGP
 derive newtype instance MonadAsk Int MonadGP
 derive newtype instance MonadReader Int MonadGP
+-}
 
 {-
-instance MonadGen MonadMam where
-    chooseInt a b = MonadMam $ liftEffect $ randomInt a b
-    chooseFloat a b = MonadMam $ liftEffect $ random <#> \n -> a + (b - a) * n
-    chooseBool = MonadMam $ liftEffect $ (_ == 0) <$> randomInt 0 1
+instance MonadGen MonadGP where
+    chooseInt a b = MonadGP $ liftEffect $ randomInt a b
+    chooseFloat a b = MonadGP $ liftEffect $ random <#> \n -> a + (b - a) * n
+    chooseBool = MonadGP $ liftEffect $ (_ == 0) <$> randomInt 0 1
     resize _ m = m
     sized f = f 0
 -}

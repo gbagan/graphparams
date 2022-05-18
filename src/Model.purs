@@ -10,6 +10,7 @@ import Web.PointerEvent.PointerEvent as PE
 import Web.Event.Event (stopPropagation)
 import GraphParams.Graph (Graph, Edge(..))
 import GraphParams.Graph as Graph
+import GraphParams.Monad (MonadGP)
 import Pha.Update (Update, get, modify_)
 import Util (pointerDecoder)
 import GraphParams.Data (codeExample)
@@ -111,7 +112,7 @@ parameters =
   ] <#> \{cat, hardness, name, fullname} -> { cat, hardness, name, fullname, selected: hardness <= 1}
 
 
-update :: Msg -> Update Model Aff Unit
+update :: Msg -> Update Model MonadGP Unit
 update (ShowWitness witness) = modify_ _{ witness = witness }
 
 update SelectAllParams = modify_ \model ->
@@ -179,6 +180,8 @@ update (DeleteEdge (Edge u v)) =
       model{graph = Graph.removeEdge u v model.graph}
     else
       model
+
+update ClearGraph = modify_ _ {graph = { layout: [], edges: [] }}
 
 update (SetEditMode mode) = modify_ _{editmode = mode}
 update _ = pure unit
