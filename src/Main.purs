@@ -15,7 +15,7 @@ main = do
     { init: { state: init, action: Nothing }
     , update
     , view
-    , eval: \m -> runReaderT m 10
+    , eval: flip runReaderT 10
     , subscriptions: []
     , selector: "#root"
     }
