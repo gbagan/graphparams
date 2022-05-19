@@ -6,6 +6,7 @@ import GraphParams.Model (Witness, EditMode)
 
 data Msg
   = ShowWitness Witness
+  | CheckParam String Boolean
   | SelectAllParams
   | UnselectAllParams
   | Compute

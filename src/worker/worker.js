@@ -38,12 +38,9 @@ const functions = {
 
 self.onmessage = msg => {
     const {graph, param} = msg.data;
-    console.log(graph, param)
     const fn = functions[param];
     const result = fn(graph);
     const result2 = (typeof result === 'boolean' || typeof result === 'number')
             ? { result, wtype: "nowitness", witness: [] } : result;
-    const result3 = result2.result === Infinity ? { result: -1, witness: result2.witness} : result2;
-    console.log({param, result: result3 });
-    self.postMessage ({ ...result3, result: '' + result3.result });
+    self.postMessage ({ ...result2, result: '' + result2.result });
 }

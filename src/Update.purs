@@ -2,7 +2,7 @@ module GraphParams.Update where
 
 import Prelude
 
-import Data.Array (elem, length)
+import Data.Array (elem, filter, length)
 import Data.Either (Either(..))
 import Data.Foldable (for_)
 import Data.Map as Map
@@ -16,7 +16,7 @@ import GraphParams.Graph as Graph
 import GraphParams.DecodeResult (decodeResult)
 import GraphParams.Parser (parseGraph)
 import GraphParams.Layout (computeLayout)
-import GraphParams.Model (Model, EditMode(..), Result)
+import GraphParams.Model (Model, EditMode(..))
 import GraphParams.Monad (MonadGP)
 import GraphParams.Msg (Msg(..))
 import Pha.Update (Update, get, modify_)
@@ -26,6 +26,10 @@ import Web.PointerEvent.PointerEvent as PE
 
 update ∷ Msg → Update Model MonadGP Unit
 update (ShowWitness witness) = modify_ _ { witness = witness }
+
+update (CheckParam name checked) =
+  modify_ \model →
+    model { parameters = model.parameters <#> \p → if p.name == name then p { selected = checked } else p }
 
 update SelectAllParams =
   modify_ \model →
@@ -47,14 +51,15 @@ update GenerateGraph =
           model { graph = { edges, layout }}
 
 update Compute = do
-  modify_ _{ results = Map.empty :: Map.Map String Result, error = Nothing }
+  modify_ _{ results = Map.empty :: _, error = Nothing, isComputing = true }
   {pull, push} <- lift ask
   {graph, parameters} <- get
-  for_ parameters \{name} → do
+  for_ (filter _.selected parameters) \{name} → do
     liftAff $ push {graph: Graph.toAdjGraph graph, param: name}
     res <- liftAff $ pull
     for_ (decodeResult res) \res' →
       modify_ \model → model{results = Map.insert name res' model.results}
+  modify_ _{ isComputing = false }
 
 update (AddVertex ev) = do
   pos ← liftEffect $ pointerDecoder ev
@@ -70,7 +75,7 @@ update (AddVertex ev) = do
 update (SelectVertex i ev) = do
   liftEffect $ stopPropagation $ PE.toEvent ev
   modify_ \model →
-    if model.editmode `elem` [ AddEMode, VertexMode ] then
+    if model.editmode `elem` [ AddEMode, MoveMode ] then
       model { selectedVertex = Just i }
     else
       model
@@ -78,7 +83,7 @@ update (SelectVertex i ev) = do
 update (GraphMove ev) = do
   pos ← liftEffect $ pointerDecoder ev
   modify_ \model → case pos, model.editmode, model.selectedVertex of
-    Just p, VertexMode, Just i → model { graph = Graph.moveVertex i p model.graph }
+    Just p, MoveMode, Just i → model { graph = Graph.moveVertex i p model.graph }
     Just p, AddEMode, _ → model { currentPosition = Just p }
     _, _, _ → model
 
@@ -91,13 +96,13 @@ update DropOrLeave =
 
 update (PointerUp i) = do
   modify_ \model → case model.editmode, model.selectedVertex of
-    VertexMode, _ → model { selectedVertex = Nothing, currentPosition = Nothing }
+    MoveMode, _ → model { selectedVertex = Nothing, currentPosition = Nothing }
     AddEMode, Just j → model { graph = Graph.addEdge i j model.graph, selectedVertex = Nothing }
     _, _ → model
 
 update (DeleteVertex i ev) = do
   st ← get
-  when (st.editmode == VertexMode)
+  when (st.editmode == MoveMode)
     (liftEffect $ stopPropagation $ PE.toEvent ev)
   modify_ \model →
     if model.editmode == DeleteMode then
@@ -114,8 +119,6 @@ update (DeleteEdge (Edge u v)) =
 
 update ClearGraph = modify_ _ { graph = { layout: [], edges: [] } }
 
-update (SetEditMode mode) = modify_ _ { editmode = mode }
+update (SetEditMode mode) = modify_ \model → model { editmode = mode, results = if model.editmode == MoveMode then model.results else Map.empty }
 
 update AdjustGraph = modify_ \model@{ graph } → model { graph = graph { layout = computeLayout (length $ graph.layout) graph.edges } }
-
-update _ = pure unit

@@ -38,7 +38,7 @@ const isChordal = graph => {
     return {
         result: false,
         wtype: "path",
-        witness: path.map(j => lbfs[j]).concat(witness[0]),
+        witness: [witness[0]].concat(path.map(j => lbfs[j])).concat(witness[0]),
     };
 };
 

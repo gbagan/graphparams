@@ -1,7 +1,8 @@
-import {addEdge, copy, graph, hasEdge} from './graph';
+import {addEdge, graph, hasEdge} from './graph';
 
 export const complement = g => {
-    g2 = copy(g);
+    const g2 = graph(g.length);
+
     for (let i = 0; i < g.length - 1; i++) {
         for (let j = i + 1; j < g.length; j++) {
             if (!hasEdge(g, i, j)) {
@@ -18,7 +19,6 @@ export const inducedGraph = (g, subset) => {
     for(let i = 0; i < subset.length; i++) {
         reverse[subset[i]] = i;
     }
-    console.log("g", g, "subset", subset, "reverse", reverse)
     const g2 = graph(subset.length);
     for(let i = 0; i < subset.length; i++) {
         for(u of g[subset[i]]) {

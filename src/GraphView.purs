@@ -1,7 +1,8 @@
 module GraphParams.GraphView where
 
 import Prelude
-import Data.Array ((..), any, length, replicate, updateAtIndices)
+
+import Data.Array ((..), any, elem, length, replicate, updateAtIndices)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
 import GraphParams.Graph as Graph
@@ -12,9 +13,6 @@ import Pha.Html as H
 import Pha.Html.Attributes as P
 import Pha.Html.Events as E
 import Util (map2)
-
-colors ∷ Array String
-colors = [ "blue", "red", "green", "cyan", "magenta", "orange", "gray", "black", "yellow" ]
 
 currentLine ∷ ∀ a. Position → Position → Html a
 currentLine p1 p2 =
@@ -27,7 +25,7 @@ currentLine p1 p2 =
     ]
 
 graphView ∷ Model → Html Msg
-graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, selectedVertex } =
+graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, selectedVertex, isComputing } =
   let
     vertexColor = case witness of
       SetWitness set →
@@ -39,6 +37,11 @@ graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, 
           <#> \v →
               if any (Graph.incident v) wedges then 1 else 0
       _ → replicate (length layout) 0
+
+    selectedEdges = case witness of
+      EdgeWitness wedges -> wedges
+      _ -> []
+
   in
     H.div []
       [ H.div [ H.class_ "graphparams-graphview-board" ]
@@ -60,6 +63,7 @@ graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, 
                           , P.x2 $ 100.0 * x2
                           , P.y2 $ 100.0 * y2
                           , H.class_ "graphparams-graphview-edge"
+                          , H.class' "color1" $ edge `elem` selectedEdges
                           , H.class' "deletemode" $ editmode == DeleteMode
                           , E.onClick \_ → DeleteEdge edge
                           ]
@@ -77,6 +81,13 @@ graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, 
                         , E.onPointerDown \ev → SelectVertex i ev
                         , E.onPointerUp \_ → PointerUp i
                         ]
+              , H.g []
+                  case witness of
+                    OrderWitness order ->
+                      map2 layout order \_ {x, y} o ->
+                        H.text_ (show $ o + 1) [H.class_ "graphview-text", P.x (100.0 * x), P.y (100.0 * y)]
+                    _ -> []
+
               , H.when (editmode == AddEMode) \_ →
                   H.fromMaybe case selectedVertex of
                     Just v → currentLine <$> currentPosition <*> Graph.getCoords graph v
@@ -84,10 +95,11 @@ graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, 
               ]
           ]
       , H.elem "sl-button-group" []
-          [ H.elem "sl-button" [ P.selected $ editmode == VertexMode, E.onClick \_ → SetEditMode VertexMode ] [ H.text "Vertex" ]
-              , H.elem "sl-button" [ P.selected $ editmode == AddEMode, E.onClick \_ → SetEditMode AddEMode ] [ H.text "Add edge" ]
-              , H.elem "sl-button" [ P.selected $ editmode == DeleteMode, E.onClick \_ → SetEditMode DeleteMode ] [ H.text "Remove" ]
-              , H.elem "sl-button" [ E.onClick \_ → ClearGraph ] [ H.text "Clear" ]
-              , H.elem "sl-button" [ E.onClick \_ → AdjustGraph ] [ H.text "Adjust" ]
+          [ H.elem "sl-button" [ P.disabled isComputing, P.selected $ editmode == MoveMode, E.onClick \_ → SetEditMode MoveMode ] [ H.text "Move" ]
+          , H.elem "sl-button" [ P.disabled isComputing, P.selected $ editmode == VertexMode, E.onClick \_ → SetEditMode VertexMode ] [ H.text "Add vertex" ]
+          , H.elem "sl-button" [ P.disabled isComputing, P.selected $ editmode == AddEMode, E.onClick \_ → SetEditMode AddEMode ] [ H.text "Add edge" ]
+          , H.elem "sl-button" [ P.disabled isComputing, P.selected $ editmode == DeleteMode, E.onClick \_ → SetEditMode DeleteMode ] [ H.text "Remove" ]
+          , H.elem "sl-button" [ P.disabled isComputing, E.onClick \_ → ClearGraph ] [ H.text "Clear" ]
+          , H.elem "sl-button" [ P.disabled isComputing, E.onClick \_ → AdjustGraph ] [ H.text "Adjust" ]
           ]
       ]

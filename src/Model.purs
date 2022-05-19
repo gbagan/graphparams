@@ -7,7 +7,7 @@ import Data.Maybe (Maybe(..))
 import GraphParams.Graph (Graph, Edge)
 import GraphParams.Data (codeExample)
 
-data EditMode = VertexMode | AddEMode | DeleteMode
+data EditMode = MoveMode | VertexMode | AddEMode | DeleteMode
 derive instance Eq EditMode
 
 type Position = { x ∷ Number, y ∷ Number}
@@ -57,7 +57,8 @@ data Witness
   | ColorWitness (Array Int)
   | SetWitness (Array Int)
   | EdgeWitness (Array Edge)
-
+  | OrderWitness (Array Int)
+ 
 derive instance Eq Witness
 
 parameters ∷ Array Parameter

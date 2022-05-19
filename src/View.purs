@@ -1,7 +1,7 @@
 module GraphParams.View (view) where
 
 import Prelude
-import Data.Array ((..), filter, mapMaybe, null, zipWith)
+import Data.Array ((..), filter, null)
 import Data.Map as Map
 import Data.Maybe (Maybe(..))
 import Data.String (split, Pattern(..))
@@ -57,7 +57,12 @@ view model@{ error, isComputing, code, parameters, results, graph } =
                     , E.on "sl-change" \ev → Just <$> SetCode <$> slStringValue ev
                     ]
                     []
-                , H.elem "sl-button" [ E.onClick \_ → GenerateGraph ] [ H.text "Generate" ]
+                , H.elem "sl-button"
+                    [ E.onClick \_ → GenerateGraph
+                    , P.disabled isComputing
+                    ]
+                    [ H.text "Generate"
+                    ]
                 ]
             , H.elem "sl-card" []
                 [ H.div [ H.attr "slot" "header" ] [ H.text "Ouput" ]
@@ -87,8 +92,6 @@ view model@{ error, isComputing, code, parameters, results, graph } =
                   H.when selected \_ →
                     outputParameter parameter (Map.lookup name results)
 
-  --    {- filter (\p → p.result /= null) -} # map \(param /\ result) →
-  --    outputParameter param result
   paramInput =
     H.div [ H.class_ "row row-top space-between" ]
       $ (1 .. 4)
@@ -96,9 +99,11 @@ view model@{ error, isComputing, code, parameters, results, graph } =
           H.div [ H.class_ "col col-6" ]
             $ parameters
             # filter (\p → p.cat == i)
-            # map \{ fullname, selected } →
+            # map \{ name, fullname, selected } →
                 H.div []
-                  [ H.elem "sl-checkbox" [ P.checked selected ] [ H.text fullname ]
+                  [ H.elem "sl-checkbox" 
+                    [ P.checked selected, E.on "sl-change" \ev → Just <$> CheckParam name <$> slChecked ev ] 
+                    [ H.text fullname ]
                   ]
 
 outputParameter ∷ Parameter → Maybe Result → Html Msg

@@ -47,7 +47,7 @@ export const isHamiltonian = graph => {
     if (graph.length === 2)
         return { result: false, wtype: "nowitness", witness: [] }
     const res = hamiltonAux(graph, [0]);
-    return res ? { result: true, wtype: "path", witness: res } : { result: false, wtype: "nowitness", witness: [] };
+    return res ? { result: true, wtype: "path", witness: res.concat(res[0]) } : { result: false, wtype: "nowitness", witness: [] };
 }
 
 const hamiltonAux = (graph, path) => {
@@ -165,7 +165,7 @@ export const girth = graph => {
     for (const [u, v] of edges(graph)) {
         const res = alternativePath(graph, u, v);
         if (res.result !== Infinity && res.result + 1 < bestRes.result) {
-            bestRes = { result: res.result + 1, witness: res.witness };
+            bestRes = { result: res.result + 1,  wtype: "path", witness: res.witness.concat(res.witness[0]) };
         }
     }
     return bestRes;

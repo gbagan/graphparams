@@ -142,7 +142,7 @@
 
   // src/worker/lib/graph/operators.js
   var complement = (g) => {
-    g2 = copy(g);
+    const g2 = graph(g.length);
     for (let i = 0; i < g.length - 1; i++) {
       for (let j = i + 1; j < g.length; j++) {
         if (!hasEdge(g, i, j)) {
@@ -158,16 +158,15 @@
     for (let i = 0; i < subset.length; i++) {
       reverse[subset[i]] = i;
     }
-    console.log("g", g, "subset", subset, "reverse", reverse);
-    const g22 = graph(subset.length);
+    const g2 = graph(subset.length);
     for (let i = 0; i < subset.length; i++) {
       for (u of g[subset[i]]) {
         if (reverse[u] !== -1) {
-          addEdge(g22, i, reverse[u]);
+          addEdge(g2, i, reverse[u]);
         }
       }
     }
-    return g22;
+    return g2;
   };
 
   // src/worker/lib/graph/basic.js
@@ -211,7 +210,7 @@
     if (graph2.length === 2)
       return { result: false, wtype: "nowitness", witness: [] };
     const res = hamiltonAux(graph2, [0]);
-    return res ? { result: true, wtype: "path", witness: res } : { result: false, wtype: "nowitness", witness: [] };
+    return res ? { result: true, wtype: "path", witness: res.concat(res[0]) } : { result: false, wtype: "nowitness", witness: [] };
   };
   var hamiltonAux = (graph2, path) => {
     const last = path[path.length - 1];
@@ -319,7 +318,7 @@
     for (const [u2, v] of edges(graph2)) {
       const res = alternativePath(graph2, u2, v);
       if (res.result !== Infinity && res.result + 1 < bestRes.result) {
-        bestRes = { result: res.result + 1, witness: res.witness };
+        bestRes = { result: res.result + 1, wtype: "path", witness: res.witness.concat(res.witness[0]) };
       }
     }
     return bestRes;
@@ -474,12 +473,12 @@
       return { result: true, wtype: "order", witness: lbfs };
     }
     const i = lbfs.indexOf(witness[0]);
-    const g22 = inducedGraph(graph2, lbfs.slice(0, i));
-    const path = alternativePath(g22, lbfs.indexOf(witness[1]), lbfs.indexOf(witness[2])).witness;
+    const g2 = inducedGraph(graph2, lbfs.slice(0, i));
+    const path = alternativePath(g2, lbfs.indexOf(witness[1]), lbfs.indexOf(witness[2])).witness;
     return {
       result: false,
       wtype: "path",
-      witness: path.map((j) => lbfs[j]).concat(witness[0])
+      witness: [witness[0]].concat(path.map((j) => lbfs[j])).concat(witness[0])
     };
   };
   var chordal_default = isChordal;
@@ -713,25 +712,25 @@
     return matching;
   };
   var contract = (graph2, set) => {
-    const g22 = copy(graph2);
+    const g2 = copy(graph2);
     const v = set[0];
     const rset = set.slice(1, set.length);
     for (const u2 of rset) {
-      g22[u2].length = 0;
+      g2[u2].length = 0;
     }
     for (let u2 = 0; u2 < graph2.length; u2++) {
       if (rset.includes(u2)) {
         continue;
       }
-      const adj = g22[u2];
-      const n = g22[u2].length;
+      const adj = g2[u2];
+      const n = g2[u2].length;
       for (let i = 0; i < n; i++) {
         if (rset.includes(adj[i])) {
           adj[i] = v;
         }
       }
     }
-    return g22;
+    return g2;
   };
   var findAugmentingPath = (graph2, matching) => {
     const parent = new Array(graph2.length);
@@ -787,9 +786,9 @@
           if (root[v] !== root[w]) {
             return path;
           } else {
-            const g22 = contract(graph2, path);
+            const g2 = contract(graph2, path);
             const m2 = matching.filter(([x]) => !path.includes(x));
-            const path2 = findAugmentingPath(g22, m2);
+            const path2 = findAugmentingPath(g2, m2);
             if (!path2) {
               return null;
             }
@@ -817,7 +816,7 @@
       }
       matching = matching.filter(([x, y]) => !excludeSet.has(edgeId(graph2, x, y)));
     }
-    return { result: matching.length, witness: matching };
+    return { result: matching.length, wtype: "edges", witness: matching.flat() };
   };
   var matching_default = maximumMatching;
 
@@ -910,12 +909,9 @@
   };
   self.onmessage = (msg) => {
     const { graph: graph2, param } = msg.data;
-    console.log(graph2, param);
     const fn = functions[param];
     const result = fn(graph2);
     const result2 = typeof result === "boolean" || typeof result === "number" ? { result, wtype: "nowitness", witness: [] } : result;
-    const result3 = result2.result === Infinity ? { result: -1, witness: result2.witness } : result2;
-    console.log({ param, result: result3 });
-    self.postMessage({ ...result3, result: "" + result3.result });
+    self.postMessage({ ...result2, result: "" + result2.result });
   };
 })();

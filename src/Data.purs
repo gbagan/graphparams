@@ -1,12 +1,15 @@
 module GraphParams.Data where
 
 codeExample ∷ String
+codeExample = "petersen"
+{-
 codeExample = """graph(9)
 .addClique(0, 1, 2)
 .addPath(2, 3, 4)
 .addCycle(4, 5, 6, 7)
 .addEdge(3, 8)
 """
+-}
 
 helpText ∷ String
 helpText = """petersen     // petersen graph
