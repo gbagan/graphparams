@@ -1,19 +1,18 @@
-import {minBy, countBy, max, range, update, times} from '../fp';
+import {minBy, countBy, maximum, range, update, times} from '../fp';
 import {encode} from '../binary';
 
 const chromaticNumberAux = predicate => graph => {
     let i = 1;
     const precol = new Array(graph.length);
     precol.fill(-1);
-    times(() => -1, graph.length);
     const uncoloredList = range(0, graph.length);
     const binNbors = graph.map(encode);
     while (true) {
         const usedColor = new Array(i)
         usedColor.fill(false);
         const res = chromaticAux(graph, binNbors, precol, uncoloredList, i, usedColor, predicate);
-        if (res.result) {
-            return { result: i, wtype: "coloring", witness: res.witness };
+        if (res) {
+            return { result: i, wtype: "color", witness: res };
         }
         i++;
     }
@@ -21,35 +20,38 @@ const chromaticNumberAux = predicate => graph => {
 
 const chromaticAux = (graph, binNbors, precoloring, uncolored, maxcolor, usedColor, predicate) => {
     if (uncolored.length === 0)
-        return predicate(graph, binNbors, precoloring) ? { result: true, witness: precoloring } : { result: false, witness: null };
-    // todo
-    const v = minBy(graph[w], w => countBy(graph[w], uncolored, u => precoloring[u] !== -1, graph[w]));
+        return predicate(graph, binNbors, precoloring) 
+                    ? precoloring
+                    : null
+    const v = minBy(uncolored, w => countBy(graph[w], u => precoloring[u] !== -1));
     const uncol2 = uncolored.filter(u => u !== v);
     let newColor = true;
     for (let i = 0; i < maxcolor; i++) {
-        if (graph[v].any(u => precoloring[u] === i) || !usedColor[i] && !newColor) {
+        if (graph[v].some(u => precoloring[u] === i) || !usedColor[i] && !newColor) {
             continue;
         }
         let usedColor2;
         if (!usedColor[i]) {
             newColor = false;
-            usedColor2 = update(i, true, usedColor);
+            usedColor2 = usedColor.slice();
+            usedColor2[i] = true;
         } else {
             usedColor2 = usedColor;
         }
 
-        const precol2 = update(v, i, precoloring);
+        const precol2 = precoloring.slice();
+        precol2[v] = i;
 
         const res = chromaticAux(graph, binNbors, precol2, uncol2, maxcolor, usedColor2, predicate);
-        if (res.result) {
+        if (res) {
             return res;
         }
     }
-    return { result: false, witness: null };
+    return null;
 };
 
 const coloringClasses = coloring => {
-    const n = max(coloring) + 1;
+    const n = maximum(coloring) + 1;
     const classes = times(() => 0, n);
 
     for (let i = 0; i < coloring.length; i++) {

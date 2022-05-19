@@ -4,8 +4,8 @@ import { insert } from '../sorted';
 
 const Q = (g, set, v) => {
     const visited = new Array(g.length);
-    insert.fill(false);
     const inset = new Array(g.length);
+    visited.fill(false);
     inset.fill(false);
     for (const x of set)
         inset[x] = true;
@@ -38,7 +38,7 @@ const treewidth = g => {
     for (let i = 1; i <= n; i++) {
         for (const [setid, r] of tw[i - 1].entries()) {
             const set = decode(setid);
-            const inset = new array(n);
+            const inset = new Array(n);
             inset.fill(false);
             for (const u of set) {
                 inset[u] = true;

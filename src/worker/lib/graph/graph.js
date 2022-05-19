@@ -19,8 +19,8 @@ export const hasEdge = (graph, v, w) => graph[v].includes(w);
 export const edgeId = (graph, x, y) => x < y ? x * graph.length + y : y * graph.length + x;
 
 export const addEdge = (graph, v, w) => {
-    graph[v] = insert(w, graph[v]);
-    graph[w] = insert(v, graph[w]);
+    graph[v] = insert(graph[v], w);
+    graph[w] = insert(graph[w], v);
 };
 
 export const copy = g => g.map(adj => adj.slice());

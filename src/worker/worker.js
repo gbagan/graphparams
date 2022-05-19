@@ -32,17 +32,18 @@ const functions = {
     cdom: domination.connectedDominatingSet,
     idcode: idcode.identifyingCode,
     locdom: idcode.locatingDominatingSet,
-    edn: eds.eds,
-    medn: eds.meds
+    // edn: eds.eds,
+    // medn: eds.meds
 };
 
 self.onmessage = msg => {
-    action = msg.data;
-    const graph = action.graph;
-    const fn = functions.get(action.param.name);
+    const {graph, param} = msg.data;
+    console.log(graph, param)
+    const fn = functions[param];
     const result = fn(graph);
     const result2 = (typeof result === 'boolean' || typeof result === 'number')
-            ? { result, witnesstype: "nowitness", witness: [] } : result;
+            ? { result, wtype: "nowitness", witness: [] } : result;
     const result3 = result2.result === Infinity ? { result: -1, witness: result2.witness} : result2;
-    self.postMessage ({ ...action.param, result: result3 });
+    console.log({param, result: result3 });
+    self.postMessage ({ ...result3, result: '' + result3.result });
 }

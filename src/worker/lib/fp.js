@@ -1,6 +1,4 @@
 export const countBy = (list, fn) => {
-    if (list === undefined)
-        return l2 => countBy(fn, l2);
     let count = 0;
     let n = list.length;
     for (let i = 0; i < n; i++) {
@@ -10,7 +8,7 @@ export const countBy = (list, fn) => {
     return count;
 };
 
-export const max = list => Math.max(...list);
+export const maximum = list => Math.max(...list);
 
 export const maxBy = (list, fn) => {
     let max = undefined;
@@ -32,9 +30,9 @@ export const mathMod = (n, m) => n >= 0 ? n % m : (n - n * m) % m;
 export const merge = (obj1, obj2) =>
     obj2 === undefined ? obj3 => merge(obj1, obj3) : Object.assign({}, obj1, obj2);
 
-export const min = list => Math.min(...list);
+export const minimum = list => Math.min(...list);
 
-export const minBy = (fn, list) => {
+export const minBy = (list, fn) => {
     if (list === undefined)
         return l2 => minBy(fn, l2);
     let min = undefined;

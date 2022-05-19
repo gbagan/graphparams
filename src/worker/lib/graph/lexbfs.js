@@ -92,4 +92,4 @@ const refine = (partitions, graph, vertex) => {
     }
 };
 
-export default vertex => graph => [...execute(makePartitions(graph.length), graph, vertex)];
+export default (graph, vertex) => [...execute(makePartitions(graph.length), graph, vertex)];

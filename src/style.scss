@@ -106,6 +106,14 @@ a {
         fill: orange;
     }
 
+    &.color4 {
+        fill: cyan;
+    }
+
+    &.color5 {
+        fill: magenta;
+    }
+
     &.deletemode:hover {
         fill: gray;
     }
@@ -121,14 +129,6 @@ a {
 
     &.color1 {
         stroke: red;
-    }
-
-    &.color2 {
-        stroke: green;
-    }
-
-    &.color3 {
-        stroke: orange;
     }
 
     &.deletemode:hover {

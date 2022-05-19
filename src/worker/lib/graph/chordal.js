@@ -15,7 +15,7 @@ const hasClique = (graph, set) => {
 };
 
 const isChordal = graph => {
-    const lbfs = [...lexbfs(graph, 0)];
+    const lbfs = lexbfs(graph, 0);
     const visited = new Set();
     let chordal = true;
     let witness = [];
@@ -30,13 +30,14 @@ const isChordal = graph => {
         visited.add(v);
     }
     if (chordal) {
-        return { result: true, witness: lbfs };
+        return { result: true, wtype: "order", witness: lbfs };
     }
     const i = lbfs.indexOf(witness[0]);
-    const g2 = inducedGraph(lbfs.slice(0, i), graph);
+    const g2 = inducedGraph(graph, lbfs.slice(0, i));
     const path = alternativePath(g2, lbfs.indexOf(witness[1]), lbfs.indexOf(witness[2])).witness;
     return {
         result: false,
+        wtype: "path",
         witness: path.map(j => lbfs[j]).concat(witness[0]),
     };
 };

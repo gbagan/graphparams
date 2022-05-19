@@ -15,13 +15,13 @@ export const complement = g => {
 export const inducedGraph = (g, subset) => {
     const reverse = new Array(g.length);
     reverse.fill(-1);
-    //// todo
     for(let i = 0; i < subset.length; i++) {
         reverse[subset[i]] = i;
     }
+    console.log("g", g, "subset", subset, "reverse", reverse)
     const g2 = graph(subset.length);
     for(let i = 0; i < subset.length; i++) {
-        for(u of reverse[subset[i]]) {
+        for(u of g[subset[i]]) {
             if (reverse[u] !== -1) {
                 addEdge(g2, i, reverse[u]);
             }

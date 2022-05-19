@@ -13,7 +13,7 @@ import Pha.Html.Attributes as P
 import Pha.Html.Events as E
 import Util (map2)
 
-colors :: Array String
+colors ∷ Array String
 colors = [ "blue", "red", "green", "cyan", "magenta", "orange", "gray", "black", "yellow" ]
 
 currentLine ∷ ∀ a. Position → Position → Html a
@@ -26,19 +26,19 @@ currentLine p1 p2 =
     , H.class_ "graphparams-graphview-edge pointer-events-none"
     ]
 
-graphView :: Model → Html Msg
+graphView ∷ Model → Html Msg
 graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, selectedVertex } =
   let
     vertexColor = case witness of
-      SetWitness set ->
+      SetWitness set →
         replicate (length layout) 0
           # updateAtIndices ((_ /\ 1) <$> set)
-      ColorWitness col -> col
-      EdgeWitness wedges ->
+      ColorWitness col → col
+      EdgeWitness wedges →
         0 .. (length layout - 1)
-          <#> \v ->
+          <#> \v →
               if any (Graph.incident v) wedges then 1 else 0
-      _ -> replicate (length layout) 0
+      _ → replicate (length layout) 0
   in
     H.div []
       [ H.div [ H.class_ "graphparams-graphview-board" ]
@@ -84,9 +84,9 @@ graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, 
               ]
           ]
       , H.elem "sl-button-group" []
-          [ H.elem "sl-button" [ P.selected $ editmode == VertexMode, E.onClick \_ -> SetEditMode VertexMode ] [ H.text "Vertex" ]
-              , H.elem "sl-button" [ P.selected $ editmode == AddEMode, E.onClick \_ -> SetEditMode AddEMode ] [ H.text "Add edge" ]
-              , H.elem "sl-button" [ P.selected $ editmode == DeleteMode, E.onClick \_ -> SetEditMode DeleteMode ] [ H.text "Remove" ]
+          [ H.elem "sl-button" [ P.selected $ editmode == VertexMode, E.onClick \_ → SetEditMode VertexMode ] [ H.text "Vertex" ]
+              , H.elem "sl-button" [ P.selected $ editmode == AddEMode, E.onClick \_ → SetEditMode AddEMode ] [ H.text "Add edge" ]
+              , H.elem "sl-button" [ P.selected $ editmode == DeleteMode, E.onClick \_ → SetEditMode DeleteMode ] [ H.text "Remove" ]
               , H.elem "sl-button" [ E.onClick \_ → ClearGraph ] [ H.text "Clear" ]
               , H.elem "sl-button" [ E.onClick \_ → AdjustGraph ] [ H.text "Adjust" ]
           ]

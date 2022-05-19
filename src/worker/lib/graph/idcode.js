@@ -17,13 +17,13 @@ const isIdentifyingCode = (g, binNbors, bset) => {
 export const identifyingCode = g => {
     const binNbors = times(j => encode(g[j].concat(j)), g.length);
     if (!allDifferent(binNbors.sort())) {
-        return { result: Infinity, witness: null };
+        return { result: -1, wtype: "nowitness", witness: [] };
     }
     let i = 1;
     while (true) {
         for (const bset of subsets(g.length, i)) {
             if (isIdentifyingCode(g, binNbors, bset)) {
-                return { result: i, witness: decode(bset) };
+                return { result: i, wtype: "set", witness: decode(bset) };
             }
         }
         i++;
@@ -42,7 +42,7 @@ const isLocatingDominatingSet = (g, binNbors, bset) => {
         }
     }
     return allDifferent(nborInSet.sort());
-};
+}
 
 export const locatingDominatingSet = g => {
     const binNbors = [];
@@ -54,9 +54,9 @@ export const locatingDominatingSet = g => {
     while (true) {
         for (const bset of subsets(g.length, i)) {
             if (isLocatingDominatingSet(g, binNbors, bset)) {
-                return { result: i, witness: decode(bset) };
+                return { result: i, wtype: "set", witness: decode(bset) };
             }
         }
         i++;
     }
-};
+}

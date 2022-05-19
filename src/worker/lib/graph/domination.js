@@ -6,12 +6,12 @@ export const dominatingSet = graph => dominationAux(graph, [], range(0, graph.le
 
 const dominationAux = (graph, preset, undom) => {
     if (undom.length === 0) {
-        return { result: preset.length, witness: preset };
+        return { result: preset.length, wtype: "set", witness: preset };
     }
     const v = undom[0];
     const nbor = graph[v].concat(v);
 
-    let bestRes = { result: Infinity, witness: null };
+    let bestRes = { result: Infinity };
     for (const u of nbor) {
         if (preset.includes(u))
             continue;
@@ -26,7 +26,7 @@ const dominationAux = (graph, preset, undom) => {
 
 export const independentDominatingSet = graph => {
     // todo
-    const nbors = encode(graph, map);
+    const nbors = graph.map(encode);
 
     let isets = [[0, 0]];
     let i = 0;
@@ -40,7 +40,7 @@ export const independentDominatingSet = graph => {
                     const iset2 = iset | (1 << ii);
                     const dom2 = dom | (1 << ii) | nbors[ii];
                     if (dom2 + 1 === (1 << graph.length)) {
-                        return { result: i + 1, witness: decode(iset2) };
+                        return { result: i + 1, wtype: "set", witness: decode(iset2) };
                     }
                     isets2.push([iset2, dom2]);
                 }
@@ -55,12 +55,12 @@ export const totalDominatingSet = graph => totalDominationAux(graph, [], range(0
 
 const totalDominationAux = (graph, preset, undom) => {
     if (undom.length === 0) {
-        return { result: preset.length, witness: preset };
+        return { result: preset.length, wtype: "set", witness: preset };
     }
     const v = undom[0];
     const nbor = graph[v].concat(v);
 
-    let bestRes = { result: Infinity, witness: null };
+    let bestRes = { result: Infinity };
     for (const u of nbor) {
         if (preset.includes(u)) {
             continue;

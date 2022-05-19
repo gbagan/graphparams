@@ -1,37 +1,38 @@
 module GraphParams.Model where
 
 import Prelude
+import Data.Map (Map)
+import Data.Map as Map
 import Data.Maybe (Maybe(..))
-import GraphParams.Graph (Graph, Edge(..))
-import GraphParams.Graph as Graph
+import GraphParams.Graph (Graph, Edge)
 import GraphParams.Data (codeExample)
 
 data EditMode = VertexMode | AddEMode | DeleteMode
 derive instance Eq EditMode
 
-type Position = { x :: Number, y :: Number}
+type Position = { x ∷ Number, y ∷ Number}
 
 type Model =
-  { witness :: Witness
-  , isComputing :: Boolean
-  , code :: String
-  , error :: Maybe String
-  , parameters :: Array Parameter
-  , results :: Array (Maybe Result)
+  { witness ∷ Witness
+  , isComputing ∷ Boolean
+  , code ∷ String
+  , error ∷ Maybe String
+  , parameters ∷ Array Parameter
+  , results ∷ Map String Result
   , graph ∷ Graph
   , editmode ∷ EditMode
   , selectedVertex ∷ Maybe Int
   , currentPosition ∷ Maybe Position
   }
 
-init :: Model
+init ∷ Model
 init =
   { witness: NoWitness
   , isComputing: false
   , code: codeExample
   , error: Nothing
   , parameters
-  , results: const (Just {value: "1", witness: SetWitness [1]}) <$> parameters
+  , results: Map.empty
   , graph: {layout: [], edges: []}
   , editmode: VertexMode
   , selectedVertex: Nothing
@@ -39,16 +40,16 @@ init =
   }
 
 type Parameter =
-  { cat :: Int
-  , name :: String
-  , hardness :: Int
-  , fullname :: String
-  , selected :: Boolean
+  { cat ∷ Int
+  , name ∷ String
+  , hardness ∷ Int
+  , fullname ∷ String
+  , selected ∷ Boolean
   }
 
 type Result =
-  { value :: String
-  , witness :: Witness
+  { value ∷ String
+  , witness ∷ Witness
   }
 
 data Witness 
@@ -59,7 +60,7 @@ data Witness
 
 derive instance Eq Witness
 
-parameters :: Array Parameter
+parameters ∷ Array Parameter
 parameters = 
   [ { cat: 1, hardness: 0, name: "order", fullname: "order" }
   , { cat: 1, hardness: 0, name: "nbedges", fullname: "number of edges" }
@@ -85,5 +86,5 @@ parameters =
   , { cat: 4, hardness: 2, name: "cdom", fullname: "connected dominating set" }
   , { cat: 4, hardness: 1, name: "idcode", fullname: "identifying code" }
   , { cat: 4, hardness: 1, name: "locdom", fullname: "locating dominating set" }
-  ] <#> \{cat, hardness, name, fullname} -> { cat, hardness, name, fullname, selected: hardness <= 1}
+  ] <#> \{cat, hardness, name, fullname} → { cat, hardness, name, fullname, selected: hardness <= 1}
 

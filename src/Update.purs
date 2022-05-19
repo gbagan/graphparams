@@ -4,13 +4,19 @@ import Prelude
 
 import Data.Array (elem, length)
 import Data.Either (Either(..))
+import Data.Foldable (for_)
+import Data.Map as Map
 import Data.Maybe (Maybe(..))
 import Effect.Class (liftEffect)
+import Effect.Aff.Class (liftAff)
+import Control.Monad.Reader.Class (ask)
+import Control.Monad.Trans.Class (lift)
 import GraphParams.Graph (Edge(..))
 import GraphParams.Graph as Graph
+import GraphParams.DecodeResult (decodeResult)
 import GraphParams.Parser (parseGraph)
 import GraphParams.Layout (computeLayout)
-import GraphParams.Model (Model, EditMode(..))
+import GraphParams.Model (Model, EditMode(..), Result)
 import GraphParams.Monad (MonadGP)
 import GraphParams.Msg (Msg(..))
 import Pha.Update (Update, get, modify_)
@@ -18,27 +24,37 @@ import Util (pointerDecoder)
 import Web.Event.Event (stopPropagation)
 import Web.PointerEvent.PointerEvent as PE
 
-update :: Msg -> Update Model MonadGP Unit
+update ∷ Msg → Update Model MonadGP Unit
 update (ShowWitness witness) = modify_ _ { witness = witness }
 
 update SelectAllParams =
-  modify_ \model ->
+  modify_ \model →
     model { parameters = model.parameters <#> (_ { selected = true }) }
 
 update UnselectAllParams =
-  modify_ \model ->
+  modify_ \model →
     model { parameters = model.parameters <#> (_ { selected = false }) }
 
 update (SetCode code) = modify_ _ { code = code }
 
 update GenerateGraph =
-  modify_ \model ->
+  modify_ \model →
     case parseGraph model.code of
-      Left error -> model { error = Just error }
-      Right {n, edges} ->
+      Left error → model { error = Just error }
+      Right {n, edges} →
          let layout = computeLayout n edges
          in
           model { graph = { edges, layout }}
+
+update Compute = do
+  modify_ _{ results = Map.empty :: Map.Map String Result, error = Nothing }
+  {pull, push} <- lift ask
+  {graph, parameters} <- get
+  for_ parameters \{name} → do
+    liftAff $ push {graph: Graph.toAdjGraph graph, param: name}
+    res <- liftAff $ pull
+    for_ (decodeResult res) \res' →
+      modify_ \model → model{results = Map.insert name res' model.results}
 
 update (AddVertex ev) = do
   pos ← liftEffect $ pointerDecoder ev
@@ -100,6 +116,6 @@ update ClearGraph = modify_ _ { graph = { layout: [], edges: [] } }
 
 update (SetEditMode mode) = modify_ _ { editmode = mode }
 
-update AdjustGraph = modify_ \model@{ graph } -> model { graph = graph { layout = computeLayout (length $ graph.layout) graph.edges } }
+update AdjustGraph = modify_ \model@{ graph } → model { graph = graph { layout = computeLayout (length $ graph.layout) graph.edges } }
 
 update _ = pure unit
