@@ -11,12 +11,12 @@ const isIdentifyingCode = (g, binNbors, bset) => {
         }
         nborInSet.push(s);
     }
-    return allDifferent(nborInSet.sort());
+    return allDifferent(nborInSet.sort((a, b) => a - b));
 };
 
 export const identifyingCode = g => {
     const binNbors = times(j => encode(g[j].concat(j)), g.length);
-    if (!allDifferent(binNbors.sort())) {
+    if (!allDifferent(binNbors.sort((a, b) => a - b))) {
         return { result: -1, wtype: "nowitness", witness: [] };
     }
     let i = 1;
@@ -41,7 +41,7 @@ const isLocatingDominatingSet = (g, binNbors, bset) => {
             nborInSet.push(s);
         }
     }
-    return allDifferent(nborInSet.sort());
+    return allDifferent(nborInSet.sort((a, b) => a - b));
 }
 
 export const locatingDominatingSet = g => {
