@@ -1,0 +1,142 @@
+body {
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-variant: tabular-nums;
+    line-height: 1.5715;
+    font-feature-settings: 'tnum';
+}
+
+a:hover {
+    color: #40a9ff;
+}
+
+a {
+    color: #1890ff;
+    cursor: pointer;
+}
+
+
+.col-6 {
+    display: block;
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.col-17 {
+    display: block;
+    flex: 0 0 70.83333333%;
+    max-width: 70.83333333%;
+}
+
+.col {
+    position: relative;
+    max-width: 100%;
+    min-height: 1px;
+}
+
+.row {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.row-top {
+    align-items: flex-start;
+}
+
+.space-around {
+    justify-content: space-around;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.pointer-events-none {
+    pointer-events: none;
+}
+
+.graphparams-code {
+    height: 20em;
+    width: 15em;
+}
+
+.graphparams-help {
+    height: 44em;
+    width: 26em;
+    overflow: auto;
+}
+
+.graphparams-output {
+    height: 30em;
+    width: 16em;
+    overflow: auto;
+}
+
+.graphoutput {
+    height: 50vmin;
+    width: 50vmin;
+}
+
+.graphparams-graphview-board {
+    width: 500px;
+    height: 500px;
+}
+
+.display-block {
+    display: block;
+}
+
+.graphparams-graphview-vertex {
+    fill: blue;
+
+    &.color0 {
+        fill: blue;
+    }
+
+    &.color1 {
+        fill: red;
+    }
+
+    &.color2 {
+        fill: green;
+    }
+
+    &.color3 {
+        fill: orange;
+    }
+
+    &.color4 {
+        fill: cyan;
+    }
+
+    &.color5 {
+        fill: magenta;
+    }
+
+    &.deletemode:hover {
+        fill: gray;
+    }
+}
+
+.graphparams-graphview-edge {
+    stroke: blue;
+    stroke-width: 1;
+
+    &.color0 {
+        stroke: blue;
+    }
+
+    &.color1 {
+        stroke: red;
+    }
+
+    &.deletemode:hover {
+        stroke: gray;
+    }
+}
+
+.graphview-text {
+    font: bold 7px sans-serif;
+    fill: red;
+}

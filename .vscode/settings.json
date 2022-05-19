@@ -1,0 +1,4 @@
+{
+    "purescript.addNpmPath": true,
+    "purescript.addSpagoSources": true
+}

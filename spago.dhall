@@ -1,0 +1,32 @@
+{ name = "graphparams"
+, dependencies =
+  [ "aff"
+  , "arrays"
+  , "avar"
+  , "bifunctors"
+  , "control"
+  , "effect"
+  , "either"
+  , "foldable-traversable"
+  , "foreign"
+  , "integers"
+  , "lists"
+  , "maybe"
+  , "numbers"
+  , "ordered-collections"
+  , "pha"
+  , "prelude"
+  , "string-parsers"
+  , "strings"
+  , "tailrec"
+  , "transformers"
+  , "tuples"
+  , "web-dom"
+  , "web-events"
+  , "web-pointerevents"
+  , "web-uievents"
+  , "web-workers"
+  ]
+, packages = ./packages.dhall
+, sources = [ "src/**/*.purs" ]
+}
