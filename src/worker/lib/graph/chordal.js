@@ -9,41 +9,41 @@ const hasClique = (graph, set) => {
     for (let i = 0; i < set.length - 1; i++) {
         for (let j = i + 1; j < set.length; j++) {
             if (!hasEdge(graph, set[i], set[j])) {
-                return {result: false, witness: [set[i], set[j]]}
+                return {result: false, certificate: [set[i], set[j]]}
             }
         }
     }
-    return { result: true, witness: null }
+    return { result: true, certificate: null }
 }
 
 const isChordal = graph => {
     const lbfs = lexbfs(graph, 0)
     const visited = new Set()
     let chordal = true
-    let witness = []
+    let certificate = []
     for (const v of lbfs) {
         const nbor = graph[v].filter(u => visited.has(u))
         const res = hasClique(graph, nbor)
         if (!res.result) {
             chordal = false
-            witness = [v, res.witness[0], res.witness[1]]
+            certificate = [v, res.certificate[0], res.certificate[1]]
             break
         }
         visited.add(v)
     }
     if (chordal) {
-        return { result: true, wtype: "order", witness: lbfs };
+        return { result: true, ctype: "order", certificate: lbfs };
     }
-    const ss = difference(range(0, graph.length), graph[witness[0]])
-                .filter(i => i != witness[0])
-                .concat([witness[1], witness[2]])
+    const ss = difference(range(0, graph.length), graph[certificate[0]])
+                .filter(i => i != certificate[0])
+                .concat([certificate[1], certificate[2]])
                 .sort((a, b) => a - b)
     const g2 = inducedGraph(graph, ss)
-    const path = alternativePath(g2, ss.indexOf(witness[1]), ss.indexOf(witness[2])).witness;
+    const path = alternativePath(g2, ss.indexOf(certificate[1]), ss.indexOf(certificate[2])).certificate;
     return {
         result: false,
-        wtype: "path",
-        witness: [witness[0]].concat(path.map(j => ss[j])).concat(witness[0]),
+        ctype: "path",
+        certificate: [certificate[0]].concat(path.map(j => ss[j])).concat(certificate[0]),
     }
 }
 

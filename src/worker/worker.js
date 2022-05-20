@@ -41,6 +41,6 @@ self.onmessage = msg => {
     const fn = functions[param];
     const result = fn(graph);
     const result2 = (typeof result === 'boolean' || typeof result === 'number')
-            ? { result, wtype: "nowitness", witness: [] } : result;
+            ? { result, ctype: "nocertificate", certificate: [] } : result;
     self.postMessage ({ ...result2, result: '' + result2.result });
 }

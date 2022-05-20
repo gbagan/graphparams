@@ -8,7 +8,7 @@ import Data.String (split, Pattern(..))
 import Effect (Effect)
 import GraphParams.Data (helpText)
 import GraphParams.GraphView (graphView)
-import GraphParams.Model (Model, Parameter, Result, Witness(..))
+import GraphParams.Model (Model, Parameter, Result, Certificate(..))
 import GraphParams.Msg (Msg(..))
 import Pha.Html (Html)
 import Pha.Html as H
@@ -101,20 +101,24 @@ view model@{ error, isComputing, code, parameters, results, graph } =
             # filter (\p → p.cat == i)
             # map \{ name, fullname, selected } →
                 H.div []
-                  [ H.elem "sl-checkbox" 
-                    [ P.checked selected, E.on "sl-change" \ev → Just <$> CheckParam name <$> slChecked ev ] 
-                    [ H.text fullname ]
+                  [ H.elem "sl-checkbox"
+                      [ P.checked selected, E.on "sl-change" \ev → Just <$> CheckParam name <$> slChecked ev ]
+                      [ H.text fullname ]
                   ]
 
 outputParameter ∷ Parameter → Maybe Result → Html Msg
 outputParameter { fullname } result = case result of
   Nothing → H.span [] []
-  Just { value, witness } →
+  Just { value, certificate } →
     H.div []
-      [ if witness == NoWitness then
+      [ if certificate == NoCertificate then
           H.span [] [ H.text $ fullname <> " : " <> value ]
         else
-          H.a [ P.href "#", E.onPointerOver \_ → ShowWitness witness, E.onPointerOut \_ → ShowWitness NoWitness ]
+          H.a
+            [ P.href "#"
+            , E.onPointerOver \_ → ShowCertificate certificate
+            , E.onPointerOut \_ → ShowCertificate NoCertificate
+            ]
             [ H.span [] [ H.text $ fullname <> " : " <> value ] ]
       , H.br
       ]

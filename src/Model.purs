@@ -13,7 +13,7 @@ derive instance Eq EditMode
 type Position = { x ∷ Number, y ∷ Number}
 
 type Model =
-  { witness ∷ Witness
+  { certificate ∷ Certificate
   , isComputing ∷ Boolean
   , code ∷ String
   , error ∷ Maybe String
@@ -27,7 +27,7 @@ type Model =
 
 init ∷ Model
 init =
-  { witness: NoWitness
+  { certificate: NoCertificate
   , isComputing: false
   , code: codeExample
   , error: Nothing
@@ -49,17 +49,16 @@ type Parameter =
 
 type Result =
   { value ∷ String
-  , witness ∷ Witness
+  , certificate ∷ Certificate
   }
 
-data Witness 
-  = NoWitness 
-  | ColorWitness (Array Int)
-  | SetWitness (Array Int)
-  | EdgeWitness (Array Edge)
-  | OrderWitness (Array Int)
+data Certificate 
+  = NoCertificate 
+  | ColorCertificate (Array Int)
+  | Certificate (Array Int) (Array Edge)
+  | OrderCertificate (Array Int)
  
-derive instance Eq Witness
+derive instance Eq Certificate
 
 parameters ∷ Array Parameter
 parameters = 

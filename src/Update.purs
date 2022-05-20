@@ -25,7 +25,7 @@ import Web.Event.Event (stopPropagation)
 import Web.PointerEvent.PointerEvent as PE
 
 update ∷ Msg → Update Model MonadGP Unit
-update (ShowWitness witness) = modify_ _ { witness = witness }
+update (ShowCertificate certificate) = modify_ _ { certificate = certificate }
 
 update (CheckParam name checked) =
   modify_ \model →
@@ -57,7 +57,7 @@ update Compute = do
   for_ (filter _.selected parameters) \{name} → do
     liftAff $ send {graph: Graph.toAdjGraph graph, param: name}
     res <- liftAff $ receive
-    for_ (decodeResult res) \res' →
+    for_ (decodeResult graph.edges res) \res' →
       modify_ \model → model{results = Map.insert name res' model.results}
   modify_ _{ isComputing = false }
 

@@ -14,11 +14,11 @@ export const isRegular = g  => {
     for (let i = 0; i < n; i++) {
         for (let j = 0; j  < n; j++) {
             if (g[i].length != g[j].length) {
-                return { result: false, wtype: "set", witness: [i, j] }
+                return { result: false, ctype: "set", certificate: [i, j] }
             }
         }
     }
-    return { result: true, wtype: "nowitness", witness: [] }
+    return { result: true, ctype: "nocertificate", certificate: [] }
 }
 
 export const isConnected = graph => {
@@ -43,11 +43,11 @@ export const isConnected = graph => {
 
 export const isHamiltonian = graph => {
     if (graph.length === 1) 
-        return { result: true, wtype: "path", witness: [0] }
+        return { result: true, ctype: "path", certificate: [0] }
     if (graph.length === 2)
-        return { result: false, wtype: "nowitness", witness: [] }
+        return { result: false, ctype: "nocertificate", certificate: [] }
     const res = hamiltonAux(graph, [0])
-    return res ? { result: true, wtype: "path", witness: res.concat(res[0]) } : { result: false, wtype: "nowitness", witness: [] }
+    return res ? { result: true, ctype: "path", certificate: res.concat(res[0]) } : { result: false, ctype: "nocertificate", certificate: [] }
 }
 
 const hamiltonAux = (graph, path) => {
@@ -87,7 +87,7 @@ export const degeneracy = graph => {
         maxdegree = Math.max(maxdegree, minDeg)
     }
 
-    return { result: maxdegree, wtype: "order", witness: order }
+    return { result: maxdegree, ctype: "order", certificate: order }
 }
 
 export const eccentricity = (graph, vertex) => {
@@ -112,7 +112,7 @@ export const eccentricity = (graph, vertex) => {
     }
 
     if (nbVisited !== graph.length) {
-        return { result: -1, wtype: "nowitness", witness: [] }
+        return { result: -1, ctype: "nocertificate", certificate: [] }
     } else {
         let u = maxBy(range(0, graph.length), w => distance[w]);
         const path = [u]
@@ -121,7 +121,7 @@ export const eccentricity = (graph, vertex) => {
             path.push(u)
         }
 
-        return { result: path.length - 1, wtype: "path", witness: path.reverse() }
+        return { result: path.length - 1, ctype: "path", certificate: path.reverse() }
     }
 }
 
@@ -148,7 +148,7 @@ export const alternativePath = (graph, v1, v2) => {
     }
 
     if (distance[v2] === -1) {
-        return { result: Infinity, witness: null };
+        return { result: Infinity, certificate: null };
     } else {
         const path = [v2];
         let u = v2
@@ -157,16 +157,16 @@ export const alternativePath = (graph, v1, v2) => {
             path.push(u)
         }
 
-        return { result: path.length - 1, wtype: "path", witness: path }
+        return { result: path.length - 1, ctype: "path", certificate: path }
     }
 };
 
 export const girth = graph => {
-    let bestRes = { result: Infinity, witness: null }
+    let bestRes = { result: Infinity, certificate: null }
     for (const [u, v] of edges(graph)) {
         const res = alternativePath(graph, u, v)
         if (res.result !== Infinity && res.result + 1 < bestRes.result) {
-            bestRes = { result: res.result + 1,  wtype: "path", witness: res.witness.concat(res.witness[0]) }
+            bestRes = { result: res.result + 1,  ctype: "path", certificate: res.certificate.concat(res.certificate[0]) }
         }
     }
     return bestRes
@@ -200,7 +200,7 @@ export const mis = graph => {
             }
         }
         if (isets2.length === 0) {
-            return { result: i, wtype: "set", witness: decode(isets[0]) }
+            return { result: i, ctype: "subgraph", certificate: decode(isets[0]) }
         }
         isets = isets2
         i++

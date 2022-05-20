@@ -135,7 +135,7 @@ const maximumMatching = graph => {
         }
         matching = matching.filter(([x, y]) => !excludeSet.has(edgeId(graph, x, y)))
     }
-    return {result: matching.length, wtype: "edges", witness: matching.flat()}
+    return {result: matching.length, ctype: "edges", certificate: matching.flat()}
 }
 
 export default maximumMatching

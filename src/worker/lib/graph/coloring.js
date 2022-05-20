@@ -12,7 +12,7 @@ const chromaticNumberAux = predicate => graph => {
         usedColor.fill(false)
         const res = chromaticAux(graph, binNbors, precol, uncoloredList, i, usedColor, predicate)
         if (res) {
-            return { result: i, wtype: "color", witness: res }
+            return { result: i, ctype: "color", certificate: res }
         }
         i++
     }
@@ -98,6 +98,6 @@ export const dominatedColoring = chromaticNumberAux(isDominatedColoring);
 
 export const totalDominatorColoring = graph =>
     graph.any(nbor => nbor.length === 0, graph) ?
-        { result: -1, wtype: "nowitness", witness: [] } : chromaticNumberAux(isTotalDominatorColoring)
+        { result: -1, ctype: "nocertificate", certificate: [] } : chromaticNumberAux(isTotalDominatorColoring)
 
 
