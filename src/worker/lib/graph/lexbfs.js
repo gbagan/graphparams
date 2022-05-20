@@ -1,29 +1,29 @@
-﻿import {range, times} from '../fp';
+﻿import {range, times} from '../fp'
 
 const makePartitions = nbVertices => {
     const partition = {
         new_: false,
         next: null,
         previous: null,
-        set: new Set(range(0, nbVertices)),
-    };
+        set: new Set(range(0, nbVertices))
+    }
     return {
         firstPartition: partition,
-        partitions: times(() => partition, nbVertices),
-    };
+        partitions: times(() => partition, nbVertices)
+    }
 };
 
 const firstElement = partitions => partitions.firstPartition.set.values().next().value;
 
 function * execute(partitions, graph, vertex) {
-    let v = vertex;
+    let v = vertex
     while (true) {
-        yield v;
-        refine(partitions, graph, v);
+        yield v
+        refine(partitions, graph, v)
         if (partitions.firstPartition === null) {
-            return;
+            return
         }
-        v = firstElement(partitions);
+        v = firstElement(partitions)
     }
 }
 
@@ -34,62 +34,62 @@ const addToPartitionBefore = (partitions, partition, vertex) => {
             new_: true,
             next: partition,
             previous: null,
-            set: new Set(),
-        };
+            set: new Set()
+        }
     } else if (!partition.previous.new_) {
         partition.previous = {
             new_: true,
             next: partition,
             previous: partition.previous,
-            set: new Set(),
-        };
+            set: new Set()
+        }
         if (partition.previous.previous) {
-            partition.previous.previous.next = partition.previous;
+            partition.previous.previous.next = partition.previous
         }
     }
     if (partition === partitions.firstPartition) {
-        partitions.firstPartition = partition.previous;
+        partitions.firstPartition = partition.previous
     }
     partition.previous.set.add(vertex);
-    partitions.partitions[vertex] = partition.previous;
+    partitions.partitions[vertex] = partition.previous
 };
 
 const removePartition = (partitions, partition) => {
     if (partition.previous) {
-        partition.previous.next = partition.next;
+        partition.previous.next = partition.next
     }
     if (partition.next) {
-        partition.next.previous = partition.previous;
+        partition.next.previous = partition.previous
     }
     if (partition === partitions.firstPartition) {
-        partitions.firstPartition = partition.next;
+        partitions.firstPartition = partition.next
     }
 };
 
 const refine = (partitions, graph, vertex) => {
-    const partition = partitions.partitions[vertex];
-    partition.set.delete(vertex);
+    const partition = partitions.partitions[vertex]
+    partition.set.delete(vertex)
     if (partition.set.size === 0) {
-        removePartition(partitions, partition);
+        removePartition(partitions, partition)
     }
     partitions.partitions[vertex] = null;
 
     for (const u of graph[vertex]) {
         const partition2 = partitions.partitions[u];
         if (!partition2) {
-            continue;
+            continue
         }
         partition2.set.delete(u);
-        addToPartitionBefore(partitions, partitions.partitions[u], u);
+        addToPartitionBefore(partitions, partitions.partitions[u], u)
     }
-    let partition2  = partitions.firstPartition;
+    let partition2  = partitions.firstPartition
     while (partition2) {
-        partition2.new_ = false;
+        partition2.new_ = false
         if (partition2.set.size === 0) {
-            removePartition(partitions, partition2);
+            removePartition(partitions, partition2)
         }
-        partition2 = partition2.next;
+        partition2 = partition2.next
     }
 };
 
-export default (graph, vertex) => [...execute(makePartitions(graph.length), graph, vertex)];
+export default (graph, vertex) => [...execute(makePartitions(graph.length), graph, vertex)]

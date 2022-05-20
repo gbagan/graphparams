@@ -52,11 +52,11 @@ update GenerateGraph =
 
 update Compute = do
   modify_ _{ results = Map.empty :: _, error = Nothing, isComputing = true }
-  {pull, push} <- lift ask
+  {send, receive} <- lift ask
   {graph, parameters} <- get
   for_ (filter _.selected parameters) \{name} → do
-    liftAff $ push {graph: Graph.toAdjGraph graph, param: name}
-    res <- liftAff $ pull
+    liftAff $ send {graph: Graph.toAdjGraph graph, param: name}
+    res <- liftAff $ receive
     for_ (decodeResult res) \res' →
       modify_ \model → model{results = Map.insert name res' model.results}
   modify_ _{ isComputing = false }

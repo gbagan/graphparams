@@ -17,12 +17,12 @@ import Web.Worker.Worker (defaultWorkerOptions, new)
 main ∷ Effect Unit
 main = launchAff_ do
   worker <- liftEffect $ new "worker.js" defaultWorkerOptions
-  {pull, push} <- makeChannel worker
+  {send, receive} <- makeChannel worker
   liftEffect $ app
     { init: { state: init, action: Nothing }
     , update
     , view
-    , eval: flip runReaderT {push, pull}
+    , eval: flip runReaderT {send, receive}
     , subscriptions: []
     , selector: "#root"
     }
