@@ -51,26 +51,30 @@ export const uniq = list => {
         pred = x;
     }
     return res;
-};
+}
 
 export const difference = (l1, l2) => {
-    const res = [];
-    let i = 0;
-    let j = 0;
-    const n = l1.length;
-    const m = l2.length;
+    const res = []
+    let i = 0
+    let j = 0
+    const n = l1.length
+    const m = l2.length
     while (i < n && j < m) {
-        const x = l1[i];
-        const y = l2[j];
+        const x = l1[i]
+        const y = l2[j]
         if (x === y) {
-            i++;
-            j++;
+            i++
+            j++
         } else if (x < y) {
-            res.push(l1[i]);
-            i++;
+            res.push(x)
+            i++
         } else {
-            j++;
+            j++
         }
     }
+    while (i < n) {
+        res.push(l1[i])
+        i++
+    }
     return res;
-};
+}

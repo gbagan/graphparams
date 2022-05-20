@@ -9,12 +9,12 @@ const hasClique = (graph, set) => {
     for (let i = 0; i < set.length - 1; i++) {
         for (let j = i + 1; j < set.length; j++) {
             if (!hasEdge(graph, set[i], set[j])) {
-                return {result: false, witness: [set[i], set[j]]};
+                return {result: false, witness: [set[i], set[j]]}
             }
         }
     }
-    return { result: true, witness: null };
-};
+    return { result: true, witness: null }
+}
 
 const isChordal = graph => {
     const lbfs = lexbfs(graph, 0)
@@ -29,7 +29,7 @@ const isChordal = graph => {
             witness = [v, res.witness[0], res.witness[1]]
             break
         }
-        visited.add(v);
+        visited.add(v)
     }
     if (chordal) {
         return { result: true, wtype: "order", witness: lbfs };
@@ -44,7 +44,7 @@ const isChordal = graph => {
         result: false,
         wtype: "path",
         witness: [witness[0]].concat(path.map(j => ss[j])).concat(witness[0]),
-    };
-};
+    }
+}
 
-export default isChordal;
+export default isChordal
