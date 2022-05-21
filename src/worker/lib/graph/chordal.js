@@ -32,7 +32,7 @@ const isChordal = graph => {
         visited.add(v)
     }
     if (chordal) {
-        return { result: true, ctype: "order", certificate: lbfs };
+        return { result: true, ctype: "order", certificate: lbfs.reverse() };
     }
     const ss = difference(range(0, graph.length), graph[certificate[0]])
                 .filter(i => i != certificate[0])
