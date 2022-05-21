@@ -2,7 +2,7 @@ module GraphParams.GraphView where
 
 import Prelude
 
-import Data.Array ((..), any, elem, length, replicate, updateAtIndices)
+import Data.Array (elem, length, replicate, updateAtIndices)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
 import GraphParams.Graph as Graph
@@ -71,10 +71,8 @@ graphView { graph: graph@{ layout, edges }, certificate, editmode, currentPositi
                         , P.r 2.3
                         , H.class_ $ "graphparams-graphview-vertex color" <> show color
                         , H.class' "deletemode" $ editmode == DeleteMode
-                        -- , P.stroke $ if selectedVertex == Just i then "red" else "blue"
-                        --,   P.fill "blue"
-                        , E.onClick \ev → DeleteVertex i ev
-                        , E.onPointerDown \ev → SelectVertex i ev
+                        , E.onClick (DeleteVertex i)
+                        , E.onPointerDown (SelectVertex i)
                         , E.onPointerUp \_ → PointerUp i
                         ]
               , H.g []

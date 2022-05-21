@@ -205,7 +205,6 @@ export const mis = graph => {
         isets = isets2
         i++
     }
-};
+}
 
-// const cliqueNumberNonOpt = (g: Graph) => mis(complement(g).freeze());
 export const cliqueNumber = graph => mis(complement(graph))
