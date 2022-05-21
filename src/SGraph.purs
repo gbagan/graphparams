@@ -98,3 +98,6 @@ petersen =
     # addCycle [ 0, 1, 2, 3, 4 ]
     # addCycle [ 5, 7, 9, 6, 8 ]
     # addEdges [ Edge 0 5, Edge 1 6, Edge 2 7, Edge 3 8, Edge 4 9 ]
+
+sun ∷ Int → SGraph
+sun n = cycle (2 * n) # addClique (0 .. (n-1) <#> (2 * _))

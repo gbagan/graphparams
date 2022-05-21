@@ -72,6 +72,9 @@ evalFunction s args =
       "petersen" → case args' of
         [] → Right SG.petersen
         _ → Left "petersen: takes no argument"
+      "sun" → case args' of
+        [ x ] → Right $ SG.sun x
+        _ → Left "sun: wrong number of arguments"
       _ → Left $ "no function is called: " <> s
 
 evalConstant ∷ String → Either String SGraph
@@ -95,6 +98,9 @@ methodEval s args =
     case s of
       "addEdge" → case args' of
         [ x, y ] → Right $ SG.addEdge x y
+        _ → Left "addEdge: wrong number of arguments"
+      "removeEdge" → case args' of
+        [ x, y ] → Right $ SG.removeEdge x y
         _ → Left "addEdge: wrong number of arguments"
       "addPath" → Right $ SG.addPath args'
       "addCycle" → Right $ SG.addCycle args'
