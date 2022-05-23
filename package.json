@@ -4,7 +4,7 @@
     "esbuild": "^0.14.38",
     "purescript": "^0.15.2",
     "rimraf": "^3.0.2",
-    "sass": "^1.51.0",
+    "sass": "^1.52.1",
     "spago": "^0.20.9"
   },
   "scripts": {

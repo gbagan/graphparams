@@ -1,11 +1,5 @@
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.15.0-20220516/packages.dhall
-        sha256:b0bf932de16a10b7d69c6bbbb31ec9ca575237c43a999fa32e59e35eb8c024a1
+      https://github.com/purescript/package-sets/releases/download/psc-0.15.0-20220522/packages.dhall
+        sha256:43895efaec7af246b60b59cfbf451cd9d3d84a5327de8c0945e2de5c9fd2fcf2
 
-in  upstream // { web-workers =
-        { dependencies =
-          [ "functions"]
-        , repo = "https://github.com/gbagan/purescript-web-workers.git"
-        , version = "main"
-        }
-        }
+in  upstream
