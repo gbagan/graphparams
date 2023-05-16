@@ -24,7 +24,7 @@ import Util (pointerDecoder)
 import Web.Event.Event (stopPropagation)
 import Web.PointerEvent.PointerEvent as PE
 
-update ∷ Msg → Update Model MonadGP Unit
+update ∷ Msg → Update Model Msg MonadGP Unit
 update (ShowWitness witness) = modify_ _ { witness = witness }
 
 update (CheckParam name checked) =

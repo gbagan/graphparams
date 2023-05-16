@@ -11,6 +11,7 @@ import GraphParams.Model (init)
 import GraphParams.Update (update)
 import GraphParams.View (view)
 import GraphParams.Channel (makeChannel)
+import Pha.Update (hoist)
 import Pha.App (app)
 import Web.Worker.Worker (defaultWorkerOptions, new)
 
@@ -19,10 +20,8 @@ main = launchAff_ do
   worker <- liftEffect $ new "worker.js" defaultWorkerOptions
   {pull, push} <- makeChannel worker
   liftEffect $ app
-    { init: { state: init, action: Nothing }
-    , update
+    { init: { model: init, msg: Nothing }
+    , update: hoist (flip runReaderT {push, pull}) <<< update
     , view
-    , eval: flip runReaderT {push, pull}
-    , subscriptions: []
     , selector: "#root"
     }
