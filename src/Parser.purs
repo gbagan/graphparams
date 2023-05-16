@@ -7,13 +7,14 @@ import Control.Alt ((<|>))
 import Control.Lazy (fix)
 import Data.Bifunctor (bimap)
 import Data.Either (Either(..), either)
+import Data.Semigroup.Foldable (foldl1)
 import Data.Int as Int
 import Data.List as List
 import Data.List.NonEmpty (NonEmptyList, toUnfoldable)
 import Data.Maybe (Maybe(..))
 import GraphParams.SGraph (SGraph)
 import GraphParams.SGraph as SG
-import StringParser (Parser, runParser, printParserError, fail, string, many, many1, sepBy1, regex, whiteSpace, try)
+import StringParser (Parser, runParser, printParserError, fail, string, many, sepBy1, regex, whiteSpace, try)
 
 decimal ∷ Parser Int
 decimal = do
@@ -71,6 +72,9 @@ evalFunction s args =
       "petersen" → case args' of
         [] → Right SG.petersen
         _ → Left "petersen: takes no argument"
+      "sun" → case args' of
+        [ x ] → Right $ SG.sun x
+        _ → Left "sun: wrong number of arguments"
       _ → Left $ "no function is called: " <> s
 
 evalConstant ∷ String → Either String SGraph
@@ -95,13 +99,28 @@ methodEval s args =
       "addEdge" → case args' of
         [ x, y ] → Right $ SG.addEdge x y
         _ → Left "addEdge: wrong number of arguments"
+      "removeEdge" → case args' of
+        [ x, y ] → Right $ SG.removeEdge x y
+        _ → Left "addEdge: wrong number of arguments"
       "addPath" → Right $ SG.addPath args'
       "addCycle" → Right $ SG.addCycle args'
       "addClique" → Right $ SG.addClique args'
       _ → Left $ "no method is called: " <> s
 
 expr ∷ Parser SGraph
-expr = List.foldl (#) <$> (try function <|> constant) <*> many method
+expr =
+  fix \sexpr ->
+    let
+      expr' = List.foldl (#) <$> (try function <|> try constant <|> paren) <*> many method
+
+      paren = string "(" *> sexpr <* string ")"
+
+      sexpr' =
+        try (foldl1 SG.union <$> expr' `sepBy1` (whiteSpace *> string "|" *> whiteSpace))
+          <|> try (foldl1 SG.join <$> expr' `sepBy1` (whiteSpace *> string "><" *> whiteSpace))
+          <|> (foldl1 SG.product <$> expr' `sepBy1` (whiteSpace *> string "*" *> whiteSpace))
+    in
+      sexpr'
 
 parseGraph ∷ String → Either String SGraph
 parseGraph s = bimap printParserError identity (runParser expr s)

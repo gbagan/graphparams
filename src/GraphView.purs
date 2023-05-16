@@ -2,11 +2,11 @@ module GraphParams.GraphView where
 
 import Prelude
 
-import Data.Array ((..), any, elem, length, replicate, updateAtIndices)
+import Data.Array (elem, length, replicate, updateAtIndices)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
 import GraphParams.Graph as Graph
-import GraphParams.Model (Model, Position, EditMode(..), Witness(..))
+import GraphParams.Model (Model, Position, EditMode(..), Certificate(..))
 import GraphParams.Msg (Msg(..))
 import Pha.Html (Html)
 import Pha.Html as H
@@ -25,21 +25,17 @@ currentLine p1 p2 =
     ]
 
 graphView ∷ Model → Html Msg
-graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, selectedVertex, isComputing } =
+graphView { graph: graph@{ layout, edges }, certificate, editmode, currentPosition, selectedVertex, isComputing } =
   let
-    vertexColor = case witness of
-      SetWitness set →
+    vertexColor = case certificate of
+      Certificate set _ →
         replicate (length layout) 0
           # updateAtIndices ((_ /\ 1) <$> set)
-      ColorWitness col → col
-      EdgeWitness wedges →
-        0 .. (length layout - 1)
-          <#> \v →
-              if any (Graph.incident v) wedges then 1 else 0
+      ColorCertificate col → col
       _ → replicate (length layout) 0
 
-    selectedEdges = case witness of
-      EdgeWitness wedges -> wedges
+    selectedEdges = case certificate of
+      Certificate _ cedges -> cedges
       _ -> []
 
   in
@@ -75,15 +71,13 @@ graphView { graph: graph@{ layout, edges }, witness, editmode, currentPosition, 
                         , P.r 2.3
                         , H.class_ $ "graphparams-graphview-vertex color" <> show color
                         , H.class' "deletemode" $ editmode == DeleteMode
-                        -- , P.stroke $ if selectedVertex == Just i then "red" else "blue"
-                        --,   P.fill "blue"
-                        , E.onClick \ev → DeleteVertex i ev
-                        , E.onPointerDown \ev → SelectVertex i ev
+                        , E.onClick (DeleteVertex i)
+                        , E.onPointerDown (SelectVertex i)
                         , E.onPointerUp \_ → PointerUp i
                         ]
               , H.g []
-                  case witness of
-                    OrderWitness order ->
+                  case certificate of
+                    OrderCertificate order ->
                       map2 layout order \_ {x, y} o ->
                         H.text_ (show $ o + 1) [H.class_ "graphview-text", P.x (100.0 * x), P.y (100.0 * y)]
                     _ -> []

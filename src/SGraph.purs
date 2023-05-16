@@ -2,7 +2,7 @@ module GraphParams.SGraph where
 
 import Prelude hiding (join)
 import Control.Alternative (guard)
-import Data.Array ((..), elem, foldr, snoc, tail, zipWith)
+import Data.Array ((..), elem, filter, foldr, snoc, tail, zipWith)
 import Data.Array.NonEmpty as NEA
 import Data.Maybe (Maybe(..), maybe)
 import GraphParams.Graph (Edge(..))
@@ -69,6 +69,9 @@ star = biclique 1
 addEdge ∷ Int → Int → SGraph → SGraph
 addEdge u v g = g { edges = if Edge u v `elem` g.edges then g.edges else g.edges `snoc` Edge u v }
 
+removeEdge ∷ Int → Int → SGraph → SGraph
+removeEdge u v g = g { edges = filter (_ /= Edge u v) g.edges }
+
 addEdges ∷ Array Edge → SGraph → SGraph
 addEdges edges g = edges # (foldr \(Edge u v) → addEdge u v) g
 
@@ -95,3 +98,6 @@ petersen =
     # addCycle [ 0, 1, 2, 3, 4 ]
     # addCycle [ 5, 7, 9, 6, 8 ]
     # addEdges [ Edge 0 5, Edge 1 6, Edge 2 7, Edge 3 8, Edge 4 9 ]
+
+sun ∷ Int → SGraph
+sun n = cycle (2 * n) # addClique (0 .. (n-1) <#> (2 * _))

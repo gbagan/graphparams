@@ -2,10 +2,10 @@ module GraphParams.Msg where
 
 import Web.PointerEvent (PointerEvent)
 import GraphParams.Graph (Edge)
-import GraphParams.Model (Witness, EditMode)
+import GraphParams.Model (Certificate, EditMode)
 
 data Msg
-  = ShowWitness Witness
+  = ShowCertificate Certificate
   | CheckParam String Boolean
   | SelectAllParams
   | UnselectAllParams

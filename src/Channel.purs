@@ -9,7 +9,7 @@ import Effect.Aff.AVar as AVar
 import Effect.Class (liftEffect)
 import Control.Monad.Rec.Class (forever)
 
-makeChannel :: forall a. Worker -> Aff { push :: a -> Aff Unit, pull :: Aff Foreign }
+makeChannel :: forall a. Worker -> Aff { send :: a -> Aff Unit, receive :: Aff Foreign }
 makeChannel worker = do
   res <- AVar.empty
   req <- AVar.empty
@@ -19,4 +19,4 @@ makeChannel worker = do
       $ forever do
           msg <- AVar.take req
           liftEffect $ worker # postMessage msg
-  pure $ { push: flip AVar.put req, pull: data_ <$> AVar.take res }
+  pure $ { send: flip AVar.put req, receive: data_ <$> AVar.take res }

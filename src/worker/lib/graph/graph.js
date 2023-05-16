@@ -24,6 +24,3 @@ export const addEdge = (graph, v, w) => {
 };
 
 export const copy = g => g.map(adj => adj.slice());
-
-export const clean = x => x;
-//map(adj => uniq(sortBy(x => x, adj)));

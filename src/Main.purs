@@ -18,10 +18,10 @@ import Web.Worker.Worker (defaultWorkerOptions, new)
 main ∷ Effect Unit
 main = launchAff_ do
   worker <- liftEffect $ new "worker.js" defaultWorkerOptions
-  {pull, push} <- makeChannel worker
+  {send, receive} <- makeChannel worker
   liftEffect $ app
     { init: { model: init, msg: Nothing }
-    , update: hoist (flip runReaderT {push, pull}) <<< update
+    , update: hoist (flip runReaderT {send, receive}) <<< update
     , view
     , selector: "#root"
     }

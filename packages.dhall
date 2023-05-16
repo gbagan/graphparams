@@ -3,9 +3,3 @@ let upstream =
         sha256:34308184189e985277c9f0214c489a845e260ff7472f322c42f5fa49e8773c11
 
 in      upstream
-    //  { web-workers =
-          { dependencies = [ "functions" ]
-          , repo = "https://github.com/gbagan/purescript-web-workers.git"
-          , version = "main"
-          }
-        }

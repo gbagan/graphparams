@@ -1,42 +1,49 @@
 module GraphParams.DecodeResult where
 
 import Prelude
-
 import Control.Monad.Except (runExcept)
 import Data.Either (hush)
-import Data.Array (cons, tail, zipWith)
+import Data.Array (cons, elem, filter, length, mapWithIndex, replicate, updateAtIndices, tail, zipWith)
 import Data.List (List(..), (:))
 import Data.List as List
 import Data.Maybe (Maybe, maybe)
 import Data.Traversable (traverse)
+import Data.Tuple.Nested ((/\))
 import Foreign (Foreign, readString, readArray, readInt)
 import Foreign.Index ((!))
 import GraphParams.Graph (Edge(..))
-import GraphParams.Model (Result, Witness(..))
+import GraphParams.Model (Result, Certificate(..))
 
 decodeEdges :: Array Int -> Array Edge
-decodeEdges = go <<< List.fromFoldable where
+decodeEdges = go <<< List.fromFoldable
+  where
   go Nil = []
   go (_ : Nil) = []
-  go (x : y : xs) = cons (Edge x y) (go xs)  
+  go (x : y : xs) = cons (Edge x y) (go xs)
 
 edgesFromPath :: Array Int -> Array Edge
 edgesFromPath p = maybe [] (zipWith Edge p) (tail p)
 
-decodeResult :: Foreign → Maybe Result
-decodeResult res =
+reversePermutation ∷ Array Int -> Array Int
+reversePermutation p =
+  replicate (length p) 0
+    # updateAtIndices (p # mapWithIndex \i j -> j /\ i)
+
+decodeResult :: Array Edge -> Foreign → Maybe Result
+decodeResult edges res =
   hush
     $ runExcept do
         value <- res ! "result" >>= readString
-        wtype <- res ! "wtype" >>= readString
-        wit <- res ! "witness" >>= readArray >>= traverse readInt
+        ctype <- res ! "ctype" >>= readString
+        wit <- res ! "certificate" >>= readArray >>= traverse readInt
         let
-          witness = case wtype of
-            "nowitness" → NoWitness
-            "set" -> SetWitness wit
-            "order" -> OrderWitness wit
-            "path" -> EdgeWitness (edgesFromPath wit) -- todo
-            "color" -> ColorWitness wit
-            "edges" -> EdgeWitness (decodeEdges wit)
-            _ → NoWitness
-        pure { value, witness }
+          certificate = case ctype of
+            "nocertificate" → NoCertificate
+            "set" -> Certificate wit []
+            "order" -> OrderCertificate (reversePermutation wit)
+            "path" -> Certificate wit (edgesFromPath wit) -- todo
+            "color" -> ColorCertificate wit
+            "edges" -> Certificate wit (decodeEdges wit)
+            "subgraph" -> Certificate wit (edges # filter \(Edge u v) -> u `elem` wit && v `elem` wit)
+            _ → NoCertificate
+        pure { value, certificate }

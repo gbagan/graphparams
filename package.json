@@ -2,8 +2,9 @@
   "dependencies": {
     "@shoelace-style/shoelace": "^2.0.0-beta.73",
     "esbuild": "^0.17.19",
-    "purescript": "^0.15.2",
+    "purescript": "^0.15.9",
     "rimraf": "^5.0.0",
+    "s": "file:shoelace-style/shoelace@latest",
     "sass": "^1.51.0",
     "spago": "^0.21.0"
   },

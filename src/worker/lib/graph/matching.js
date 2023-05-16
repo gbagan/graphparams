@@ -2,20 +2,20 @@
 import {copy, edgeId} from './graph';
 
 const greedyMatching = graph => {
-    const matching = [];
-    const matched = new Array(graph.length);
+    const matching = []
+    const matched = new Array(graph.length)
     matched.fill(false)
 
     for (let u = 0; u < graph.length - 1; u++) {
         if (matched[u]) {
-            continue;
+            continue
         }
         for (const v of graph[u]) {
             if (u < v && !matched[v]) {
-                matching.push([u, v]);
-                matched[u] = true;
-                matched[v] = true;
-                break;
+                matching.push([u, v])
+                matched[u] = true
+                matched[v] = true
+                break
             }
         }
     }
@@ -23,21 +23,21 @@ const greedyMatching = graph => {
 }
 
 const contract = (graph, set) => {
-    const g2 = copy(graph);
-    const v = set[0];
+    const g2 = copy(graph)
+    const v = set[0]
     const rset = set.slice(1, set.length);
     for (const u of rset) {
-        g2[u].length = 0;
+        g2[u].length = 0
     }
     for (let u = 0; u < graph.length; u++) {
         if (rset.includes(u)) {
             continue;
         }
-        const adj = g2[u];
-        const n = g2[u].length;
+        const adj = g2[u]
+        const n = g2[u].length
         for (let i = 0; i < n; i++) {
             if (rset.includes(adj[i])) {
-                adj[i] = v;
+                adj[i] = v
             }
         }
     }
@@ -45,23 +45,23 @@ const contract = (graph, set) => {
 }
 
 const findAugmentingPath = (graph, matching) => {
-    const parent = new Array(graph.length);
-    const distanceToRoot = new Array(graph.length);
-    const matched = new Array(graph.length);
-    const root = new Array(graph.length);
-    parent.fill(-1);
-    distanceToRoot.fill(-1);
-    matched.fill(-1);
-    root.fill(-1);
+    const parent = new Array(graph.length)
+    const distanceToRoot = new Array(graph.length)
+    const matched = new Array(graph.length)
+    const root = new Array(graph.length)
+    parent.fill(-1)
+    distanceToRoot.fill(-1)
+    matched.fill(-1)
+    root.fill(-1)
     for (const [x, y] of matching) {
-        matched[x] = y;
-        matched[y] = x;
+        matched[x] = y
+        matched[y] = x
     }
     for (let i = 0; i < graph.length; i++) {
         if (matched[i] === -1) {
-            distanceToRoot[i] = 0;
-            parent[i] = i;
-            root[i] = i;
+            distanceToRoot[i] = 0
+            parent[i] = i
+            root[i] = i
         }
     }
     const unexplored = range(0, graph.length).filter(w => matched[w] === -1);
@@ -74,38 +74,38 @@ const findAugmentingPath = (graph, matching) => {
             if (matched[w] === v) {
                 continue;
             } else if (root[w] === -1) {
-                const x = matched[w];
-                parent[w] = v;
-                distanceToRoot[w] = distanceToRoot[v] + 1;
-                parent[x] = w;
-                distanceToRoot[x] = distanceToRoot[w] + 1;
-                root[x] = root[w] = root[v];
-                unexplored.push(w);  ///////
-                unexplored.push(x);  //////
+                const x = matched[w]
+                parent[w] = v
+                distanceToRoot[w] = distanceToRoot[v] + 1
+                parent[x] = w
+                distanceToRoot[x] = distanceToRoot[w] + 1
+                root[x] = root[w] = root[v]
+                unexplored.push(w)  ///////
+                unexplored.push(x)  //////
             } else if (distanceToRoot[w] % 2 === 0) {
                 // create a path  root(v) -- ... -- v --w -- .... -- root(w)
                 const path = [];
-                let v1 = v;
+                let v1 = v
                 while (parent[v1] !== v1) {
-                    path.unshift(v1);
-                    v1 = parent[v1];
+                    path.unshift(v1)
+                    v1 = parent[v1]
                 }
                 path.unshift(v1);
-                let w1 = w;
+                let w1 = w
                 while (parent[w1] !== w1) {
-                    path.push(w1);
-                    w1 = parent[w1];
+                    path.push(w1)
+                    w1 = parent[w1]
                 }
-                path.push(w1);
+                path.push(w1)
 
                 if (root[v] !== root[w]) {
-                    return path;
+                    return path
                 } else {
-                    const g2 = contract(graph, path);
-                    const m2 = matching.filter(([x]) => !path.includes(x));
-                    const path2 = findAugmentingPath(g2, m2);
+                    const g2 = contract(graph, path)
+                    const m2 = matching.filter(([x]) => !path.includes(x))
+                    const path2 = findAugmentingPath(g2, m2)
                     if (!path2) {
-                        return null;
+                        return null
                     }
                     // TODO
                     // return lift(path2)
@@ -117,25 +117,25 @@ const findAugmentingPath = (graph, matching) => {
 }
 
 const maximumMatching = graph => {
-    let matching = greedyMatching(graph);
-    let path = null;
+    let matching = greedyMatching(graph)
+    let path = null
 
     while (true) {
-        path = findAugmentingPath(graph, matching);
+        path = findAugmentingPath(graph, matching)
         if (!path) {
             break;
         }
         const excludeSet = new Set();
         for (let i = 0; i < path.length; i++) {
             if (i % 2 === 0) {
-                matching.push([path[i], path[i + 1]]);
+                matching.push([path[i], path[i + 1]])
             } else {
-                excludeSet.add(edgeId(graph, path[i], path[i + 1]));
+                excludeSet.add(edgeId(graph, path[i], path[i + 1]))
             }
         }
-        matching = matching.filter(([x, y]) => !excludeSet.has(edgeId(graph, x, y)));
+        matching = matching.filter(([x, y]) => !excludeSet.has(edgeId(graph, x, y)))
     }
-    return {result: matching.length, wtype: "edges", witness: matching.flat()};
-};
+    return {result: matching.length, ctype: "edges", certificate: matching.flat()}
+}
 
-export default maximumMatching;
+export default maximumMatching

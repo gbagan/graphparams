@@ -3,5 +3,6 @@
 package-lock.json
 node_modules
 dist/bundle*
+dist/worker.js
 output
 dist/worker*

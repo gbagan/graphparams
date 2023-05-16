@@ -17,7 +17,7 @@ type InputData
     }
 
 type MonadGP
-  = ReaderT { push :: InputData -> Aff Unit, pull :: Aff Foreign } Aff
+  = ReaderT { send :: InputData -> Aff Unit, receive :: Aff Foreign } Aff
 
 {-
 derive newtype instance Functor MonadGP

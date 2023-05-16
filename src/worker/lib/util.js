@@ -1,11 +1,5 @@
 ﻿import {range} from '@fp';
 
-export const Map_dec = (map, key) => {
-    let v = map.get(key.toString()) - 1;
-    map.set(key.toString(), v);
-    return v;
-};
-
 export function* sublists(n, k) {
     if (k === 0) {
         yield [];
