@@ -20,8 +20,9 @@ import GraphParams.Model (Model, EditMode(..))
 import GraphParams.Monad (MonadGP)
 import GraphParams.Msg (Msg(..))
 import Pha.Update (Update, get, modify_)
-import Util (pointerDecoder)
+import Util (pointerDecoder, pointerDecoder')
 import Web.Event.Event (stopPropagation)
+import Web.UIEvent.MouseEvent as ME
 import Web.PointerEvent.PointerEvent as PE
 
 update ∷ Msg → Update Model Msg MonadGP Unit
@@ -81,7 +82,7 @@ update (SelectVertex i ev) = do
       model
 
 update (GraphMove ev) = do
-  pos ← liftEffect $ pointerDecoder ev
+  pos ← liftEffect $ pointerDecoder' ev
   modify_ \model → case pos, model.editmode, model.selectedVertex of
     Just p, MoveMode, Just i → model { graph = Graph.moveVertex i p model.graph }
     Just p, AddEMode, _ → model { currentPosition = Just p }
@@ -103,7 +104,7 @@ update (PointerUp i) = do
 update (DeleteVertex i ev) = do
   st ← get
   when (st.editmode == MoveMode)
-    (liftEffect $ stopPropagation $ PE.toEvent ev)
+    (liftEffect $ stopPropagation $ ME.toEvent ev)
   modify_ \model →
     if model.editmode == DeleteMode then
       model { graph = Graph.removeVertex i model.graph }

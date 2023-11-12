@@ -1,60 +1,6 @@
-body {
-    color: rgba(0, 0, 0, 0.65);
-    font-size: 14px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-    font-variant: tabular-nums;
-    line-height: 1.5715;
-    font-feature-settings: 'tnum';
-}
-
-a:hover {
-    color: #40a9ff;
-}
-
-a {
-    color: #1890ff;
-    cursor: pointer;
-}
-
-
-.col-6 {
-    display: block;
-    flex: 0 0 25%;
-    max-width: 25%;
-}
-
-.col-17 {
-    display: block;
-    flex: 0 0 70.83333333%;
-    max-width: 70.83333333%;
-}
-
-.col {
-    position: relative;
-    max-width: 100%;
-    min-height: 1px;
-}
-
-.row {
-    display: flex;
-    flex-flow: row wrap;
-}
-
-.row-top {
-    align-items: flex-start;
-}
-
-.space-around {
-    justify-content: space-around;
-}
-
-.space-between {
-    justify-content: space-between;
-}
-
-.pointer-events-none {
-    pointer-events: none;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .graphparams-code {
     height: 20em;
@@ -81,10 +27,6 @@ a {
 .graphparams-graphview-board {
     width: 500px;
     height: 500px;
-}
-
-.display-block {
-    display: block;
 }
 
 .graphparams-graphview-vertex {

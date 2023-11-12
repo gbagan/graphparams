@@ -1,84 +1,67 @@
 module GraphParams.View (view) where
 
 import Prelude
+
 import Data.Array ((..), filter, null)
 import Data.Map as Map
 import Data.Maybe (Maybe(..))
 import Data.String (split, Pattern(..))
-import Effect (Effect)
 import GraphParams.Data (helpText)
 import GraphParams.GraphView (graphView)
 import GraphParams.Model (Model, Parameter, Result, Certificate(..))
 import GraphParams.Msg (Msg(..))
+import GraphParams.UI as UI
 import Pha.Html (Html)
 import Pha.Html as H
 import Pha.Html.Attributes as P
 import Pha.Html.Events as E
-import Web.Event.Event (Event)
-
-foreign import slStringValue ∷ Event → Effect String
-
-foreign import slChecked ∷ Event → Effect Boolean
 
 htmlizedHelp ∷ forall a. Array (Html a)
 htmlizedHelp = helpText # split (Pattern "\n") >>= \line → [ H.text line, H.br ]
 
 view ∷ Model → Html Msg
 view model@{ error, isComputing, code, parameters, results, graph } =
-  H.div [ H.class_ "row row-top space-between" ]
-    [ H.div [ H.class_ "col col-17" ]
+  H.div [ H.class_ "flex flex-row justify-between" ]
+    [ H.div [ H.class_ "w-3/4" ]
         [ H.div [ H.class_ "row" ]
-            [ H.elem "sl-button-group" []
-                [ H.elem "sl-button"
-                    [ P.disabled isComputing
-                    , E.onClick \_ → SelectAllParams
-                    ]
-                    [ H.text "Select All" ]
-                , H.elem "sl-button"
-                    [ P.disabled isComputing
-                    , E.onClick \_ → UnselectAllParams
-                    ]
-                    [ H.text "Unselect All" ]
-                , H.elem "sl-button"
-                    [ P.disabled $ isComputing || null (graph.layout)
-                    , E.onClick \_ → Compute
-                    ]
-                    [ H.text "Compute" ]
+            [ UI.buttonGroup
+                [ { name: "SelectAll"
+                  , onClick: SelectAllParams
+                  , attrs: [ P.disabled isComputing ]
+                  }
+                , { name: "Unselect All"
+                  , onClick: UnselectAllParams
+                  , attrs: [ P.disabled isComputing ]
+                  }
+                , { name: "Compute"
+                  , onClick: Compute
+                  , attrs: [ P.disabled $ isComputing || null (graph.layout) ]
+                  }
                 -- ,   H.bButton [P.disabled $ not computing, E.onClick UnselectAll] [H.text "Compute"]
                 ]
             ]
         , paramInput
-        , H.div [ H.class_ "row row-top space-around" ]
-            [ H.div [ H.class_ "col" ] -- col
-                [ H.elem "sl-textarea"
-                    [ P.rows 15
-                    , P.cols 40
+        , H.div [ H.class_ "flex flex-row justify-around" ]
+            [ H.div [ H.class_ "flex flex-col items-start" ]
+                [ H.textarea
+                    [ H.class_ UI.textareaClass
+                    , P.rows 15
+                    , P.cols 30
                     , P.value code
-                    , E.on "sl-change" \ev → Just <$> SetCode <$> slStringValue ev
+                    , E.onValueChange SetCode
                     ]
-                    []
-                , H.elem "sl-button"
-                    [ E.onClick \_ → GenerateGraph
-                    , P.disabled isComputing
-                    ]
-                    [ H.text "Generate"
-                    ]
+                , UI.button
+                    { name: "Generate"
+                    , onClick: GenerateGraph
+                    , attrs: [P.disabled isComputing]
+                    }
                 ]
-            , H.elem "sl-card" []
-                [ H.div [ H.attr "slot" "header" ] [ H.text "Ouput" ]
-                , output
-                ]
-            , H.elem "sl-card" []
-                [ H.div [ H.attr "slot" "header" ] [ H.text "Graph" ]
-                , graphView model
-                ]
+            , UI.card "Output" [output]
+            , UI.card "Graph" [graphView model]
             ]
         ]
     , H.div [ H.class_ "graphparams-help-container" ]
-        [ H.elem "sl-card" []
-            [ H.div [ H.attr "slot" "header" ] [ H.text "Help" ]
-            , H.div [ H.class_ "graphparams-help" ] htmlizedHelp
-            ]
+        [ UI.card "Help" [H.div [ H.class_ "graphparams-help" ] htmlizedHelp]
         ]
     ]
   where
@@ -93,17 +76,20 @@ view model@{ error, isComputing, code, parameters, results, graph } =
                     outputParameter parameter (Map.lookup name results)
 
   paramInput =
-    H.div [ H.class_ "row row-top space-between" ]
+    H.div [ H.class_ "flex flex-row justify-around" ]
       $ (1 .. 4)
       <#> \i →
-          H.div [ H.class_ "col col-6" ]
+          H.div [ H.class_ "flex flex-col w-1/4 ml-4" ]
             $ parameters
             # filter (\p → p.cat == i)
             # map \{ name, fullname, selected } →
-                H.div []
-                  [ H.elem "sl-checkbox"
-                      [ P.checked selected, E.on "sl-change" \ev → Just <$> CheckParam name <$> slChecked ev ]
-                      [ H.text fullname ]
+                H.label []
+                  [ H.input
+                      [ P.type_ "checkbox"
+                      , H.class_ UI.checkboxClass
+                      , P.checked selected
+                      , E.onChecked $ CheckParam name ]
+                  , H.span [ H.class_ "ml-2 text-sm font-medium text-gray-900" ] [ H.text fullname ]
                   ]
 
 outputParameter ∷ Parameter → Maybe Result → Html Msg
@@ -115,7 +101,8 @@ outputParameter { fullname } result = case result of
           H.span [] [ H.text $ fullname <> " : " <> value ]
         else
           H.a
-            [ P.href "#"
+            [ H.class_ "font-medium text-blue-600 hover:underline"
+            , P.href "#"
             , E.onPointerOver \_ → ShowCertificate certificate
             , E.onPointerOut \_ → ShowCertificate NoCertificate
             ]

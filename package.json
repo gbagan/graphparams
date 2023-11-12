@@ -1,18 +1,15 @@
 {
   "dependencies": {
-    "@shoelace-style/shoelace": "^2.0.0-beta.73",
-    "esbuild": "^0.17.19",
-    "purescript": "^0.15.9",
-    "rimraf": "^5.0.0",
-    "s": "file:shoelace-style/shoelace@latest",
-    "sass": "^1.51.0",
-    "spago": "^0.21.0"
+    "esbuild": "^0.19.5",
+    "purescript": "^0.15.12",
+    "rimraf": "^5.0.5",
+    "spago": "^0.21.0",
+    "tailwindcss": "^3.3.5"
   },
   "scripts": {
     "clean": "rimraf output && rimraf .spago",
     "build": "spago bundle-app --minify --to dist/bundle.js",
     "build-worker": "esbuild --bundle src/worker/worker.js > dist/worker.js",
-    "build-shoelace": "esbuild --bundle shoelace/index.js --minify --outfile=dist/shoelace.js",
-    "buildcss": "sass --no-source-map src/style.scss dist/bundle.css"
+    "buildtw": "tailwindcss -i src/tailwind.css -o dist/tailwind.css"
   }
 }
