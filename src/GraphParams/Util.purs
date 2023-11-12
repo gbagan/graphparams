@@ -1,10 +1,7 @@
 module Util where
 
-import Prelude
+import Relude
 import Data.Int as Int
-import Data.Array (zipWith, mapWithIndex)
-import Data.Maybe (Maybe(..))
-import Effect (Effect)
 import Web.UIEvent.MouseEvent (MouseEvent)
 import Web.UIEvent.MouseEvent as ME
 import Web.PointerEvent (PointerEvent)

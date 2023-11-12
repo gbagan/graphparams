@@ -1,16 +1,8 @@
 module GraphParams.Update where
 
-import Prelude
+import Relude
 
-import Data.Array (elem, filter, length)
-import Data.Either (Either(..))
-import Data.Foldable (for_)
 import Data.Map as Map
-import Data.Maybe (Maybe(..))
-import Effect.Class (liftEffect)
-import Effect.Aff.Class (liftAff)
-import Control.Monad.Reader.Class (ask)
-import Control.Monad.Trans.Class (lift)
 import GraphParams.Graph (Edge(..))
 import GraphParams.Graph as Graph
 import GraphParams.DecodeResult (decodeResult)
@@ -19,7 +11,7 @@ import GraphParams.Layout (computeLayout)
 import GraphParams.Model (Model, EditMode(..))
 import GraphParams.Monad (MonadGP)
 import GraphParams.Msg (Msg(..))
-import Pha.Update (Update, get, modify_)
+import Pha.Update (Update)
 import Util (pointerDecoder, pointerDecoder')
 import Web.Event.Event (stopPropagation)
 import Web.UIEvent.MouseEvent as ME

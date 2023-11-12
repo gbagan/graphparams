@@ -1,12 +1,11 @@
 module GraphParams.Channel where
 
-import Prelude
+import Relude
 import Foreign (Foreign)
-import Effect.Aff (Aff, launchAff_, forkAff)
+import Effect.Aff (launchAff_, forkAff)
 import Web.Worker.Worker (Worker, postMessage, onMessage)
 import Web.Worker.MessageEvent (data_)
 import Effect.Aff.AVar as AVar
-import Effect.Class (liftEffect)
 import Control.Monad.Rec.Class (forever)
 
 makeChannel :: forall a. Worker -> Aff { send :: a -> Aff Unit, receive :: Aff Foreign }

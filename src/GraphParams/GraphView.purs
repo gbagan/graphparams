@@ -1,10 +1,7 @@
 module GraphParams.GraphView where
 
-import Prelude
+import Relude
 
-import Data.Array (elem, length, replicate, updateAtIndices)
-import Data.Maybe (Maybe(..))
-import Data.Tuple.Nested ((/\))
 import GraphParams.Graph as Graph
 import GraphParams.Model (Model, Position, EditMode(..), Certificate(..))
 import GraphParams.Msg (Msg(..))

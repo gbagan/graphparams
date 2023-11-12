@@ -1,9 +1,8 @@
 module GraphParams.UI
   where
 
-import Prelude
+import Relude
 
-import Data.Array (length, mapWithIndex)
 import Pha.Html (Html, Prop)
 import Pha.Html as H
 import Pha.Html.Events as E

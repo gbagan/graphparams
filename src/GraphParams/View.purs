@@ -1,10 +1,8 @@
 module GraphParams.View (view) where
 
-import Prelude
+import Relude
 
-import Data.Array ((..), filter, null)
 import Data.Map as Map
-import Data.Maybe (Maybe(..))
 import Data.String (split, Pattern(..))
 import GraphParams.Data (helpText)
 import GraphParams.GraphView (graphView)

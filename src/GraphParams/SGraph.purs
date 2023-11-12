@@ -1,10 +1,7 @@
 module GraphParams.SGraph where
 
-import Prelude hiding (join)
-import Control.Alternative (guard)
-import Data.Array ((..), elem, filter, foldr, snoc, tail, zipWith)
+import Relude hiding (join)
 import Data.Array.NonEmpty as NEA
-import Data.Maybe (Maybe(..), maybe)
 import GraphParams.Graph (Edge(..))
 
 type SGraph

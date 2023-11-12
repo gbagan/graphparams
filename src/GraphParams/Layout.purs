@@ -2,12 +2,8 @@ module GraphParams.Layout
   ( computeLayout
   ) where
 
-import Prelude
-import Data.Array ((..), foldl, mapWithIndex, notElem)
-import Data.Foldable (minimum, maximum)
-import Data.Int (toNumber)
-import Data.Maybe (fromMaybe)
-import Data.Number (pi, sqrt, cos, sin)
+import Relude hiding (force)
+import Data.Array (notElem)
 import GraphParams.Graph (Edge(..), Position)
 
 initialRadius ∷ Number
@@ -17,8 +13,6 @@ initialAngle ∷ Number
 initialAngle = pi * (3.0 - sqrt 5.0)
 
 initLayout ∷ Int → Array Position
-initLayout 0 = []
-
 initLayout n =
   0 .. (n - 1)
     <#> \i →

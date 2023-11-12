@@ -2,16 +2,14 @@ module GraphParams.Parser
   ( parseGraph
   ) where
 
-import Prelude
-import Control.Alt ((<|>))
+import Relude
 import Control.Lazy (fix)
 import Data.Bifunctor (bimap)
-import Data.Either (Either(..), either)
+import Data.Either (either)
 import Data.Semigroup.Foldable (foldl1)
 import Data.Int as Int
 import Data.List as List
 import Data.List.NonEmpty (NonEmptyList, toUnfoldable)
-import Data.Maybe (Maybe(..))
 import GraphParams.SGraph (SGraph)
 import GraphParams.SGraph as SG
 import StringParser (Parser, runParser, printParserError, fail, string, many, sepBy1, regex, whiteSpace, try)

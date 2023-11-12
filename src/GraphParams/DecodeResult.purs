@@ -1,14 +1,10 @@
 module GraphParams.DecodeResult where
 
-import Prelude
+import Relude
 import Control.Monad.Except (runExcept)
 import Data.Either (hush)
-import Data.Array (cons, elem, filter, length, mapWithIndex, replicate, updateAtIndices, tail, zipWith)
-import Data.List (List(..), (:))
+import Data.List ((:))
 import Data.List as List
-import Data.Maybe (Maybe, maybe)
-import Data.Traversable (traverse)
-import Data.Tuple.Nested ((/\))
 import Foreign (Foreign, readString, readArray, readInt)
 import Foreign.Index ((!))
 import GraphParams.Graph (Edge(..))

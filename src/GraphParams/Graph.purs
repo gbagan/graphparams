@@ -1,9 +1,6 @@
 module GraphParams.Graph where
 
-import Prelude
-import Data.Array ((!!), deleteAt, elem, filter, foldr, mapMaybe, snoc, modifyAtIndices, updateAtIndices)
-import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Tuple.Nested ((/\))
+import Relude
 
 data Edge
   = Edge Int Int

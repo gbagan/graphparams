@@ -1,9 +1,7 @@
 module GraphParams.Monad where
 
-import Prelude
-import Effect.Aff (Aff)
+import Relude
 import Foreign (Foreign)
-import Control.Monad.Reader.Trans (ReaderT)
 import GraphParams.Graph (AdjGraph)
 
 type InputData

@@ -1,9 +1,7 @@
 module GraphParams.Model where
 
-import Prelude
-import Data.Map (Map)
+import Relude
 import Data.Map as Map
-import Data.Maybe (Maybe(..))
 import GraphParams.Graph (Graph, Edge)
 import GraphParams.Data (codeExample)
 
